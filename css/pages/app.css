@@ -1,3 +1,4 @@
+/* planner pages, loaded after shared components */
 .planner-shell {
   display: grid;
   grid-template-rows: auto 1fr auto;
@@ -21,6 +22,7 @@
   gap: var(--space-6);
 }
 
+/* checked radios drive :has() filters, including groups with no matching cards */
 .app-nav,
 .app-filter__value > span,
 .form-select__value,
@@ -82,6 +84,7 @@
   padding: var(--space-4);
 }
 
+/* reset follows the switch in DOM order, only add uses an auto start margin */
 .app-toolbar {
   gap: var(--space-3);
   margin-block-end: var(--space-6);
@@ -98,11 +101,11 @@
   position: relative;
 }
 
-/* Search Clear */
 .app-search .field__control {
   padding-inline-end: 2.25rem;
 }
 
+/* search reset */
 .search-clear {
   position: absolute;
   inset-block: 0;
@@ -132,7 +135,7 @@
 .app-search input[type="search"]::-webkit-search-cancel-button {
   display: none;
 }
-/* Search Submit */
+/* reveal the hidden submit control when reached by keyboard */
 .search-submit:focus {
   position: static;
   inline-size: auto;
@@ -145,6 +148,7 @@
   margin: 0;
 }
 
+/* the dim layer ignores clicks so summary can still close the menu */
 .app-filter[open]::before,
 .form-select[open]::before {
   position: fixed;
@@ -156,6 +160,7 @@
   pointer-events: none;
 }
 
+/* mobile select sheet stays above the bottom tabs */
 .app-filter[open] .select__options,
 .form-select[open] .select__options {
   position: fixed;
@@ -192,6 +197,7 @@
   background: var(--muted);
 }
 
+/* labels act as rows for visually hidden radios */
 .select__option {
   display: flex;
   align-items: center;
@@ -203,6 +209,7 @@
   cursor: pointer;
 }
 
+/* reserve the check slot even when the option is not selected */
 .select__check {
   order: -1;
   margin-inline-start: 0;
@@ -228,6 +235,7 @@
   font-weight: 600;
 }
 
+/* the selected radio also selects the visible trigger text */
 .app-filter:has(.filter-radio--0:checked) .app-filter__value-0,
 .app-filter:has(.filter-radio--1:checked) .app-filter__value-1,
 .app-filter:has(.filter-radio--2:checked) .app-filter__value-2,
@@ -251,6 +259,7 @@
   margin-block-end: var(--space-2);
 }
 
+/* static counters match the demo data, they do not count arbitrary cards */
 .task-app:has(.filter-radio:not(.filter-radio--0):checked) .group-count::after {
   content: "1";
 }
@@ -273,6 +282,7 @@
   font-size: var(--text-sm);
 }
 
+/* switch track */
 .switch__track {
   display: inline-block;
   inline-size: 2rem;
@@ -292,6 +302,7 @@
   content: "";
 }
 
+/* sibling :checked controls the switch and completed cards below the toolbar */
 .done-toggle:checked ~ .app-toolbar .switch__track {
   background: var(--primary);
 }
@@ -305,6 +316,7 @@
   outline-offset: 0.1875rem;
 }
 
+/* task groups */
 .task-groups,
 .component-gallery {
   display: flex;
@@ -336,6 +348,7 @@
   color: var(--primary-foreground);
 }
 
+/* task card */
 .task-card {
   --task-color: var(--future);
   --task-bg: var(--future-bg);
@@ -359,12 +372,14 @@
   --task-bg: var(--overdue-bg);
 }
 
+/* done overrides urgency through local card colors */
 .task-card--done,
 .task-card:has(.task-card__check:checked) {
   --task-color: var(--done);
   --task-bg: var(--done-bg);
 }
 
+/* transparent checkbox background keeps the card color visible */
 .task-card__check {
   display: grid;
   place-content: center;
@@ -396,6 +411,7 @@
   visibility: visible;
 }
 
+/* mobile card layout */
 .task-card__body {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -434,6 +450,7 @@
   block-size: 1rem;
 }
 
+/* color-mix tints actions with the current card color */
 .task-card__actions .button--ghost:hover {
   background: color-mix(in srgb, var(--task-color) 14%, var(--transparent));
 }
@@ -454,6 +471,7 @@
   margin-block: calc(var(--space-1) - var(--border-width)) var(--border-width);
 }
 
+/* task metadata */
 .task-card__meta {
   display: flex;
   flex-wrap: wrap;
@@ -481,6 +499,7 @@
   color: var(--muted-foreground);
 }
 
+/* filled tags keep their own foreground in every card state */
 .task-card .tag,
 .task-details .tag {
   line-height: 1rem;
@@ -493,6 +512,7 @@
   background: var(--soon-bg);
 }
 
+/* empty list */
 .app-empty {
   justify-content: center;
   gap: var(--space-4);
@@ -520,6 +540,7 @@
   max-inline-size: 20rem;
 }
 
+/* demo states stay outside the normal task workflow */
 .demo-footer {
   padding: var(--space-6) var(--space-4);
   font-size: var(--text-xs);
@@ -545,6 +566,7 @@
   border-block-start: var(--border-width) solid var(--border);
 }
 
+/* bottom sheet by default, centered dialog from the tablet breakpoint */
 .modal__panel {
   position: relative;
   inline-size: 100%;
@@ -592,6 +614,7 @@
   margin-block-end: var(--space-4);
 }
 
+/* task fields */
 .task-form,
 .task-form__fields,
 .component-gallery > section {
@@ -604,6 +627,7 @@
   background: var(--card);
 }
 
+/* show hidden radio validation on the visible select trigger */
 .form-select:has(input:user-invalid) > summary {
   border-color: var(--destructive);
 }
@@ -627,6 +651,7 @@
   font-size: 1.25rem;
 }
 
+/* task details */
 .task-details__meta {
   display: flex;
   flex-wrap: wrap;
@@ -646,6 +671,7 @@
   margin-block-end: var(--space-2);
 }
 
+/* delete confirmation */
 .delete-dialog {
   display: flex;
   flex-direction: column;
@@ -715,6 +741,7 @@
   font-weight: 600;
 }
 
+/* month calendar */
 .month-calendar {
   padding: var(--space-3);
   border: var(--border-width) solid var(--border);
@@ -730,6 +757,7 @@
   color: var(--muted-foreground);
 }
 
+/* one link covers the date, task markers and empty cell space */
 .calendar-cell {
   display: flex;
   flex-direction: column;
@@ -742,6 +770,7 @@
   text-align: center;
 }
 
+/* reserve date height so the selected circle cannot overlap task markers */
 .calendar-cell__date {
   display: block;
   flex: none;
@@ -763,6 +792,7 @@
 }
 
 .calendar-cell__tasks,
+/* dots replace task names on narrow screens */
 .calendar-cell__dots {
   margin-block-start: var(--space-1);
 }
@@ -786,6 +816,7 @@
   background: var(--discipline-3);
 }
 
+/* calendar legend */
 .calendar-legend {
   display: flex;
   flex-direction: column;
@@ -807,6 +838,7 @@
   font-size: var(--text-sm);
 }
 
+/* day view */
 .day-view__cards {
   display: flex;
   flex-direction: column;
@@ -832,12 +864,14 @@
   font-size: 1.5rem;
 }
 
+/* demo state index */
 .state-index {
   display: grid;
   gap: var(--space-3);
   padding-inline-start: var(--space-6);
 }
 
+/* tablet: top tabs, single-row cards and centered dialogs */
 @media (min-width: 48rem) {
   .planner-shell {
     padding: var(--space-8);
@@ -874,6 +908,7 @@
     inline-size: min(20rem, 100%);
   }
 
+  /* tablet filter width stays fixed while search can shrink */
   .app-filter {
     inline-size: var(--select-width);
     min-inline-size: var(--select-width);
@@ -888,6 +923,7 @@
     display: none;
   }
 
+  /* tablet select returns to a dropdown below the trigger */
   .app-filter[open] .select__options,
   .form-select[open] .select__options {
     position: absolute;
@@ -931,6 +967,7 @@
     min-block-size: 2rem;
   }
 
+  /* tablet cards keep title and metadata in one row */
   .task-card {
     align-items: center;
     gap: var(--space-4);
@@ -975,6 +1012,7 @@
     padding: var(--space-8) 0 0;
   }
 
+  /* centered dialogs retain scrolling for long forms */
   .modal__panel {
     padding: var(--space-6);
     max-inline-size: 30rem;
@@ -1082,6 +1120,7 @@
     text-decoration: none;
   }
 
+  /* desktop calendar task chips */
   .calendar-chip {
     padding: 0.125rem var(--space-1);
     border-inline-start: 0.1875rem solid var(--chip-color);
@@ -1119,6 +1158,7 @@
   }
 }
 
+/* desktop: wider page margins and unwrapped dates */
 @media (min-width: 75rem) {
   .planner-shell {
     padding: var(--space-12) var(--space-20);
@@ -1130,6 +1170,7 @@
   }
 }
 
+/* motion allowed: switch thumb and color transitions */
 @media (prefers-reduced-motion: no-preference) {
   .switch__track::before {
     transition: transform var(--duration-base) var(--ease);
@@ -1144,6 +1185,7 @@
   }
 }
 
+/* native date field */
 .field__control--date {
   position: relative;
   padding-inline-start: calc(var(--space-8) + var(--space-1));
@@ -1160,6 +1202,7 @@
   pointer-events: none;
 }
 
+/* transparent native indicator covers the field, the SVG ignores pointer events */
 .field__control--date::-webkit-calendar-picker-indicator {
   position: absolute;
   inset: 0;
@@ -1175,6 +1218,7 @@
   display: block;
 }
 
+/* mobile with motion: slide up select sheets and fade the backdrop */
 @media (width<48rem) and (prefers-reduced-motion: no-preference) {
   .select[open] .select__options {
     animation: sheet-enter var(--duration-enter) var(--ease-enter);
@@ -1190,6 +1234,7 @@
   }
 }
 
+/* Firefox keeps its native icon, so the custom SVG is hidden */
 @supports (-moz-appearance: none) {
   .field__control--date[type="date"] {
     padding-inline-start: 0.625rem;
@@ -1201,6 +1246,7 @@
   }
 }
 
+/* empty day view */
 .day-empty__header {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -1240,6 +1286,7 @@
   block-size: var(--space-4);
 }
 
+/* tablet empty-day dialog sizing */
 @media (min-width: 48rem) {
   .modal__panel--empty {
     border-radius: var(--radius-lg);
@@ -1254,6 +1301,7 @@
   }
 }
 
+/* static picker only, dates and arrows do not update the field */
 .date-demo {
   position: fixed;
   inset-inline: 0;
@@ -1300,6 +1348,7 @@
   block-size: var(--space-4);
 }
 
+/* fixed demo month, no date calculation */
 .date-demo__grid {
   row-gap: var(--border-width);
   padding-block: calc(var(--space-1) + var(--border-width));
@@ -1331,6 +1380,7 @@
   position: relative;
 }
 
+/* mobile static picker backdrop */
 @media (width < 48rem) {
   .modal:has(.date-demo):has(.modal__variant:target) .modal__panel {
     transform: none;
@@ -1347,6 +1397,7 @@
   }
 }
 
+/* tablet static picker below the date field */
 @media (min-width: 48rem) {
   .date-demo {
     position: absolute;
@@ -1375,6 +1426,7 @@
   }
 }
 
+/* mobile select separators */
 @media (max-width: 47.999rem) {
   .form-select[open] .select__heading,
   .app-filter[open] .select__heading {
@@ -1392,6 +1444,7 @@
   }
 }
 
+/* tablet-only calendar toolbar grid */
 @media (min-width: 48rem) and (max-width: 74.999rem) {
   .calendar-toolbar {
     display: grid;

@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/pages/app.css" />
   </head>
   <body class="app-page">
+    <!-- icon sprite -->
     <svg class="icon-sprite" aria-hidden="true">
       <symbol id="icon-trash-2" viewBox="0 0 24 24">
         <path
@@ -58,7 +59,9 @@
     </svg>
     <a class="skip-link" href="#main">Перейти до календаря</a>
     <div class="planner-shell">
+      <!-- header -->
       <header class="app-header">
+        <!-- brand -->
         <a class="brand" href="index.html">
           <svg class="icon" aria-hidden="true">
             <use href="#icon-cap"></use>
@@ -66,6 +69,7 @@
           <span>StudyPlanner</span>
         </a>
         <div class="app-header__right">
+          <!-- main nav -->
           <nav class="app-nav" aria-label="Основна навігація">
             <ul>
               <li>
@@ -76,6 +80,7 @@
               </li>
             </ul>
           </nav>
+          <!-- user menu -->
           <details class="user-menu">
             <summary class="user-menu__trigger" aria-label="Меню користувача">
               <span class="avatar">ОК</span>
@@ -93,7 +98,9 @@
           </details>
         </div>
       </header>
+      <!-- main content -->
       <main class="planner-main" id="main">
+        <!-- calendar header -->
         <div class="toolbar calendar-toolbar">
           <div class="month-heading">
             <a
@@ -117,6 +124,8 @@
             </a>
           </div>
           <a class="button button--outline" href="calendar.html">Сьогодні</a>
+          <!-- discipline select -->
+          <!-- visually hidden radios drive the :has() filter -->
           <details class="select app-filter" open>
             <summary class="field__control select__trigger">
               <span class="app-filter__value">
@@ -182,6 +191,7 @@
               ></label>
             </fieldset>
           </details>
+          <!-- reset filter -->
           <a class="button button--ghost filter-reset" href="calendar.html"
             >× Скинути фільтр</a
           >
@@ -189,7 +199,9 @@
             >+ Додати завдання</a
           >
         </div>
+        <!-- calendar -->
         <section class="month-calendar" aria-label="Календар на жовтень 2026">
+          <!-- weekdays -->
           <div class="calendar-grid calendar-weekdays">
             <span>Пн</span>
             <span>Вт</span>
@@ -199,6 +211,7 @@
             <span>Сб</span>
             <span>Нд</span>
           </div>
+          <!-- calendar grid -->
           <div class="calendar-grid">
             <a
               class="calendar-cell calendar-cell--outside"
@@ -561,6 +574,7 @@
             >
           </div>
         </section>
+        <!-- calendar legend -->
         <ul class="calendar-legend" aria-label="Дисципліни">
           <li class="discipline-item discipline-item--1">
             <span class="calendar-cell__dot calendar-cell__dot--1"> </span
@@ -579,6 +593,7 @@
           >+ Додати завдання</a
         >
       </main>
+      <!-- footer -->
       <footer class="demo-footer">
         <details>
           <summary>Демо версія · усі стани</summary>
@@ -591,6 +606,8 @@
         </details>
       </footer>
     </div>
+    <!-- day view (#day) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day"
@@ -598,6 +615,7 @@
       aria-labelledby="day-title"
     >
       <a class="modal__backdrop" href="#main" aria-label="Закрити діалог"> </a>
+      <!-- state (#day-15) -->
       <div
         class="modal__panel modal__panel--empty modal__state"
         id="day-15"
@@ -619,6 +637,7 @@
         </header>
         <p class="muted day-view__subtitle">четвер · 4 завдання</p>
         <div class="day-view__cards">
+          <!-- normal task card -->
           <article class="task-card discipline-item discipline-item--1">
             <input
               class="checkbox task-card__check"
@@ -800,6 +819,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-empty) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-empty"
@@ -807,6 +828,7 @@
       aria-labelledby="day-empty-title"
     >
       <a class="modal__backdrop" href="#main" aria-label="Закрити діалог"></a>
+      <!-- state (#day-20) -->
       <div
         class="modal__panel modal__panel--empty modal__state"
         id="day-20"
@@ -825,6 +847,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -839,6 +862,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-01) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-01"
@@ -863,6 +888,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -877,6 +903,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-02) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-02"
@@ -901,6 +929,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -915,6 +944,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-03) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-03"
@@ -937,6 +968,7 @@
         </header>
         <p class="muted day-view__subtitle">1 завдання</p>
         <div class="day-view__cards">
+          <!-- overdue task card -->
           <article
             class="task-card task-card--overdue discipline-item discipline-item--2"
           >
@@ -989,6 +1021,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-04) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-04"
@@ -1011,6 +1045,7 @@
         </header>
         <p class="muted day-view__subtitle">1 завдання</p>
         <div class="day-view__cards">
+          <!-- overdue task card -->
           <article
             class="task-card task-card--overdue discipline-item discipline-item--1"
           >
@@ -1065,6 +1100,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-05) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-05"
@@ -1086,6 +1123,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1100,6 +1138,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-06) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-06"
@@ -1122,6 +1162,7 @@
         </header>
         <p class="muted day-view__subtitle">1 завдання</p>
         <div class="day-view__cards">
+          <!-- normal task card -->
           <article class="task-card discipline-item discipline-item--3">
             <input
               class="checkbox task-card__check"
@@ -1167,6 +1208,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-07) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-07"
@@ -1188,6 +1231,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1202,6 +1246,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-08) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-08"
@@ -1224,6 +1270,7 @@
         </header>
         <p class="muted day-view__subtitle">1 завдання</p>
         <div class="day-view__cards">
+          <!-- soon task card -->
           <article
             class="task-card task-card--soon discipline-item discipline-item--1"
           >
@@ -1278,6 +1325,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-09) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-09"
@@ -1299,6 +1348,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1313,6 +1363,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-10) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-10"
@@ -1337,6 +1389,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1351,6 +1404,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-11) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-11"
@@ -1375,6 +1430,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1389,6 +1445,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-12) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-12"
@@ -1413,6 +1471,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1427,6 +1486,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-13) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-13"
@@ -1451,6 +1512,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1465,6 +1527,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-14) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-14"
@@ -1489,6 +1553,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1503,6 +1568,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-16) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-16"
@@ -1527,6 +1594,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1541,6 +1609,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-17) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-17"
@@ -1565,6 +1635,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1579,6 +1650,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-18) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-18"
@@ -1601,6 +1674,7 @@
         </header>
         <p class="muted day-view__subtitle">1 завдання</p>
         <div class="day-view__cards">
+          <!-- normal task card -->
           <article class="task-card discipline-item discipline-item--1">
             <input
               class="checkbox task-card__check"
@@ -1653,6 +1727,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-19) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-19"
@@ -1674,6 +1750,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1688,6 +1765,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-21) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-21"
@@ -1712,6 +1791,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1726,6 +1806,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-22) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-22"
@@ -1750,6 +1832,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1764,6 +1847,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-23) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-23"
@@ -1788,6 +1873,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1802,6 +1888,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-24) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-24"
@@ -1826,6 +1914,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1840,6 +1929,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-25) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-25"
@@ -1864,6 +1955,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1878,6 +1970,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-26) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-26"
@@ -1902,6 +1996,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1916,6 +2011,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-27) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-27"
@@ -1940,6 +2037,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1954,6 +2052,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-28) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-28"
@@ -1978,6 +2078,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -1992,6 +2093,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-29) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-29"
@@ -2016,6 +2119,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -2030,6 +2134,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-30) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-30"
@@ -2054,6 +2160,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -2068,6 +2175,8 @@
         >
       </div>
     </section>
+    <!-- day view (#day-31) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--day"
       id="day-31"
@@ -2092,6 +2201,7 @@
               <use href="#icon-close"></use></svg
           ></a>
         </header>
+        <!-- empty state -->
         <div class="empty-state day-empty">
           <svg
             class="icon empty-state__icon empty-state__icon--square"
@@ -2106,6 +2216,8 @@
         >
       </div>
     </section>
+    <!-- add task dialog (#add-task) -->
+    <!-- closed via link back to #main, no JS -->
     <section class="modal" role="dialog" aria-labelledby="add-task-title">
       <a class="modal__backdrop" href="#main" aria-label="Закрити діалог"> </a>
       <div class="modal__panel" tabindex="-1">
@@ -2148,6 +2260,7 @@
               <span class="field__label" id="add-task-discipline-label"
                 >Дисципліна <span class="required">*</span>
               </span>
+              <!-- discipline select -->
               <details class="select form-select">
                 <summary class="field__control select__trigger">
                   <span class="form-select__placeholder"
@@ -2254,6 +2367,7 @@
           </div>
         </form>
 
+        <!-- state (#add-task-day) -->
         <form
           class="task-form modal__state modal__variant"
           id="add-task-day"
@@ -2281,6 +2395,7 @@
               <span class="field__label" id="add-task-day-discipline-label"
                 >Дисципліна <span class="required">*</span>
               </span>
+              <!-- discipline select -->
               <details class="select form-select">
                 <summary class="field__control select__trigger">
                   <span class="form-select__placeholder"
@@ -2387,6 +2502,7 @@
             <a class="button button--outline" href="#day-empty">Скасувати</a>
           </div>
         </form>
+        <!-- state (#add-task-day-15) -->
         <form
           class="task-form modal__state modal__variant"
           id="add-task-day-15"
@@ -2414,6 +2530,7 @@
               <span class="field__label" id="add-task-day-15-discipline-label"
                 >Дисципліна <span class="required">*</span>
               </span>
+              <!-- discipline select -->
               <details class="select form-select">
                 <summary class="field__control select__trigger">
                   <span class="form-select__placeholder"
@@ -2522,6 +2639,8 @@
         </form>
       </div>
     </section>
+    <!-- edit task dialog (#edit-task) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal"
       id="edit-task"
@@ -2566,6 +2685,7 @@
               <span class="field__label" id="edit-task-discipline-label"
                 >Дисципліна <span class="required">*</span>
               </span>
+              <!-- discipline select -->
               <details class="select form-select">
                 <summary class="field__control select__trigger">
                   <span class="form-select__placeholder"
@@ -2677,6 +2797,8 @@
         </form>
       </div>
     </section>
+    <!-- task details dialog (#task-details) -->
+    <!-- closed via link back to #day, no JS -->
     <section class="modal" role="dialog" aria-labelledby="task-details-title">
       <a class="modal__backdrop" href="#day" aria-label="Закрити діалог"> </a>
       <div class="modal__panel" tabindex="-1">
@@ -2709,6 +2831,7 @@
             практичного заняття через Moodle.
           </p>
         </div>
+        <!-- state (#task-details-empty) -->
         <div
           class="task-details modal__state modal__variant"
           id="task-details-empty"
@@ -2728,6 +2851,8 @@
         </div>
       </div>
     </section>
+    <!-- delete alert dialog (#delete-task) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--alert"
       id="delete-task"
@@ -2736,6 +2861,7 @@
       aria-describedby="delete-task-description"
     >
       <a class="modal__backdrop" href="#main" aria-label="Закрити діалог"></a>
+      <!-- state (#task-delete) -->
       <div class="modal__panel modal__state" id="task-delete" tabindex="-1">
         <div class="delete-dialog">
           <span class="delete-dialog__icon" aria-hidden="true"
@@ -2764,6 +2890,8 @@
         </div>
       </div>
     </section>
+    <!-- static demo (#save-demo) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal"
       id="save-demo"
@@ -2791,6 +2919,8 @@
         <a class="button button--primary" href="#main">До планувальника</a>
       </div>
     </section>
+    <!-- static demo (#delete-demo) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal"
       id="delete-demo"
@@ -2817,6 +2947,8 @@
         <a class="button button--primary" href="#main">До завдань</a>
       </div>
     </section>
+    <!-- dialog (#new-discipline) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal"
       id="new-discipline"
@@ -2851,6 +2983,8 @@
         </form>
       </div>
     </section>
+    <!-- static demo (#month-demo) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal"
       id="month-demo"
@@ -2878,6 +3012,7 @@
         <a class="button button--primary" href="#main">До календаря</a>
       </div>
     </section>
+    <!-- bottom tabs (mobile) -->
     <nav class="bottom-tabs" aria-label="Мобільна навігація">
       <a class="bottom-tabs__link" href="tasks.html">
         <svg class="icon" aria-hidden="true"><use href="#icon-list"></use></svg

@@ -1,3 +1,4 @@
+/* hidden radios remain keyboard accessible, unlike display: none */
 .visually-hidden {
   position: absolute;
   inline-size: 0.0625rem;
@@ -10,6 +11,7 @@
   clip-path: inset(50%);
 }
 
+/* skip navigation link, revealed on keyboard focus */
 .skip-link {
   position: absolute;
   inset-inline-start: var(--space-4);

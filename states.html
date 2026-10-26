@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/pages/app.css" />
   </head>
   <body class="app-page">
+    <!-- icon sprite -->
     <svg class="icon-sprite" aria-hidden="true">
       <symbol id="icon-cap" viewBox="0 0 24 24">
         <path d="m2 10 10-5 10 5-10 5-10-5Zm4 2v5c3 3 9 3 12 0v-5M22 10v6" />
@@ -28,7 +29,9 @@
       </symbol>
     </svg>
     <div class="planner-shell">
+      <!-- header -->
       <header class="app-header">
+        <!-- brand -->
         <a class="brand" href="index.html">
           <svg class="icon" aria-hidden="true">
             <use href="#icon-cap"></use>
@@ -36,6 +39,7 @@
           <span>StudyPlanner</span>
         </a>
         <div class="app-header__right">
+          <!-- main nav -->
           <nav class="app-nav" aria-label="Основна навігація">
             <ul>
               <li>
@@ -46,6 +50,7 @@
               </li>
             </ul>
           </nav>
+          <!-- user menu -->
           <details class="user-menu">
             <summary class="user-menu__trigger" aria-label="Меню користувача">
               <span class="avatar">ОК</span>
@@ -63,10 +68,13 @@
           </details>
         </div>
       </header>
+      <!-- main content -->
       <main class="planner-main component-gallery">
         <h1>Усі стани StudyPlanner</h1>
         <p>Пошук і зміна даних не виконують серверних операцій.</p>
+        <!-- main nav -->
         <nav aria-label="Каталог станів">
+          <!-- state index -->
           <ul class="state-index">
             <li>
               <a href="calendar-filter.html">Календар із фільтром</a>
@@ -200,6 +208,7 @@
         </nav>
       </main>
     </div>
+    <!-- bottom tabs (mobile) -->
     <nav class="bottom-tabs" aria-label="Мобільна навігація">
       <a class="bottom-tabs__link" href="tasks.html" aria-current="page">
         <svg class="icon" aria-hidden="true"><use href="#icon-list"></use></svg

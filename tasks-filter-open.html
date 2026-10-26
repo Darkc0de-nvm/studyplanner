@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/pages/app.css" />
   </head>
   <body class="app-page">
+    <!-- icon sprite -->
     <svg class="icon-sprite" aria-hidden="true">
       <symbol id="icon-trash-2" viewBox="0 0 24 24">
         <path
@@ -52,7 +53,9 @@
     </svg>
     <a class="skip-link" href="#main">Перейти до завдань</a>
     <div class="planner-shell">
+      <!-- header -->
       <header class="app-header">
+        <!-- brand -->
         <a class="brand" href="index.html">
           <svg class="icon" aria-hidden="true">
             <use href="#icon-cap"></use>
@@ -60,6 +63,7 @@
           <span>StudyPlanner</span>
         </a>
         <div class="app-header__right">
+          <!-- main nav -->
           <nav class="app-nav" aria-label="Основна навігація">
             <ul>
               <li>
@@ -70,6 +74,7 @@
               </li>
             </ul>
           </nav>
+          <!-- user menu -->
           <details class="user-menu">
             <summary class="user-menu__trigger" aria-label="Меню користувача">
               <span class="avatar">ОК</span>
@@ -87,6 +92,7 @@
           </details>
         </div>
       </header>
+      <!-- main content -->
       <main class="planner-main task-app" id="main">
         <h1 class="visually-hidden">Навчальні завдання</h1>
         <input
@@ -94,7 +100,9 @@
           class="done-toggle visually-hidden"
           id="show-done"
         />
+        <!-- toolbar -->
         <div class="toolbar app-toolbar">
+          <!-- search -->
           <form class="app-search" action="tasks-search.html" role="search">
             <label class="visually-hidden" for="task-search"
               >Пошук за назвою або описом</label
@@ -112,6 +120,8 @@
               Показати приклад результатів
             </button>
           </form>
+          <!-- discipline select -->
+          <!-- visually hidden radios drive the :has() filter -->
           <details class="select app-filter" open>
             <summary class="field__control select__trigger">
               <span class="app-filter__value">
@@ -177,13 +187,16 @@
               ></label>
             </fieldset>
           </details>
+          <!-- show-done switch -->
           <label class="switch done-label" for="show-done"
             >Показати виконані<span class="switch__track" aria-hidden="true">
             </span>
           </label>
+          <!-- reset filter -->
           <a class="button button--ghost filter-reset" href="tasks.html"
             >× Скинути фільтр</a
           >
+          <!-- add task -->
           <a class="button button--primary app-add" href="#add-task"
             >+ Додати завдання</a
           >
@@ -194,7 +207,9 @@
           <span class="filter-count__three">2</span> з 6
         </p>
         <div class="task-groups">
+          <!-- task group overdue -->
           <section class="task-group">
+            <!-- header -->
             <header class="group-header">
               <h2 class="group-header__title">Прострочені</h2>
               <span class="badge group-count group-count--overdue">
@@ -203,6 +218,7 @@
               </span>
             </header>
             <div class="task-group__cards">
+              <!-- overdue task card -->
               <article
                 class="task-card task-card--overdue discipline-item discipline-item--1"
               >
@@ -298,6 +314,7 @@
                   </div>
                 </div>
               </article>
+              <!-- done task card -->
               <article
                 class="task-card task-card--overdue task-card--done discipline-item discipline-item--1"
               >
@@ -348,7 +365,9 @@
               </article>
             </div>
           </section>
+          <!-- task group today -->
           <section class="task-group">
+            <!-- header -->
             <header class="group-header">
               <h2 class="group-header__title">Сьогодні</h2>
               <span class="badge group-count">
@@ -356,6 +375,7 @@
               </span>
             </header>
             <div class="task-group__cards">
+              <!-- normal task card -->
               <article class="task-card discipline-item discipline-item--3">
                 <input
                   class="checkbox task-card__check"
@@ -399,7 +419,9 @@
               </article>
             </div>
           </section>
+          <!-- task group this week -->
           <section class="task-group">
+            <!-- header -->
             <header class="group-header">
               <h2 class="group-header__title">Цей тиждень</h2>
               <span class="badge group-count group-count--soon">
@@ -407,6 +429,7 @@
               </span>
             </header>
             <div class="task-group__cards">
+              <!-- soon task card -->
               <article
                 class="task-card task-card--soon discipline-item discipline-item--1"
               >
@@ -457,7 +480,9 @@
               </article>
             </div>
           </section>
+          <!-- task group later -->
           <section class="task-group">
+            <!-- header -->
             <header class="group-header">
               <h2 class="group-header__title">Пізніше</h2>
               <span class="badge group-count">
@@ -465,6 +490,7 @@
               </span>
             </header>
             <div class="task-group__cards">
+              <!-- normal task card -->
               <article class="task-card discipline-item discipline-item--3">
                 <input
                   class="checkbox task-card__check"
@@ -561,6 +587,7 @@
           </section>
         </div>
       </main>
+      <!-- footer -->
       <footer class="demo-footer">
         <details>
           <summary>Демо версія · усі стани</summary>
@@ -573,6 +600,8 @@
         </details>
       </footer>
     </div>
+    <!-- add task dialog (#add-task) -->
+    <!-- closed via link back to #main, no JS -->
     <section class="modal" role="dialog" aria-labelledby="add-task-title">
       <a class="modal__backdrop" href="#main" aria-label="Закрити діалог"> </a>
       <div class="modal__panel" tabindex="-1">
@@ -615,6 +644,7 @@
               <span class="field__label" id="add-task-discipline-label"
                 >Дисципліна <span class="required">*</span>
               </span>
+              <!-- discipline select -->
               <details class="select form-select">
                 <summary class="field__control select__trigger">
                   <span class="form-select__placeholder"
@@ -722,6 +752,8 @@
         </form>
       </div>
     </section>
+    <!-- edit task dialog (#edit-task) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal"
       id="edit-task"
@@ -766,6 +798,7 @@
               <span class="field__label" id="edit-task-discipline-label"
                 >Дисципліна <span class="required">*</span>
               </span>
+              <!-- discipline select -->
               <details class="select form-select">
                 <summary class="field__control select__trigger">
                   <span class="form-select__placeholder"
@@ -877,6 +910,8 @@
         </form>
       </div>
     </section>
+    <!-- task details dialog (#task-details) -->
+    <!-- closed via link back to #main, no JS -->
     <section class="modal" role="dialog" aria-labelledby="task-details-title">
       <a class="modal__backdrop" href="#main" aria-label="Закрити діалог"> </a>
       <div class="modal__panel" tabindex="-1">
@@ -909,6 +944,7 @@
             практичного заняття через Moodle.
           </p>
         </div>
+        <!-- state (#task-details-empty) -->
         <div
           class="task-details modal__state modal__variant"
           id="task-details-empty"
@@ -928,6 +964,8 @@
         </div>
       </div>
     </section>
+    <!-- delete alert dialog (#delete-task) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal modal--alert"
       id="delete-task"
@@ -936,6 +974,7 @@
       aria-describedby="delete-task-description"
     >
       <a class="modal__backdrop" href="#main" aria-label="Закрити діалог"></a>
+      <!-- state (#task-delete) -->
       <div class="modal__panel modal__state" id="task-delete" tabindex="-1">
         <div class="delete-dialog">
           <span class="delete-dialog__icon" aria-hidden="true"
@@ -964,6 +1003,8 @@
         </div>
       </div>
     </section>
+    <!-- static demo (#save-demo) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal"
       id="save-demo"
@@ -991,6 +1032,8 @@
         <a class="button button--primary" href="#main">До планувальника</a>
       </div>
     </section>
+    <!-- static demo (#delete-demo) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal"
       id="delete-demo"
@@ -1017,6 +1060,8 @@
         <a class="button button--primary" href="#main">До завдань</a>
       </div>
     </section>
+    <!-- dialog (#new-discipline) -->
+    <!-- closed via link back to #main, no JS -->
     <section
       class="modal"
       id="new-discipline"
@@ -1051,6 +1096,7 @@
         </form>
       </div>
     </section>
+    <!-- bottom tabs (mobile) -->
     <nav class="bottom-tabs" aria-label="Мобільна навігація">
       <a class="bottom-tabs__link" href="tasks.html" aria-current="page">
         <svg class="icon" aria-hidden="true"><use href="#icon-list"></use></svg

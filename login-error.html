@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="css/pages/auth.css" />
   </head>
   <body class="auth-page">
+    <!-- icon sprite -->
     <svg class="icon-sprite" aria-hidden="true">
       <symbol id="icon-shape-1" viewBox="0 0 24 24">
         <path d="m12 19-7-7 7-7M5 12h14" />
@@ -34,9 +35,13 @@
       </symbol>
     </svg>
     <a class="skip-link" href="#main">Перейти до форми</a>
+    <!-- main content -->
     <main id="main" class="auth-layout">
+      <!-- authentication -->
       <article class="auth-card" aria-labelledby="auth-title">
+        <!-- header -->
         <header class="auth-card__navigation">
+          <!-- main nav -->
           <nav aria-label="Навігація авторизації">
             <a
               class="button button--ghost button--icon auth-card__back"
@@ -47,6 +52,7 @@
                 <use href="#icon-shape-1"></use>
               </svg>
             </a>
+            <!-- brand -->
             <a class="brand auth-card__brand" href="index.html">
               <svg class="icon icon--large" aria-hidden="true">
                 <use href="#icon-shape-2"></use>
@@ -55,6 +61,7 @@
             </a>
           </nav>
         </header>
+        <!-- header -->
         <header class="auth-card__header">
           <a
             class="auth-card__logo"
@@ -124,6 +131,7 @@
             <button class="button button--primary button--wide" type="submit">
               Увійти
             </button>
+            <!-- footer -->
             <footer class="auth-card__footer">
               <span class="muted">Немає акаунту?</span>
               <a href="register.html">Зареєструватися</a>

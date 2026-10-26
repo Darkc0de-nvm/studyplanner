@@ -1,3 +1,4 @@
+/* landing page, loaded after shared styles */
 .landing__hero {
   display: flex;
   flex-direction: column;
@@ -37,13 +38,13 @@
 
 .landing__grid {
   display: grid;
-  grid-template-columns: minmax(0,1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-3);
 }
 
 .feature-card {
   display: grid;
-  grid-template-columns: 2.5rem minmax(0,1fr);
+  grid-template-columns: 2.5rem minmax(0, 1fr);
   align-content: start;
   column-gap: var(--space-3);
   row-gap: var(--space-1);
@@ -81,7 +82,8 @@
   block-size: 0;
 }
 
-@media (min-width:48rem) {
+/* tablet: horizontal actions and three feature columns */
+@media (min-width: 48rem) {
   .landing__hero {
     gap: var(--space-6);
     padding: var(--space-12) var(--space-8);
@@ -93,7 +95,7 @@
   }
 
   .landing__grid {
-    grid-template-columns: repeat(3,minmax(0,1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-6);
   }
 
@@ -110,7 +112,8 @@
   }
 }
 
-@media (min-width:75rem) {
+/* desktop: larger heading and expanded introduction */
+@media (min-width: 75rem) {
   .landing__hero {
     padding: var(--space-20) var(--space-10) var(--space-16);
   }

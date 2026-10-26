@@ -1,9 +1,13 @@
+/* shared design tokens, loaded before all other styles */
 :root {
   /* colors */
   --background: #FAFAFA;
   --foreground: #000000;
+  /* neutral field focus, overridden locally for invalid fields */
   --ring: #D4D4D4;
+  /* keyboard outline for controls outside form fields */
   --focus-strong: #404040;
+  /* color-mix keeps the ring translucent without another color value */
   --ring-halo: color-mix(in srgb, var(--ring) 50%, var(--transparent));
   --primary: #171717;
   --primary-foreground: #FFFFFF;
@@ -13,11 +17,12 @@
   --destructive: #DC2626;
   --muted: #F5F5F5;
   --muted-foreground: #737373;
+  /* page dimming behind dialogs and sheets */
   --overlay: rgba(0, 0, 0, 0.5);
   --overlay-light: rgba(0, 0, 0, 0.2);
   --secondary-foreground: #525252;
 
-  /* status */
+  /* task status colors */
   --overdue-bg: #FFE2E2;
   --overdue: #EF4444;
   --soon: #F59E0B;
@@ -27,7 +32,7 @@
   --done: #16A34A;
   --done-bg: #DCFCE7;
 
-  /* disciplines */
+  /* discipline colors */
   --discipline-1: #3B82F6;
   --discipline-1-bg: #DBEAFE;
   --discipline-2: #8B5CF6;
@@ -35,13 +40,13 @@
   --discipline-3: #10B981;
   --discipline-3-bg: #D1FAE5;
 
-  /* radius */
+  /* radii */
   --radius-sm: 0.625rem;
   --radius-full: 62.4375rem;
   --radius-lg: 1rem;
   --radius-md: 0.875rem;
 
-  /* spacing */
+  /* spacing and control sizes */
   --space-2: 0.5rem;
   --space-4: 1rem;
   --border-width: 0.0625rem;
@@ -52,6 +57,7 @@
   --space-12: 3rem;
   --space-10: 2.5rem;
   --content-width: 70rem;
+  /* sheet offset includes the bottom navigation and safe area */
   --bottom-tabs-height: calc(1.25rem + 0.25rem + 0.75rem * 1.5 + 0.5rem + max(0.5rem, env(safe-area-inset-bottom)) + 0.0625rem);
   --space-16: 4rem;
   --space-5: 1.25rem;
@@ -61,7 +67,7 @@
   --space-20: 5rem;
   --auth-width: 25rem;
 
-  /* type */
+  /* typography */
   --font-sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
   --text-sm: 0.875rem;
   --text-xs: 0.75rem;

@@ -1,3 +1,4 @@
+/* inline sprite keeps local use references working on file URLs */
 .icon-sprite {
   position: absolute;
   inline-size: 0;
@@ -45,6 +46,7 @@
   gap: var(--space-4);
 }
 
+/* buttons and button-like links */
 .button {
   display: inline-flex;
   align-items: center;
@@ -91,6 +93,7 @@
   padding: var(--space-2);
 }
 
+/* hover styles currently have no hover-capability media guard */
 .button--primary:hover,
 .button--destructive:hover {
   filter: brightness(1.2);
@@ -110,6 +113,7 @@
   cursor: not-allowed;
 }
 
+/* form fields */
 .field {
   display: flex;
   flex-direction: column;
@@ -151,6 +155,7 @@
   color: var(--destructive);
 }
 
+/* delay validation feedback until the user interacts with the form */
 .field__control:user-invalid ~ .field__error,
 .field--error .field__error,
 .field__password:has(.field__control:user-invalid) + .field__error {
@@ -162,6 +167,7 @@
   color: var(--muted-foreground);
 }
 
+/* positioning anchors for field icons and native details menus */
 .field__password,
 .select,
 .user-menu {
@@ -182,6 +188,7 @@
   pointer-events: none;
 }
 
+/* counter badge */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -204,6 +211,7 @@
   accent-color: var(--primary);
 }
 
+/* switch label */
 .switch {
   display: inline-flex;
   align-items: center;
@@ -211,6 +219,7 @@
   cursor: pointer;
 }
 
+/* native details opens without JS, with the panel below summary */
 .select__trigger {
   display: flex;
   align-items: center;
@@ -223,6 +232,7 @@
   display: none;
 }
 
+/* select panel */
 .select__options {
   position: absolute;
   inset-inline: 0;
@@ -261,6 +271,7 @@
   box-shadow: var(--shadow-sm);
 }
 
+/* task group heading */
 .group-header {
   display: flex;
   align-items: center;
@@ -272,6 +283,7 @@
   font-weight: 600;
 }
 
+/* discipline tag */
 .tag {
   display: inline-flex;
   align-items: center;
@@ -309,6 +321,7 @@
   color: var(--primary-foreground);
 }
 
+/* compact task markers for mobile calendar cells */
 .calendar-cell__dot {
   inline-size: 0.375rem;
   block-size: 0.375rem;
@@ -316,6 +329,7 @@
   background: var(--primary);
 }
 
+/* target opens the dialog, a link to another anchor closes it */
 .modal {
   display: none;
   position: fixed;
@@ -367,6 +381,7 @@
   text-align: center;
 }
 
+/* fixed tabs include the device safe area */
 .bottom-tabs {
   position: fixed;
   inset-inline: 0;
@@ -400,6 +415,7 @@
   background: var(--muted);
 }
 
+/* tablet: compact controls and centered dialogs, no bottom tabs */
 @media (min-width: 48rem) {
   .button {
     --control-height: 2.75rem;
@@ -424,6 +440,7 @@
   }
 }
 
+/* desktop navbar spacing */
 @media (min-width: 75rem) {
   .navbar {
     padding: var(--space-6) var(--space-10);
@@ -431,6 +448,7 @@
   }
 }
 
+/* motion allowed: short feedback and opening animations */
 @media (prefers-reduced-motion: no-preference) {
   .button,
   .bottom-tabs__link,
@@ -458,6 +476,7 @@
     animation: feedback-enter var(--duration-fast) var(--ease);
   }
 
+  /* animate opening only, leaving native details closing intact */
   .select[open] .select__options,
   .user-menu[open] .user-menu__panel {
     animation: feedback-enter var(--duration-fast) var(--ease-enter);
@@ -516,6 +535,7 @@
   }
 }
 
+/* tablet with motion: scale the dialog instead of sliding it up */
 @media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
   .modal:is(:target, :has(.modal__state:target)) .modal__panel {
     animation-name: dialog-enter;
@@ -530,6 +550,7 @@
   color: var(--primary);
 }
 
+/* the whole cell is clickable, outline adds a frame without shifting the grid */
 .calendar-cell:hover,
 .calendar-cell:focus-visible,
 .calendar-cell:has(:focus-visible) {
@@ -538,6 +559,7 @@
   outline-offset: calc(-1 * var(--border-width));
 }
 
+/* focus reads the local ring color rather than a fixed neutral color */
 .field__control:focus,
 .select__trigger:focus-visible,
 .select[open] > .select__trigger {
@@ -547,6 +569,7 @@
     color-mix(in srgb, var(--ring) 50%, var(--transparent));
 }
 
+/* invalid fields override --ring after the normal focus rule */
 .field__control:is(
   :user-invalid,
   .field__control--error,
@@ -557,6 +580,7 @@
   border-color: var(--destructive);
 }
 
+/* empty-state icon containers */
 .empty-state__icon {
   flex: none;
   inline-size: var(--space-12);

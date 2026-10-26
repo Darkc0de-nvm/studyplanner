@@ -1,3 +1,4 @@
+/* error pages, loaded after shared styles */
 .error-page {
   display: grid;
   grid-template-rows: auto 1fr;
@@ -19,6 +20,7 @@
   text-align: center;
 }
 
+/* error code or connection icon */
 .error-content__symbol {
   font-size: 4rem;
   font-weight: 600;
@@ -45,6 +47,7 @@
   inline-size: 100%;
 }
 
+/* tablet: larger error code and content-width button */
 @media (min-width:48rem) {
   .error-header {
     max-inline-size: 70rem;
