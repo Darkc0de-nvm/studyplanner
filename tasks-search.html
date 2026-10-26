@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Результати пошуку</title>
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/utilities.css" />
+    <link rel="stylesheet" href="css/pages/app.css" />
+  </head>
+  <body class="app-page">
+    <svg class="icon-sprite" aria-hidden="true">
+      <symbol id="icon-trash-2" viewBox="0 0 24 24">
+        <path
+          d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"
+        />
+      </symbol>
+      <symbol id="icon-cap" viewBox="0 0 24 24">
+        <path d="m2 10 10-5 10 5-10 5-10-5Zm4 2v5c3 3 9 3 12 0v-5M22 10v6" />
+      </symbol>
+      <symbol id="icon-logout" viewBox="0 0 24 24">
+        <path d="M9 3H4v18h5M9 12h12m-4-4 4 4-4 4" />
+      </symbol>
+      <symbol id="icon-down" viewBox="0 0 24 24">
+        <path d="m6 9 6 6 6-6" />
+      </symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24">
+        <path d="m20 6-11 11-5-5" />
+      </symbol>
+      <symbol id="icon-text" viewBox="0 0 24 24">
+        <path d="M4 5h16M4 10h16M4 15h10M4 20h7" />
+      </symbol>
+      <symbol id="icon-pencil" viewBox="0 0 24 24">
+        <path d="m16 3 5 5-12 12-6 1 1-6L16 3ZM14 5l5 5" />
+      </symbol>
+      <symbol id="icon-trash" viewBox="0 0 24 24">
+        <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7" />
+      </symbol>
+      <symbol id="icon-close" viewBox="0 0 24 24">
+        <path d="m6 6 12 12M6 18 18 6" />
+      </symbol>
+      <symbol id="icon-calendar" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="16" rx="2" />
+        <path d="M16 3v4M8 3v4M3 11h18" />
+      </symbol>
+      <symbol id="icon-list" viewBox="0 0 24 24">
+        <path d="M9 6h12M9 12h12M9 18h12M3 6h.01M3 12h.01M3 18h.01" />
+      </symbol>
+    </svg>
+    <a class="skip-link" href="#main">Перейти до завдань</a>
+    <div class="planner-shell">
+      <header class="app-header">
+        <a class="brand" href="index.html">
+          <svg class="icon" aria-hidden="true">
+            <use href="#icon-cap"></use>
+          </svg>
+          <span>StudyPlanner</span>
+        </a>
+        <div class="app-header__right">
+          <nav class="app-nav" aria-label="Основна навігація">
+            <ul>
+              <li>
+                <a href="tasks.html" aria-current="page">Завдання</a>
+              </li>
+              <li>
+                <a href="calendar.html">Календар</a>
+              </li>
+            </ul>
+          </nav>
+          <details class="user-menu">
+            <summary class="user-menu__trigger" aria-label="Меню користувача">
+              <span class="avatar">ОК</span>
+            </summary>
+            <div class="user-menu__panel">
+              <strong>Олена Коваль</strong>
+              <p class="muted">olena.koval@example.com</p>
+              <a class="select__option" href="login.html">
+                <svg class="icon" aria-hidden="true">
+                  <use href="#icon-logout"></use>
+                </svg>
+                Вийти</a
+              >
+            </div>
+          </details>
+        </div>
+      </header>
+      <main class="planner-main task-app" id="main">
+        <h1 class="visually-hidden">Навчальні завдання</h1>
+        <input
+          type="checkbox"
+          class="done-toggle visually-hidden"
+          id="show-done"
+        />
+        <div class="toolbar app-toolbar">
+          <form class="app-search" action="tasks-search.html" role="search">
+            <label class="visually-hidden" for="task-search"
+              >Пошук за назвою або описом</label
+            >
+            <input
+              class="field__control"
+              type="search"
+              id="task-search"
+              placeholder="Пошук за назвою або описом"
+              value="звіт"
+            />
+            <a
+              class="search-clear"
+              href="tasks.html"
+              aria-label="Скинути пошук"
+            >
+              <svg class="icon" aria-hidden="true">
+                <use href="#icon-close"></use>
+              </svg>
+            </a>
+            <button class="visually-hidden search-submit" type="submit">
+              Показати приклад результатів
+            </button>
+          </form>
+          <details class="select app-filter">
+            <summary class="field__control select__trigger">
+              <span class="app-filter__value">
+                <span class="app-filter__value-0">Усі дисципліни</span>
+                <span class="app-filter__value-1">Архітектура комп’ютера</span>
+                <span class="app-filter__value-2">Web-дизайн</span>
+                <span class="app-filter__value-3">Бази даних</span>
+              </span>
+              <svg class="icon" aria-hidden="true">
+                <use href="#icon-down"></use>
+              </svg>
+            </summary>
+            <fieldset class="select__options">
+              <legend class="select__heading">Дисципліна</legend>
+              <input
+                class="visually-hidden select__radio filter-radio filter-radio--0"
+                type="radio"
+                name="discipline-filter"
+                value="0"
+                checked
+                id="discipline-option-1"
+              />
+              <label class="select__option" for="discipline-option-1"
+                ><span>Усі дисципліни</span
+                ><svg class="icon select__check" aria-hidden="true">
+                  <use href="#icon-check"></use></svg
+              ></label>
+              <input
+                class="visually-hidden select__radio filter-radio filter-radio--1"
+                type="radio"
+                name="discipline-filter"
+                value="1"
+                id="discipline-option-2"
+              />
+              <label class="select__option" for="discipline-option-2"
+                ><span>Архітектура комп’ютера</span
+                ><svg class="icon select__check" aria-hidden="true">
+                  <use href="#icon-check"></use></svg
+              ></label>
+              <input
+                class="visually-hidden select__radio filter-radio filter-radio--2"
+                type="radio"
+                name="discipline-filter"
+                value="2"
+                id="discipline-option-3"
+              />
+              <label class="select__option" for="discipline-option-3"
+                ><span>Web-дизайн</span
+                ><svg class="icon select__check" aria-hidden="true">
+                  <use href="#icon-check"></use></svg
+              ></label>
+              <input
+                class="visually-hidden select__radio filter-radio filter-radio--3"
+                type="radio"
+                name="discipline-filter"
+                value="3"
+                id="discipline-option-4"
+              />
+              <label class="select__option" for="discipline-option-4"
+                ><span>Бази даних</span
+                ><svg class="icon select__check" aria-hidden="true">
+                  <use href="#icon-check"></use></svg
+              ></label>
+            </fieldset>
+          </details>
+          <label class="switch done-label" for="show-done"
+            >Показати виконані<span class="switch__track" aria-hidden="true">
+            </span>
+          </label>
+          <a class="button button--ghost filter-reset" href="tasks.html"
+            >× Скинути фільтр</a
+          >
+          <a class="button button--primary app-add" href="#add-task"
+            >+ Додати завдання</a
+          >
+        </div>
+        <p class="filter-count muted">
+          Показано: <span class="filter-count__one">3</span>
+          <span class="filter-count__two">1</span>
+          <span class="filter-count__three">2</span> з 6
+        </p>
+        <p class="muted">Знайдено: 2</p>
+        <div class="task-groups">
+          <section class="task-group">
+            <header class="group-header">
+              <h2 class="group-header__title">Прострочені</h2>
+              <span class="badge group-count group-count--overdue">
+                <span class="group-count__active">1</span>
+              </span>
+            </header>
+            <div class="task-group__cards">
+              <article
+                class="task-card task-card--overdue discipline-item discipline-item--1"
+              >
+                <input
+                  class="checkbox task-card__check"
+                  type="checkbox"
+                  aria-label="Позначити виконаним: Оформити звіт з лабораторної роботи №3"
+                />
+                <div class="task-card__body">
+                  <h3 class="task-card__title">
+                    <a href="#task-details"
+                      >Оформити <mark>звіт</mark> з лабораторної роботи №3</a
+                    >
+                    <span role="img" aria-label="Є опис">
+                      <svg class="icon" aria-hidden="true">
+                        <use href="#icon-text"></use>
+                      </svg>
+                    </span>
+                  </h3>
+                  <span class="tag tag--1 task-card__discipline"
+                    >Архітектура комп’ютера</span
+                  >
+                  <div class="task-card__meta">
+                    <time datetime="2026-10-04">04.10.2026</time>
+                    <span>· 2 дні тому</span>
+                  </div>
+                  <div class="task-card__actions">
+                    <a
+                      class="button button--ghost button--icon"
+                      href="#edit-task"
+                      aria-label="Редагувати: Оформити звіт з лабораторної роботи №3"
+                    >
+                      <svg class="icon" aria-hidden="true">
+                        <use href="#icon-pencil"></use>
+                      </svg>
+                    </a>
+                    <a
+                      class="button button--ghost button--icon"
+                      href="#delete-task"
+                      aria-label="Видалити: Оформити звіт з лабораторної роботи №3"
+                    >
+                      <svg class="icon" aria-hidden="true">
+                        <use href="#icon-trash"></use>
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </section>
+          <section class="task-group">
+            <header class="group-header">
+              <h2 class="group-header__title">Пізніше</h2>
+              <span class="badge group-count">
+                <span class="group-count__active">1</span>
+              </span>
+            </header>
+            <div class="task-group__cards">
+              <article class="task-card discipline-item discipline-item--1">
+                <input
+                  class="checkbox task-card__check"
+                  type="checkbox"
+                  aria-label="Позначити виконаним: Підготувати підсумковий звіт за курсовий проєкт"
+                />
+                <div class="task-card__body">
+                  <h3 class="task-card__title">
+                    <a href="#task-details"
+                      >Підготувати підсумковий <mark>звіт</mark> за курсовий
+                      проєкт</a
+                    >
+                    <span role="img" aria-label="Є опис">
+                      <svg class="icon" aria-hidden="true">
+                        <use href="#icon-text"></use>
+                      </svg>
+                    </span>
+                  </h3>
+                  <span class="tag tag--1 task-card__discipline"
+                    >Архітектура комп’ютера</span
+                  >
+                  <div class="task-card__meta">
+                    <time datetime="2026-10-18">18.10.2026</time>
+                    <span>· через 12 днів</span>
+                  </div>
+                  <div class="task-card__actions">
+                    <a
+                      class="button button--ghost button--icon"
+                      href="#edit-task"
+                      aria-label="Редагувати: Підготувати підсумковий звіт за курсовий проєкт"
+                    >
+                      <svg class="icon" aria-hidden="true">
+                        <use href="#icon-pencil"></use>
+                      </svg>
+                    </a>
+                    <a
+                      class="button button--ghost button--icon"
+                      href="#delete-task"
+                      aria-label="Видалити: Підготувати підсумковий звіт за курсовий проєкт"
+                    >
+                      <svg class="icon" aria-hidden="true">
+                        <use href="#icon-trash"></use>
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+      </main>
+      <footer class="demo-footer">
+        <details>
+          <summary>Демо версія · усі стани</summary>
+          <p>
+            Пошук показує підготовлений приклад «звіт». Збереження, видалення та
+            авторизація демонстраційні: дані не змінюються. Фільтри, перемикачі,
+            меню й перевірка полів працюють засобами HTML та CSS.
+          </p>
+          <a href="states.html">Перелік сторінок і станів</a>
+        </details>
+      </footer>
+    </div>
+    <section class="modal" role="dialog" aria-labelledby="add-task-title">
+      <a class="modal__backdrop" href="#main" aria-label="Закрити діалог"> </a>
+      <div class="modal__panel" tabindex="-1">
+        <header class="modal__header">
+          <h2 id="add-task-title">Нове завдання</h2>
+          <a
+            class="button button--ghost button--icon"
+            href="#main"
+            aria-label="Закрити"
+          >
+            <svg class="icon" aria-hidden="true">
+              <use href="#icon-close"></use>
+            </svg>
+          </a>
+        </header>
+        <form
+          class="task-form modal__state modal__variant"
+          id="add-task"
+          action="#save-demo"
+        >
+          <fieldset class="task-form__fields">
+            <legend class="visually-hidden">Параметри завдання</legend>
+            <div class="field">
+              <label class="field__label" for="add-task-name"
+                >Назва <span class="required">*</span>
+              </label>
+              <input
+                class="field__control"
+                id="add-task-name"
+                required
+                minlength="2"
+                placeholder="Лабораторна робота №3"
+                aria-describedby="add-task-name-error"
+              />
+              <p class="field__error" id="add-task-name-error">
+                Вкажіть назву завдання
+              </p>
+            </div>
+            <div class="field">
+              <span class="field__label" id="add-task-discipline-label"
+                >Дисципліна <span class="required">*</span>
+              </span>
+              <details class="select form-select">
+                <summary class="field__control select__trigger">
+                  <span class="form-select__placeholder"
+                    >Оберіть дисципліну</span
+                  >
+                  <span class="form-select__value form-select__value--1"
+                    >Архітектура комп’ютера</span
+                  >
+                  <span class="form-select__value form-select__value--2"
+                    >Web-дизайн</span
+                  >
+                  <span class="form-select__value form-select__value--3"
+                    >Бази даних</span
+                  >
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#icon-down"></use>
+                  </svg>
+                </summary>
+                <fieldset
+                  class="select__options"
+                  aria-labelledby="add-task-discipline-label"
+                >
+                  <legend class="select__heading">Дисципліна</legend>
+                  <input
+                    type="radio"
+                    class="visually-hidden select__radio discipline-choice discipline-choice--1"
+                    name="add-task-discipline"
+                    value="1"
+                    required
+                    id="discipline-option-5"
+                  />
+                  <label class="select__option" for="discipline-option-5"
+                    ><span>Архітектура комп’ютера</span
+                    ><svg class="icon select__check" aria-hidden="true">
+                      <use href="#icon-check"></use></svg
+                  ></label>
+                  <input
+                    type="radio"
+                    class="visually-hidden select__radio discipline-choice discipline-choice--2"
+                    name="add-task-discipline"
+                    value="2"
+                    required
+                    id="discipline-option-6"
+                  />
+                  <label class="select__option" for="discipline-option-6"
+                    ><span>Web-дизайн</span
+                    ><svg class="icon select__check" aria-hidden="true">
+                      <use href="#icon-check"></use></svg
+                  ></label>
+                  <input
+                    type="radio"
+                    class="visually-hidden select__radio discipline-choice discipline-choice--3"
+                    name="add-task-discipline"
+                    value="3"
+                    required
+                    id="discipline-option-7"
+                  />
+                  <label class="select__option" for="discipline-option-7"
+                    ><span>Бази даних</span
+                    ><svg class="icon select__check" aria-hidden="true">
+                      <use href="#icon-check"></use></svg
+                  ></label>
+                  <a class="select__option muted" href="#new-discipline"
+                    >+ Нова дисципліна...</a
+                  >
+                </fieldset>
+              </details>
+            </div>
+            <div class="field">
+              <label class="field__label" for="add-task-deadline"
+                >Дедлайн <span class="required">*</span>
+              </label>
+              <div class="field__date">
+                <input
+                  class="field__control field__control--date"
+                  type="date"
+                  id="add-task-deadline"
+                  required
+                  aria-describedby="add-task-date-error"
+                /><svg class="icon field__date-icon" aria-hidden="true">
+                  <use href="#icon-calendar"></use>
+                </svg>
+              </div>
+              <p class="field__error" id="add-task-date-error">
+                Вкажіть дедлайн
+              </p>
+            </div>
+            <div class="field">
+              <label class="field__label" for="add-task-description"
+                >Опис</label
+              >
+              <textarea
+                class="field__control field__control--textarea"
+                id="add-task-description"
+                placeholder="Необов’язково"
+              ></textarea>
+            </div>
+          </fieldset>
+          <div class="modal__actions">
+            <button class="button button--primary" type="submit">
+              Зберегти
+            </button>
+            <a class="button button--outline" href="#main">Скасувати</a>
+          </div>
+        </form>
+      </div>
+    </section>
+    <section
+      class="modal"
+      id="edit-task"
+      role="dialog"
+      aria-labelledby="edit-task-title"
+    >
+      <a class="modal__backdrop" href="#main" aria-label="Закрити діалог"> </a>
+      <div class="modal__panel" tabindex="-1">
+        <header class="modal__header">
+          <h2 id="edit-task-title">Редагувати завдання</h2>
+          <a
+            class="button button--ghost button--icon"
+            href="#main"
+            aria-label="Закрити"
+          >
+            <svg class="icon" aria-hidden="true">
+              <use href="#icon-close"></use>
+            </svg>
+          </a>
+        </header>
+        <form class="task-form" action="#save-demo">
+          <fieldset class="task-form__fields">
+            <legend class="visually-hidden">Параметри завдання</legend>
+            <div class="field">
+              <label class="field__label" for="edit-task-name"
+                >Назва <span class="required">*</span>
+              </label>
+              <input
+                class="field__control"
+                id="edit-task-name"
+                required
+                minlength="2"
+                placeholder="Лабораторна робота №3"
+                value="Лабораторна робота №3"
+                aria-describedby="edit-task-name-error"
+              />
+              <p class="field__error" id="edit-task-name-error">
+                Вкажіть назву завдання
+              </p>
+            </div>
+            <div class="field">
+              <span class="field__label" id="edit-task-discipline-label"
+                >Дисципліна <span class="required">*</span>
+              </span>
+              <details class="select form-select">
+                <summary class="field__control select__trigger">
+                  <span class="form-select__placeholder"
+                    >Оберіть дисципліну</span
+                  >
+                  <span class="form-select__value form-select__value--1"
+                    >Архітектура комп’ютера</span
+                  >
+                  <span class="form-select__value form-select__value--2"
+                    >Web-дизайн</span
+                  >
+                  <span class="form-select__value form-select__value--3"
+                    >Бази даних</span
+                  >
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#icon-down"></use>
+                  </svg>
+                </summary>
+                <fieldset
+                  class="select__options"
+                  aria-labelledby="edit-task-discipline-label"
+                >
+                  <legend class="select__heading">Дисципліна</legend>
+                  <input
+                    type="radio"
+                    class="visually-hidden select__radio discipline-choice discipline-choice--1"
+                    name="edit-task-discipline"
+                    value="1"
+                    required
+                    checked
+                    id="discipline-option-8"
+                  />
+                  <label class="select__option" for="discipline-option-8"
+                    ><span>Архітектура комп’ютера</span
+                    ><svg class="icon select__check" aria-hidden="true">
+                      <use href="#icon-check"></use></svg
+                  ></label>
+                  <input
+                    type="radio"
+                    class="visually-hidden select__radio discipline-choice discipline-choice--2"
+                    name="edit-task-discipline"
+                    value="2"
+                    required
+                    id="discipline-option-9"
+                  />
+                  <label class="select__option" for="discipline-option-9"
+                    ><span>Web-дизайн</span
+                    ><svg class="icon select__check" aria-hidden="true">
+                      <use href="#icon-check"></use></svg
+                  ></label>
+                  <input
+                    type="radio"
+                    class="visually-hidden select__radio discipline-choice discipline-choice--3"
+                    name="edit-task-discipline"
+                    value="3"
+                    required
+                    id="discipline-option-10"
+                  />
+                  <label class="select__option" for="discipline-option-10"
+                    ><span>Бази даних</span
+                    ><svg class="icon select__check" aria-hidden="true">
+                      <use href="#icon-check"></use></svg
+                  ></label>
+                  <a class="select__option muted" href="#new-discipline"
+                    >+ Нова дисципліна...</a
+                  >
+                </fieldset>
+              </details>
+            </div>
+            <div class="field">
+              <label class="field__label" for="edit-task-deadline"
+                >Дедлайн <span class="required">*</span>
+              </label>
+              <div class="field__date">
+                <input
+                  class="field__control field__control--date"
+                  type="date"
+                  id="edit-task-deadline"
+                  required
+                  value="2026-10-15"
+                  aria-describedby="edit-task-date-error"
+                /><svg class="icon field__date-icon" aria-hidden="true">
+                  <use href="#icon-calendar"></use>
+                </svg>
+              </div>
+              <p class="field__error" id="edit-task-date-error">
+                Вкажіть дедлайн
+              </p>
+            </div>
+            <div class="field">
+              <label class="field__label" for="edit-task-description"
+                >Опис</label
+              >
+              <textarea
+                class="field__control field__control--textarea"
+                id="edit-task-description"
+                placeholder="Необов’язково"
+              >
+Додати скріни та висновки</textarea
+              >
+            </div>
+          </fieldset>
+          <div class="modal__actions">
+            <button class="button button--primary" type="submit">
+              Зберегти
+            </button>
+            <a class="button button--outline" href="#main">Скасувати</a>
+          </div>
+        </form>
+      </div>
+    </section>
+    <section class="modal" role="dialog" aria-labelledby="task-details-title">
+      <a class="modal__backdrop" href="#main" aria-label="Закрити діалог"> </a>
+      <div class="modal__panel" tabindex="-1">
+        <header class="modal__header">
+          <h2 id="task-details-title">Деталі завдання</h2>
+          <a
+            class="button button--ghost button--icon"
+            href="#main"
+            aria-label="Закрити"
+          >
+            <svg class="icon" aria-hidden="true">
+              <use href="#icon-close"></use>
+            </svg>
+          </a>
+        </header>
+        <div class="task-details modal__state modal__variant" id="task-details">
+          <h3>Оформити звіт з лабораторної роботи №3</h3>
+          <div class="task-details__meta">
+            <span class="tag tag--1">Архітектура комп’ютера</span>
+            <span class="muted">
+              <svg class="icon" aria-hidden="true">
+                <use href="#icon-calendar"></use>
+              </svg>
+              <time datetime="2026-10-04">04.10.2026</time> · 2 дні тому</span
+            >
+          </div>
+          <p class="field__hint">Опис</p>
+          <p>
+            Додати скриншоти виконання, схему алгоритму та висновки. Здати до
+            практичного заняття через Moodle.
+          </p>
+        </div>
+      </div>
+    </section>
+    <section
+      class="modal modal--alert"
+      id="delete-task"
+      role="alertdialog"
+      aria-labelledby="delete-task-title"
+      aria-describedby="delete-task-description"
+    >
+      <a class="modal__backdrop" href="#main" aria-label="Закрити діалог"></a>
+      <div class="modal__panel modal__state" id="task-delete" tabindex="-1">
+        <div class="delete-dialog">
+          <span class="delete-dialog__icon" aria-hidden="true"
+            ><svg class="icon" aria-hidden="true">
+              <use href="#icon-trash-2"></use></svg
+          ></span>
+          <h2 class="delete-dialog__title" id="delete-task-title">
+            Видалити завдання?
+          </h2>
+          <p
+            class="delete-dialog__description muted"
+            id="delete-task-description"
+          >
+            Цю дію не можна скасувати.
+          </p>
+          <div class="delete-dialog__task">
+            <p>Оформити звіт з лабораторної роботи №3</p>
+            <span class="badge">Архітектура комп’ютера</span>
+          </div>
+          <div class="modal__actions">
+            <a class="button button--outline" href="#main">Скасувати</a>
+            <a class="button button--destructive" href="#delete-demo"
+              >Видалити</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+    <section
+      class="modal"
+      id="save-demo"
+      role="dialog"
+      aria-labelledby="save-demo-title"
+    >
+      <a class="modal__backdrop" href="#main" aria-label="Закрити діалог"> </a>
+      <div class="modal__panel" tabindex="-1">
+        <header class="modal__header">
+          <h2 id="save-demo-title">Статична демонстрація</h2>
+          <a
+            class="button button--ghost button--icon"
+            href="#main"
+            aria-label="Закрити"
+          >
+            <svg class="icon" aria-hidden="true">
+              <use href="#icon-close"></use>
+            </svg>
+          </a>
+        </header>
+        <p>
+          Поля перевірено браузером. Для збереження завдань потрібна програмна
+          логіка; у цій HTML/CSS-версії дані не змінюються.
+        </p>
+        <a class="button button--primary" href="#main">До планувальника</a>
+      </div>
+    </section>
+    <section
+      class="modal"
+      id="delete-demo"
+      role="dialog"
+      aria-labelledby="delete-demo-title"
+    >
+      <a class="modal__backdrop" href="#main" aria-label="Закрити діалог"> </a>
+      <div class="modal__panel" tabindex="-1">
+        <header class="modal__header">
+          <h2 id="delete-demo-title">Статична демонстрація</h2>
+          <a
+            class="button button--ghost button--icon"
+            href="#main"
+            aria-label="Закрити"
+          >
+            <svg class="icon" aria-hidden="true">
+              <use href="#icon-close"></use>
+            </svg>
+          </a>
+        </header>
+        <p>
+          Підтвердження видалення показано. Дані прикладу залишилися без змін.
+        </p>
+        <a class="button button--primary" href="#main">До завдань</a>
+      </div>
+    </section>
+    <section
+      class="modal"
+      id="new-discipline"
+      role="dialog"
+      aria-labelledby="new-discipline-title"
+    >
+      <a class="modal__backdrop" href="#main" aria-label="Закрити діалог"> </a>
+      <div class="modal__panel" tabindex="-1">
+        <header class="modal__header">
+          <h2 id="new-discipline-title">Нова дисципліна...</h2>
+          <a
+            class="button button--ghost button--icon"
+            href="#main"
+            aria-label="Закрити"
+          >
+            <svg class="icon" aria-hidden="true">
+              <use href="#icon-close"></use>
+            </svg>
+          </a>
+        </header>
+        <form class="task-form" action="#save-demo">
+          <label class="field"
+            >Назва дисципліни<input
+              class="field__control"
+              required
+              minlength="2"
+              placeholder="Введіть назву"
+            />
+          </label>
+          <p class="field__hint">Статична демонстрація створення дисципліни.</p>
+          <button class="button button--primary" type="submit">Додати</button>
+        </form>
+      </div>
+    </section>
+    <nav class="bottom-tabs" aria-label="Мобільна навігація">
+      <a class="bottom-tabs__link" href="tasks.html" aria-current="page">
+        <svg class="icon" aria-hidden="true"><use href="#icon-list"></use></svg
+        >Завдання</a
+      >
+      <a class="bottom-tabs__link" href="calendar.html">
+        <svg class="icon" aria-hidden="true">
+          <use href="#icon-calendar"></use></svg
+        >Календар</a
+      >
+    </nav>
+  </body>
+</html>

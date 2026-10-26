@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="StudyPlanner — плануйте навчальні завдання та контролюйте дедлайни."
+    />
+    <title>Реєстрація</title>
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/utilities.css" />
+    <link rel="stylesheet" href="css/pages/auth.css" />
+  </head>
+  <body class="auth-page">
+    <svg class="icon-sprite" aria-hidden="true">
+      <symbol id="icon-shape-1" viewBox="0 0 24 24">
+        <path d="m12 19-7-7 7-7M5 12h14" />
+      </symbol>
+      <symbol id="icon-shape-2" viewBox="0 0 24 24">
+        <path d="M22 10 12 5 2 10l10 5 10-5Z" />
+        <path d="M6 12v5c3 3 9 3 12 0v-5M22 10v6" />
+      </symbol>
+      <symbol id="icon-shape-3" viewBox="0 0 24 24">
+        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12Z" />
+        <circle cx="12" cy="12" r="3" />
+      </symbol>
+    </svg>
+    <a class="skip-link" href="#main">Перейти до форми</a>
+    <main id="main" class="auth-layout">
+      <article class="auth-card" aria-labelledby="auth-title">
+        <header class="auth-card__navigation">
+          <nav aria-label="Навігація авторизації">
+            <a
+              class="button button--ghost button--icon auth-card__back"
+              href="index.html"
+              aria-label="Повернутися на головну"
+            >
+              <svg class="icon" aria-hidden="true">
+                <use href="#icon-shape-1"></use>
+              </svg>
+            </a>
+            <a class="brand auth-card__brand" href="index.html">
+              <svg class="icon icon--large" aria-hidden="true">
+                <use href="#icon-shape-2"></use>
+              </svg>
+              <span>StudyPlanner</span>
+            </a>
+          </nav>
+        </header>
+        <header class="auth-card__header">
+          <a
+            class="auth-card__logo"
+            href="index.html"
+            aria-label="StudyPlanner — головна"
+          >
+            <svg class="icon" aria-hidden="true">
+              <use href="#icon-shape-2"></use>
+            </svg>
+          </a>
+          <h1 id="auth-title" class="auth-card__title">Реєстрація</h1>
+          <p class="auth-card__subtitle">
+            Створіть акаунт, щоб зберігати завдання
+          </p>
+        </header>
+        <form class="auth-card__form" action="#auth-demo" method="get">
+          <fieldset class="auth-card__fields">
+            <legend class="visually-hidden">Дані для реєстрації</legend>
+            <div class="field">
+              <label class="field__label" for="name">Ім’я</label>
+              <input
+                class="field__control"
+                id="name"
+                type="text"
+                placeholder="Ваше ім’я"
+                autocomplete="name"
+                required
+                minlength="2"
+                aria-describedby="name-error"
+              />
+              <p class="field__error" id="name-error">Вкажіть ім’я</p>
+            </div>
+            <div class="field">
+              <label class="field__label" for="email">Електронна пошта</label>
+              <input
+                class="field__control"
+                id="email"
+                type="email"
+                placeholder="name@example.com"
+                autocomplete="email"
+                required
+                aria-describedby="email-error"
+              />
+              <p class="field__error" id="email-error">
+                Вкажіть коректну адресу email
+              </p>
+            </div>
+            <div class="field">
+              <label class="field__label" for="password">Пароль</label>
+              <div class="field__password">
+                <input
+                  class="field__control"
+                  id="password"
+                  type="password"
+                  placeholder="Створіть пароль"
+                  autocomplete="new-password"
+                  required
+                  minlength="8"
+                  aria-describedby="password-error"
+                />
+                <svg class="icon field__password-icon" aria-hidden="true">
+                  <use href="#icon-shape-3"></use>
+                </svg>
+              </div>
+              <p class="field__error" id="password-error">
+                Пароль має містити щонайменше 8 символів.
+              </p>
+            </div>
+            <div class="field">
+              <label class="field__label" for="password-repeat"
+                >Підтвердіть пароль</label
+              >
+              <div class="field__password">
+                <input
+                  class="field__control"
+                  id="password-repeat"
+                  type="password"
+                  placeholder="Повторіть пароль"
+                  autocomplete="new-password"
+                  required
+                  minlength="8"
+                  aria-describedby="password-repeat-error"
+                />
+                <svg class="icon field__password-icon" aria-hidden="true">
+                  <use href="#icon-shape-3"></use>
+                </svg>
+              </div>
+              <p class="field__error" id="password-repeat-error">
+                Паролі не збігаються
+              </p>
+            </div>
+          </fieldset>
+          <div class="auth-card__actions">
+            <button class="button button--primary button--wide" type="submit">
+              Створити акаунт
+            </button>
+            <footer class="auth-card__footer">
+              <span class="muted">Вже є акаунт?</span>
+              <a href="login.html">Увійти</a>
+            </footer>
+          </div>
+        </form>
+        <aside
+          class="alert auth-card__notice"
+          id="auth-demo"
+          aria-label="Результат перевірки форми"
+        >
+          <p>
+            Формат даних перевірено. Дані поки не надсилаються, акаунт не
+            створюється.
+          </p>
+          <a href="tasks.html">Перейти до завдань</a>
+        </aside>
+      </article>
+    </main>
+  </body>
+</html>

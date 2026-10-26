@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="StudyPlanner — плануйте навчальні завдання та контролюйте дедлайни."
+    />
+    <title>StudyPlanner</title>
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/utilities.css" />
+    <link rel="stylesheet" href="css/pages/landing.css" />
+  </head>
+  <body class="site-shell">
+    <svg class="icon-sprite" aria-hidden="true">
+      <symbol id="icon-shape-1" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c3 3 9 3 12 0v-5M22 10v6"/></symbol>
+      <symbol id="icon-shape-2" viewBox="0 0 24 24"><path d="m13 2-3 8H3l8 12 3-8h7L13 2Z"/></symbol>
+      <symbol id="icon-shape-3" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path
+                  d="M12 9v4l2 2M5 3 2 6M19 3l3 3M5 20l-1 2M19 20l1 2"/></symbol>
+      <symbol id="icon-shape-4" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path
+                  d="M16 3v4M8 3v4M3 11h18M8 15h.01M12 15h.01M16 15h.01M8 18h.01M12 18h.01M16 18h.01"/></symbol>
+    </svg>
+    <a class="skip-link" href="#main">Перейти до вмісту</a>
+    <header class="navbar">
+      <nav class="navbar__inner container" aria-label="Головна навігація">
+        <a class="brand" href="index.html" aria-label="StudyPlanner — головна" > <svg class="icon icon--large" aria-hidden="true"><use href="#icon-shape-1"></use></svg> <span>StudyPlanner</span> </a>
+      </nav>
+    </header>
+    <main id="main">
+      <section class="landing__hero" aria-labelledby="hero-title">
+        <h1 id="hero-title" class="landing__title"> Усі навчальні завдання в одному місці </h1>
+        <p class="landing__intro landing__intro--mobile"> Записуйте завдання одразу після заняття, бачте найближчі дедлайни та не пропускайте терміни. </p>
+        <p class="landing__intro landing__intro--desktop"> Плануйте навчання, контролюйте дедлайни та тримайте всі завдання під рукою. </p>
+        <div class="landing__actions">
+          <a class="button button--primary" href="register.html" >Зареєструватися</a>
+          <a class="button button--outline" href="login.html">Увійти</a>
+        </div>
+      </section>
+      <section class="landing__features" aria-labelledby="features-title">
+        <h2 id="features-title" class="visually-hidden"> Можливості StudyPlanner </h2>
+        <div class="landing__grid container">
+          <article class="feature-card">
+            <span class="feature-card__icon" > <svg class="icon" aria-hidden="true"><use href="#icon-shape-2"></use></svg> </span>
+            <h3 class="feature-card__title">Швидке додавання</h3>
+            <p class="feature-card__text"> Додавайте завдання за кілька секунд, зазначивши лише необхідне </p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-card__icon" > <svg class="icon" aria-hidden="true"><use href="#icon-shape-3"></use></svg> </span>
+            <h3 class="feature-card__title">Контроль дедлайнів</h3>
+            <p class="feature-card__text"> Прострочені та найближчі завдання завжди зверху. </p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-card__icon" > <svg class="icon" aria-hidden="true"><use href="#icon-shape-4"></use></svg> </span>
+            <h3 class="feature-card__title">Календар навантаження</h3>
+            <p class="feature-card__text"> Переглядайте, як завдання розподілені за днями. </p>
+          </article>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <span class="visually-hidden" >StudyPlanner — планувальник навчальних завдань</span>
+    </footer>
+  </body>
+</html>
