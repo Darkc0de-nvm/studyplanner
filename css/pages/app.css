@@ -22,33 +22,19 @@
   gap: var(--space-6);
 }
 
-/* checked radios drive :has() filters, including groups with no matching cards */
 .app-nav,
 .app-filter__value > span,
 .form-select__value,
-.form-select:has(.discipline-choice:checked) .form-select__placeholder,
-.planner-main:has(.filter-radio--1:checked)
+body:not([data-page="tasks"]) .form-select:has(.discipline-choice:checked) .form-select__placeholder,
+.planner-main:not(.task-app):has(.filter-radio--1:checked)
   .discipline-item:not(.discipline-item--1),
-.planner-main:has(.filter-radio--2:checked)
+.planner-main:not(.task-app):has(.filter-radio--2:checked)
   .discipline-item:not(.discipline-item--2),
-.planner-main:has(.filter-radio--3:checked)
+.planner-main:not(.task-app):has(.filter-radio--3:checked)
   .discipline-item:not(.discipline-item--3),
-.task-app:has(.filter-radio--1:checked)
-  .task-group:not(:has(.discipline-item--1)),
-.task-app:has(.filter-radio--2:checked)
-  .task-group:not(:has(.discipline-item--2)),
-.task-app:has(.filter-radio--3:checked)
-  .task-group:not(:has(.discipline-item--3)),
-.filter-reset,
-.filter-count,
-.filter-count > span,
-.task-app:has(.filter-radio:not(.filter-radio--0):checked) .group-count > span,
-.done-toggle:not(:checked) ~ .task-groups .task-card--done,
-.group-count__all,
-.done-toggle:checked
-  ~ .task-groups
-  .group-count:has(.group-count__all)
-  .group-count__active,
+.planner-main:not(.task-app) .filter-reset,
+.planner-main:not(.task-app) .filter-count,
+.planner-main:not(.task-app) .filter-count > span,
 .task-card .tag::before,
 .task-details .tag::before,
 .calendar-add,
@@ -235,47 +221,18 @@
   font-weight: 600;
 }
 
-/* the selected radio also selects the visible trigger text */
-.app-filter:has(.filter-radio--0:checked) .app-filter__value-0,
-.app-filter:has(.filter-radio--1:checked) .app-filter__value-1,
-.app-filter:has(.filter-radio--2:checked) .app-filter__value-2,
-.app-filter:has(.filter-radio--3:checked) .app-filter__value-3,
-.form-select:has(.discipline-choice--1:checked) .form-select__value--1,
-.form-select:has(.discipline-choice--2:checked) .form-select__value--2,
-.form-select:has(.discipline-choice--3:checked) .form-select__value--3,
-.task-app:has(.filter-radio--1:checked) .filter-count__one,
-.task-app:has(.filter-radio--2:checked) .filter-count__two,
-.task-app:has(.filter-radio--3:checked) .filter-count__three,
-.done-toggle:checked ~ .task-groups .group-count__all {
+.planner-main:not(.task-app) .app-filter:has(.filter-radio--0:checked) .app-filter__value-0,
+.planner-main:not(.task-app) .app-filter:has(.filter-radio--1:checked) .app-filter__value-1,
+.planner-main:not(.task-app) .app-filter:has(.filter-radio--2:checked) .app-filter__value-2,
+.planner-main:not(.task-app) .app-filter:has(.filter-radio--3:checked) .app-filter__value-3,
+body:not([data-page="tasks"]) .form-select:has(.discipline-choice--1:checked) .form-select__value--1,
+body:not([data-page="tasks"]) .form-select:has(.discipline-choice--2:checked) .form-select__value--2,
+body:not([data-page="tasks"]) .form-select:has(.discipline-choice--3:checked) .form-select__value--3 {
   display: inline;
 }
 
-.planner-main:has(.filter-radio:not(.filter-radio--0):checked) .filter-reset {
+.planner-main:not(.task-app):has(.filter-radio:not(.filter-radio--0):checked) .filter-reset {
   display: inline-flex;
-}
-
-.task-app:has(.filter-radio:not(.filter-radio--0):checked) .filter-count {
-  display: block;
-  margin-block-end: var(--space-2);
-}
-
-/* static counters match the demo data, they do not count arbitrary cards */
-.task-app:has(.filter-radio:not(.filter-radio--0):checked) .group-count::after {
-  content: "1";
-}
-
-.task-app:has(.filter-radio--1:checked):has(.done-toggle:checked)
-  .group-count--overdue::after {
-  content: "2";
-}
-
-.task-app:has(.done-toggle:checked) .filter-count__one {
-  font-size: 0;
-}
-
-.task-app:has(.done-toggle:checked) .filter-count__one::after {
-  font-size: 1rem;
-  content: "4";
 }
 
 .done-label {
@@ -628,11 +585,11 @@
 }
 
 /* show hidden radio validation on the visible select trigger */
-.form-select:has(input:user-invalid) > summary {
+body:not([data-page="tasks"]) .form-select:has(input:user-invalid) > summary {
   border-color: var(--destructive);
 }
 
-.form-select:has(input:user-invalid)::after {
+body:not([data-page="tasks"]) .form-select:has(input:user-invalid)::after {
   font-size: var(--text-xs);
   color: var(--destructive);
   content: "Оберіть дисципліну у списку";
@@ -933,7 +890,7 @@
     padding: var(--space-1);
     border: var(--border-width) solid var(--border);
     border-radius: var(--radius-sm);
-    min-inline-size: max(100%, var(--select-width));
+    min-inline-size: 100%;
     inline-size: max-content;
     max-block-size: none;
     overflow-y: visible;
@@ -1484,4 +1441,30 @@
     justify-self: end;
     margin-inline-start: 0;
   }
+}
+
+/* JavaScript updates values and results without changing the prototype layout */
+.task-app .app-filter__value,
+[data-page="tasks"] .select__value {
+  display: inline;
+}
+
+.task-app .filter-reset:not([hidden]) {
+  display: inline-flex;
+}
+
+.task-app .filter-reset[hidden] {
+  display: none;
+}
+
+.task-app .app-add[hidden] {
+  display: none;
+}
+
+.filter-count--visible {
+  margin-block-end: var(--space-2);
+}
+
+.app-page--modal {
+  overflow: hidden;
 }

@@ -563,10 +563,11 @@
 .field__control:focus,
 .select__trigger:focus-visible,
 .select[open] > .select__trigger {
+  --ring-halo: color-mix(in srgb, var(--ring) 50%, var(--transparent));
   border-color: var(--ring);
   outline: none;
   box-shadow: 0 0 0 calc(3 * var(--border-width))
-    color-mix(in srgb, var(--ring) 50%, var(--transparent));
+    var(--ring-halo);
 }
 
 /* invalid fields override --ring after the normal focus rule */
