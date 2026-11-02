@@ -100,9 +100,7 @@
     container.replaceChildren(content);
   }
 
-  function init(options = {}) {
-    compactTitleId = options.compactTitleId || null;
-    const container = document.querySelector(SELECTOR.list);
+  function bind(container) {
     // One delegated listener also handles cards created after filtering or saving
     container.addEventListener('click', event => {
       const action = event.target.closest(SELECTOR.action);
@@ -119,9 +117,14 @@
         app.modals.showTask(action.dataset.action, task, action);
       }
     });
+  }
+
+  function init(options = {}) {
+    compactTitleId = options.compactTitleId || null;
+    bind(document.querySelector(SELECTOR.list));
     app.tasks.subscribe(list);
     list();
   }
 
-  app.render = { init, list, card };
+  app.render = { init, list, card, bind, clone };
 })();

@@ -2,10 +2,11 @@
   'use strict';
 
   const app = window.StudyPlanner;
-  const SELECTOR = { modal: '.modal', panel: '.modal__panel', link: 'a[href^="#"]', close: 'a[href="#main"]', title: '#task-details h3', description: '#task-details > p:last-child', tag: '#task-details .tag', time: '#task-details time', relative: '[data-relative]', deleteTitle: '.delete-dialog__task > p', deleteTag: '.delete-dialog__task > span', confirm: '[data-confirm-delete]', focusable: 'a[href], button, input, textarea, select, summary, [tabindex="0"]', background: '.planner-shell, .bottom-tabs', add: '.app-add' };
+  const SELECTOR = { modal: '.modal', panel: '.modal__panel', link: 'a[href^="#"]', close: 'a[href="#main"]', title: '#task-details h3', description: '#task-details > p:last-child', tag: '#task-details .tag', time: '#task-details time', relative: '[data-relative]', deleteTitle: '.delete-dialog__task > p', deleteTag: '.delete-dialog__task > span', confirm: '[data-confirm-delete]', focusable: 'a[href], button, input, textarea, select, summary, [tabindex="0"]', background: '.planner-shell, .bottom-tabs', add: '.app-add, .calendar-add' };
   const TARGETS = { add: 'add-task', edit: 'edit-task', details: 'task-details', delete: 'delete-task' };
   const LOCKED = 'app-page--modal';
   const MUTED = 'muted';
+  const DATE_CELL = '[data-date]';
   let active = null;
   let trigger = null;
   let selectedId = null;
@@ -27,7 +28,9 @@
       active.setAttribute('aria-modal', 'true');
       (focusable().find(element => element.matches('input:not([type="radio"]), textarea')) || active.querySelector(SELECTOR.panel)).focus({ preventScroll: true });
     } else {
-      const fallback = document.querySelector(SELECTOR.add);
+      const date = trigger?.closest(DATE_CELL)?.dataset.date;
+      const calendarTrigger = [...document.querySelectorAll(DATE_CELL)].find(cell => cell.dataset.date === date);
+      const fallback = calendarTrigger || document.querySelector(SELECTOR.add);
       (trigger?.isConnected ? trigger : fallback)?.focus({ preventScroll: true });
       trigger = null;
     }
@@ -77,6 +80,7 @@
 
   function init(initialTask) {
     document.addEventListener('click', event => {
+      if (event.defaultPrevented) return;
       const link = event.target.closest(SELECTOR.link);
       if (!link) return;
       if (active && link.matches(SELECTOR.close)) {
@@ -113,7 +117,7 @@
     window.addEventListener('hashchange', sync);
     const target = location.hash.slice(1);
     const task = initialTask || app.tasks.all()[0];
-    const action = Object.keys(TARGETS).find(key => TARGETS[key] === target);
+    const action = target === 'task-delete' ? 'delete' : Object.keys(TARGETS).find(key => TARGETS[key] === target);
     if (action === 'add') app.forms.fill();
     else if (action && task) showTask(action, task);
     sync();

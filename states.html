@@ -1,31 +1,32 @@
-<!doctype html>
-<html lang="uk">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+<!DOCTYPE html><html lang="uk"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Усі стани</title>
-    <link rel="stylesheet" href="css/tokens.css" />
-    <link rel="stylesheet" href="css/base.css" />
-    <link rel="stylesheet" href="css/layout.css" />
-    <link rel="stylesheet" href="css/components.css" />
-    <link rel="stylesheet" href="css/utilities.css" />
-    <link rel="stylesheet" href="css/pages/app.css" />
-  </head>
-  <body class="app-page">
+    <link rel="stylesheet" href="css/tokens.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="css/pages/app.css">
+
+<script src="js/navigation.js" defer=""></script><script src="js/selects.js" defer></script>
+<script src="js/app.js" defer=""></script>
+</head>
+  <body class="app-page" data-page="static">
     <!-- icon sprite -->
     <svg class="icon-sprite" aria-hidden="true">
       <symbol id="icon-cap" viewBox="0 0 24 24">
-        <path d="m2 10 10-5 10 5-10 5-10-5Zm4 2v5c3 3 9 3 12 0v-5M22 10v6" />
+        <path d="m2 10 10-5 10 5-10 5-10-5Zm4 2v5c3 3 9 3 12 0v-5M22 10v6"></path>
       </symbol>
       <symbol id="icon-logout" viewBox="0 0 24 24">
-        <path d="M9 3H4v18h5M9 12h12m-4-4 4 4-4 4" />
+        <path d="M9 3H4v18h5M9 12h12m-4-4 4 4-4 4"></path>
       </symbol>
       <symbol id="icon-list" viewBox="0 0 24 24">
-        <path d="M9 6h12M9 12h12M9 18h12M3 6h.01M3 12h.01M3 18h.01" />
+        <path d="M9 6h12M9 12h12M9 18h12M3 6h.01M3 12h.01M3 18h.01"></path>
       </symbol>
       <symbol id="icon-calendar" viewBox="0 0 24 24">
-        <rect x="3" y="5" width="18" height="16" rx="2" />
-        <path d="M16 3v4M8 3v4M3 11h18" />
+        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+        <path d="M16 3v4M8 3v4M3 11h18"></path>
       </symbol>
     </svg>
     <div class="planner-shell">
@@ -62,8 +63,7 @@
                 <svg class="icon" aria-hidden="true">
                   <use href="#icon-logout"></use>
                 </svg>
-                Вийти</a
-              >
+                Вийти</a>
             </div>
           </details>
         </div>
@@ -77,10 +77,10 @@
           <!-- state index -->
           <ul class="state-index">
             <li>
-              <a href="calendar-filter.html">Календар із фільтром</a>
+              <a href="calendar.html?state=filter">Календар із фільтром</a>
             </li>
             <li>
-              <a href="calendar-filter-open.html">Відкритий фільтр календаря</a>
+              <a href="calendar.html?state=filter-open">Відкритий фільтр календаря</a>
             </li>
             <li>
               <a href="calendar.html">Календар</a>
@@ -92,66 +92,46 @@
               <a href="calendar.html#day-empty">Календар · Порожній день</a>
             </li>
             <li>
-              <a href="calendar.html#add-task-day"
-                >Календар · Додавання на 20 жовтня</a
-              >
+              <a href="calendar.html?date=2026-10-20#add-task">Календар · Додавання на 20 жовтня</a>
             </li>
             <li>
-              <a href="calendar.html#edit-task"
-                >Календар · Редагування завдання</a
-              >
+              <a href="calendar.html#edit-task">Календар · Редагування завдання</a>
             </li>
             <li>
-              <a href="calendar.html#delete-task"
-                >Календар · Підтвердження видалення</a
-              >
+              <a href="calendar.html#delete-task">Календар · Підтвердження видалення</a>
             </li>
             <li>
               <a href="calendar.html#add-task">Календар · Нове завдання</a>
             </li>
             <li>
-              <a href="calendar.html#task-details"
-                >Календар · Деталі завдання</a
-              >
+              <a href="calendar.html#task-details">Календар · Деталі завдання</a>
             </li>
             <li>
-              <a href="calendar.html#task-details-empty"
-                >Календар · Деталі без опису</a
-              >
+              <a href="calendar.html?state=details-empty#task-details">Календар · Деталі без опису</a>
             </li>
             <li>
-              <a href="tasks.html?state=details-empty#task-details"
-                >Завдання · Деталі без опису</a
-              >
+              <a href="tasks.html?state=details-empty#task-details">Завдання · Деталі без опису</a>
             </li>
             <li>
               <a href="tasks.html#task-details">Завдання · Деталі завдання</a>
             </li>
             <li>
-              <a href="tasks.html#delete-task"
-                >Завдання · Підтвердження видалення</a
-              >
+              <a href="tasks.html#delete-task">Завдання · Підтвердження видалення</a>
             </li>
             <li>
               <a href="tasks.html#edit-task">Завдання · Редагування завдання</a>
             </li>
             <li>
-              <a href="tasks.html#add-task"
-                >Завдання · Нове завдання · Датапікер</a
-              >
+              <a href="tasks.html#add-task">Завдання · Нове завдання · Датапікер</a>
             </li>
             <li>
-              <a href="tasks.html#add-task"
-                >Завдання · Вибір дисципліни</a
-              >
+              <a href="tasks.html#add-task">Завдання · Вибір дисципліни</a>
             </li>
             <li>
               <a href="tasks.html#add-task">Завдання · Нове завдання</a>
             </li>
             <li>
-              <a href="tasks.html#add-task"
-                >Завдання · Помилки нового завдання</a
-              >
+              <a href="tasks.html#add-task">Завдання · Помилки нового завдання</a>
             </li>
             <li>
               <a href="tasks.html?state=no-results">Нічого не знайдено</a>
@@ -211,14 +191,11 @@
     <!-- bottom tabs (mobile) -->
     <nav class="bottom-tabs" aria-label="Мобільна навігація">
       <a class="bottom-tabs__link" href="tasks.html" aria-current="page">
-        <svg class="icon" aria-hidden="true"><use href="#icon-list"></use></svg
-        >Завдання</a
-      >
+        <svg class="icon" aria-hidden="true"><use href="#icon-list"></use></svg>Завдання</a>
       <a class="bottom-tabs__link" href="calendar.html">
         <svg class="icon" aria-hidden="true">
-          <use href="#icon-calendar"></use></svg
-        >Календар</a
-      >
+          <use href="#icon-calendar"></use></svg>Календар</a>
     </nav>
-  </body>
-</html>
+
+
+</body></html>

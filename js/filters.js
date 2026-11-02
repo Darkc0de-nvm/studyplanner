@@ -6,10 +6,11 @@
   const DELAY_MS = 180;
   let state = { query: '', discipline: '0', showDone: false };
   let timer;
+  let render = () => {};
 
   function changed() {
     app.storage.saveSettings(state);
-    app.render.list();
+    render();
   }
 
   function reset() {
@@ -20,8 +21,10 @@
   }
 
   function sync() {
-    document.querySelector(SELECTOR.search).value = state.query;
-    document.querySelector(SELECTOR.done).checked = state.showDone;
+    const search = document.querySelector(SELECTOR.search);
+    const done = document.querySelector(SELECTOR.done);
+    if (search) search.value = state.query;
+    if (done) done.checked = state.showDone;
     document.querySelectorAll(SELECTOR.discipline).forEach(radio => { radio.checked = radio.value === state.discipline; });
     app.selects.sync(document.querySelector(SELECTOR.select));
   }
@@ -31,7 +34,8 @@
       `${task.title} ${task.description}`.toLocaleLowerCase('uk').includes(state.query.trim().toLocaleLowerCase('uk'));
   }
 
-  function init(preview) {
+  function init(preview, onChange = app.render.list) {
+    render = onChange;
     state = { ...state, ...app.storage.loadSettings() };
     if (preview === 'search') state.query = 'звіт';
     if (preview === 'no-results') state.query = 'Квантова фізика';
@@ -42,20 +46,20 @@
       state.query = search.value;
       changed();
     }
-    search.addEventListener('input', () => {
+    search?.addEventListener('input', () => {
       clearTimeout(timer);
       timer = setTimeout(searchNow, DELAY_MS);
     });
-    document.querySelector(SELECTOR.form).addEventListener('submit', event => { event.preventDefault(); searchNow(); });
-    document.querySelector(SELECTOR.clear).addEventListener('click', event => {
+    document.querySelector(SELECTOR.form)?.addEventListener('submit', event => { event.preventDefault(); searchNow(); });
+    document.querySelector(SELECTOR.clear)?.addEventListener('click', event => {
       event.preventDefault();
       search.value = '';
       searchNow();
       search.focus();
     });
-    document.querySelector(SELECTOR.done).addEventListener('change', event => { state.showDone = event.target.checked; changed(); });
+    document.querySelector(SELECTOR.done)?.addEventListener('change', event => { state.showDone = event.target.checked; changed(); });
     document.querySelector(SELECTOR.select).addEventListener('change', event => { state.discipline = event.target.value; changed(); });
-    document.querySelector(SELECTOR.reset).addEventListener('click', event => { event.preventDefault(); reset(); search.focus(); });
+    document.querySelector(SELECTOR.reset).addEventListener('click', event => { event.preventDefault(); reset(); (search || document.querySelector(SELECTOR.select).querySelector('summary')).focus(); });
   }
 
   app.filters = { init, reset, matches, current: () => ({ ...state }) };

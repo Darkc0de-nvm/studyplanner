@@ -1,6 +1,4 @@
-<!doctype html>
-<html lang="uk">
-  <head>
+<!DOCTYPE html><html lang="uk"><head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Щось пішло не так</title>
@@ -10,11 +8,14 @@
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/utilities.css">
     <link rel="stylesheet" href="css/pages/errors.css">
-  </head>
-  <body class="error-page">
+
+<script src="js/navigation.js" defer=""></script>
+<script src="js/app.js" defer=""></script>
+</head>
+  <body class="error-page" data-page="static">
     <!-- icon sprite -->
     <svg class="icon-sprite" aria-hidden="true">
-      <symbol id="icon-cap" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5-10-5Zm4 2v5c3 3 9 3 12 0v-5M22 10v6"/></symbol>
+      <symbol id="icon-cap" viewBox="0 0 24 24"><path d="m2 10 10-5 10 5-10 5-10-5Zm4 2v5c3 3 9 3 12 0v-5M22 10v6"></path></symbol>
     </svg>
     <!-- header -->
     <header class="error-header">
@@ -26,7 +27,8 @@
       <div class="error-content__symbol">500</div>
       <h1>Щось пішло не так</h1>
       <p>Виникла помилка сервера. Спробуйте ще раз трохи пізніше.</p>
-      <a class="button button--primary" href="tasks.html">Спробувати ще раз</a>
+      <a class="button button--primary" href="tasks.html" data-reload="">Спробувати ще раз</a>
     </main>
-  </body>
-</html>
+
+
+</body></html>

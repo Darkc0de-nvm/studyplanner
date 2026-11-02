@@ -23,18 +23,6 @@
 }
 
 .app-nav,
-.app-filter__value > span,
-.form-select__value,
-body:not([data-page="tasks"]) .form-select:has(.discipline-choice:checked) .form-select__placeholder,
-.planner-main:not(.task-app):has(.filter-radio--1:checked)
-  .discipline-item:not(.discipline-item--1),
-.planner-main:not(.task-app):has(.filter-radio--2:checked)
-  .discipline-item:not(.discipline-item--2),
-.planner-main:not(.task-app):has(.filter-radio--3:checked)
-  .discipline-item:not(.discipline-item--3),
-.planner-main:not(.task-app) .filter-reset,
-.planner-main:not(.task-app) .filter-count,
-.planner-main:not(.task-app) .filter-count > span,
 .task-card .tag::before,
 .task-details .tag::before,
 .calendar-add,
@@ -219,20 +207,6 @@ body:not([data-page="tasks"]) .form-select:has(.discipline-choice:checked) .form
   font-size: var(--text-lg);
   line-height: var(--leading-lg);
   font-weight: 600;
-}
-
-.planner-main:not(.task-app) .app-filter:has(.filter-radio--0:checked) .app-filter__value-0,
-.planner-main:not(.task-app) .app-filter:has(.filter-radio--1:checked) .app-filter__value-1,
-.planner-main:not(.task-app) .app-filter:has(.filter-radio--2:checked) .app-filter__value-2,
-.planner-main:not(.task-app) .app-filter:has(.filter-radio--3:checked) .app-filter__value-3,
-body:not([data-page="tasks"]) .form-select:has(.discipline-choice--1:checked) .form-select__value--1,
-body:not([data-page="tasks"]) .form-select:has(.discipline-choice--2:checked) .form-select__value--2,
-body:not([data-page="tasks"]) .form-select:has(.discipline-choice--3:checked) .form-select__value--3 {
-  display: inline;
-}
-
-.planner-main:not(.task-app):has(.filter-radio:not(.filter-radio--0):checked) .filter-reset {
-  display: inline-flex;
 }
 
 .done-label {
@@ -585,15 +559,6 @@ body:not([data-page="tasks"]) .form-select:has(.discipline-choice--3:checked) .f
 }
 
 /* show hidden radio validation on the visible select trigger */
-body:not([data-page="tasks"]) .form-select:has(input:user-invalid) > summary {
-  border-color: var(--destructive);
-}
-
-body:not([data-page="tasks"]) .form-select:has(input:user-invalid)::after {
-  font-size: var(--text-xs);
-  color: var(--destructive);
-  content: "Оберіть дисципліну у списку";
-}
 
 .required {
   color: var(--destructive);
@@ -1171,9 +1136,7 @@ body:not([data-page="tasks"]) .form-select:has(input:user-invalid)::after {
   cursor: pointer;
 }
 
-.field__date:has(.field__control:user-invalid) + .field__error {
-  display: block;
-}
+
 
 /* mobile with motion: slide up select sheets and fade the backdrop */
 @media (width<48rem) and (prefers-reduced-motion: no-preference) {
@@ -1258,130 +1221,9 @@ body:not([data-page="tasks"]) .form-select:has(input:user-invalid)::after {
   }
 }
 
-/* static picker only, dates and arrows do not update the field */
-.date-demo {
-  position: fixed;
-  inset-inline: 0;
-  inset-block-end: var(--bottom-tabs-height);
-  z-index: 30;
-  padding: var(--space-6);
-  border: var(--border-width) solid var(--border);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  background: var(--card);
-  box-shadow: var(--shadow-lg);
-}
 
-.date-demo::before {
-  display: block;
-  inline-size: var(--space-10);
-  block-size: var(--space-1);
-  margin: calc(-1 * var(--space-3)) auto var(--space-4);
-  border-radius: var(--radius-full);
-  background: var(--muted);
-  content: "";
-}
 
-.date-demo__caption,
-.date-demo__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-block-size: var(--space-12);
-  font-size: var(--text-sm);
-  font-weight: 500;
-}
 
-.date-demo__arrow {
-  display: grid;
-  place-items: center;
-  inline-size: calc(var(--space-6) + var(--space-1));
-  block-size: calc(var(--space-6) + var(--space-1));
-  border: var(--border-width) solid var(--border);
-  border-radius: var(--space-2);
-}
-
-.date-demo__arrow .icon {
-  inline-size: var(--space-4);
-  block-size: var(--space-4);
-}
-
-/* fixed demo month, no date calculation */
-.date-demo__grid {
-  row-gap: var(--border-width);
-  padding-block: calc(var(--space-1) + var(--border-width));
-  text-align: center;
-  font-size: var(--text-xs);
-}
-
-.date-demo__day,
-.date-demo__weekday {
-  display: grid;
-  place-items: center;
-  inline-size: 1.75rem;
-  block-size: 1.75rem;
-  margin: auto;
-  border-radius: 50%;
-}
-
-.date-demo__weekday,
-.date-demo__day--outside {
-  color: var(--muted-foreground);
-}
-
-.date-demo__day--selected {
-  border-radius: var(--space-1);
-  background: var(--muted);
-}
-
-.field--date-demo {
-  position: relative;
-}
-
-/* mobile static picker backdrop */
-@media (width < 48rem) {
-  .modal:has(.date-demo):has(.modal__variant:target) .modal__panel {
-    transform: none;
-  }
-
-  .task-form--date-demo:target::before {
-    position: fixed;
-    inset: 0;
-    inset-block-end: var(--bottom-tabs-height);
-    z-index: 29;
-    background: var(--overlay);
-    content: "";
-    pointer-events: none;
-  }
-}
-
-/* tablet static picker below the date field */
-@media (min-width: 48rem) {
-  .date-demo {
-    position: absolute;
-    inset-block-start: calc(100% + var(--space-2));
-    inset-block-end: auto;
-    inset-inline-end: auto;
-    inline-size: min(20rem, 100%);
-    padding: 0;
-    border-radius: var(--radius-sm);
-  }
-
-  .date-demo::before,
-  .date-demo__caption {
-    display: none;
-  }
-
-  .date-demo__header {
-    justify-content: center;
-    gap: calc(var(--space-8) - 2 * var(--border-width));
-    min-block-size: calc(var(--space-10) - 2 * var(--border-width));
-  }
-
-  .date-demo__day,
-  .date-demo__weekday {
-    min-block-size: var(--space-6);
-  }
-}
 
 /* mobile select separators */
 @media (max-width: 47.999rem) {
@@ -1444,16 +1286,16 @@ body:not([data-page="tasks"]) .form-select:has(input:user-invalid)::after {
 }
 
 /* JavaScript updates values and results without changing the prototype layout */
-.task-app .app-filter__value,
-[data-page="tasks"] .select__value {
+.app-filter__value,
+.select__value {
   display: inline;
 }
 
-.task-app .filter-reset:not([hidden]) {
+.planner-main .filter-reset:not([hidden]) {
   display: inline-flex;
 }
 
-.task-app .filter-reset[hidden] {
+.planner-main .filter-reset[hidden] {
   display: none;
 }
 
@@ -1467,4 +1309,13 @@ body:not([data-page="tasks"]) .form-select:has(input:user-invalid)::after {
 
 .app-page--modal {
   overflow: hidden;
+}
+
+.calendar-legend li[hidden] {
+  display: none;
+}
+
+.calendar-cell--selected .calendar-cell__date span {
+  background: var(--muted);
+  outline: var(--border-width) solid var(--foreground);
 }

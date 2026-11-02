@@ -2,7 +2,7 @@
   'use strict';
 
   const app = window.StudyPlanner;
-  const KEYS = { tasks: 'studyplanner.tasks.v1', settings: 'studyplanner.settings.v1' };
+  const KEYS = { tasks: 'studyplanner.tasks.v1', settings: 'studyplanner.settings.v1', user: 'studyplanner.user.v1' };
   const STATUS = '[data-storage-status]';
   const SEED = [
   {
@@ -126,13 +126,22 @@
     if (app.filters) app.filters.reset();
   }
 
-  function setPreview(state) {
+  function setPreview(state, discipline = '3') {
     if (!state) return;
     preview = true;
     previewTasks = state === 'first-run' ? [] : seed();
     if (state === 'empty-group') previewTasks = previewTasks.filter(task => app.dates.group(task.deadline) !== 'week');
-    previewSettings = { discipline: state === 'filter' ? '3' : '0', showDone: state === 'done' };
+    previewSettings = { discipline: state === 'filter' ? discipline : '0', showDone: state === 'done' };
   }
 
-  app.storage = { loadTasks, saveTasks, loadSettings, saveSettings, reset, setPreview, seed };
+  function loadUser() {
+    const user = read(KEYS.user, null);
+    return user && typeof user.name === 'string' && user.name.trim() && typeof user.email === 'string' && typeof user.passwordDigest === 'string' ? user : null;
+  }
+
+  function saveUser(user) {
+    write(KEYS.user, user);
+  }
+
+  app.storage = { loadTasks, saveTasks, loadSettings, saveSettings, reset, setPreview, seed, loadUser, saveUser };
 })();

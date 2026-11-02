@@ -156,9 +156,7 @@
 }
 
 /* delay validation feedback until the user interacts with the form */
-.field__control:user-invalid ~ .field__error,
-.field--error .field__error,
-.field__password:has(.field__control:user-invalid) + .field__error {
+.field--error .field__error {
   display: block;
 }
 
@@ -178,14 +176,34 @@
   padding-inline-end: 2.5rem;
 }
 
-.field__password-icon {
+.field__password-toggle {
   position: absolute;
-  inset-inline-end: 0.625rem;
+  inset-inline-end: 0;
   inset-block-start: 50%;
-  inline-size: 1rem;
-  block-size: 1rem;
+  display: grid;
+  place-items: center;
+  inline-size: calc(var(--space-12) - var(--space-1));
+  min-block-size: calc(var(--space-12) - var(--space-1));
+  block-size: 100%;
   transform: translateY(-50%);
-  pointer-events: none;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--transparent);
+  color: inherit;
+  cursor: pointer;
+}
+
+.field__password-toggle .icon {
+  justify-self: end;
+  margin-inline-end: calc(var(--space-2) + 2 * var(--border-width));
+  inline-size: var(--space-4);
+  block-size: var(--space-4);
+}
+
+.field__password-toggle:focus-visible {
+  outline: var(--border-width) solid var(--focus-strong);
+  outline-offset: calc(-1 * var(--border-width));
 }
 
 /* counter badge */
@@ -572,11 +590,10 @@
 
 /* invalid fields override --ring after the normal focus rule */
 .field__control:is(
-  :user-invalid,
   .field__control--error,
   [aria-invalid="true"]
 ),
-.form-select:has(input:user-invalid) {
+.field--error .select__trigger {
   --ring: color-mix(in srgb, var(--destructive) 30%, transparent);
   border-color: var(--destructive);
 }

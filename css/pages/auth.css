@@ -33,8 +33,7 @@
   font-size: 1rem;
 }
 
-.auth-card__logo,
-.auth-card__notice {
+.auth-card__logo {
   display: none;
 }
 
@@ -91,11 +90,6 @@
   text-decoration: underline;
 }
 
-/* local form result demo, no data is submitted */
-.auth-card__notice:target {
-  display: block;
-}
-
 /* tablet: center the form in a bordered card */
 @media (min-width: 48rem) {
   .auth-page {
@@ -140,4 +134,8 @@
   .auth-card__actions .button {
     min-block-size: 2.5rem;
   }
+}
+
+.alert[hidden] {
+  display: none;
 }

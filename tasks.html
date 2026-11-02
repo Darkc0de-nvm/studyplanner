@@ -8,7 +8,17 @@
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/utilities.css">
     <link rel="stylesheet" href="css/pages/app.css">
-      <script src="js/dates.js" defer=""></script>
+
+
+
+
+
+
+
+
+
+
+    <script src="js/dates.js" defer=""></script>
     <script src="js/tasks.js" defer=""></script>
     <script src="js/storage.js" defer=""></script>
     <script src="js/selects.js" defer=""></script>
@@ -16,8 +26,10 @@
     <script src="js/forms.js" defer=""></script>
     <script src="js/filters.js" defer=""></script>
     <script src="js/render.js" defer=""></script>
-    <script src="js/app.js" defer=""></script>
-</head>
+    <script src="js/calendar.js" defer=""></script>
+    <script src="js/auth.js" defer=""></script>
+    <script src="js/navigation.js" defer=""></script>
+    <script src="js/app.js" defer=""></script></head>
   <body class="app-page" data-page="tasks">
     <svg class="icon-sprite" aria-hidden="true">
       <symbol id="icon-trash-2" viewBox="0 0 24 24">
@@ -144,7 +156,7 @@
           <a class="button button--primary app-add" href="#add-task">+ Додати завдання</a>
         </div>
         <p class="filter-count muted visually-hidden" aria-live="polite" aria-atomic="true"></p>
-        <p class="muted" data-search-count hidden></p>
+        <p class="muted" data-search-count="" hidden=""></p>
         <div class="task-groups" tabindex="-1"></div><noscript><p class="muted">Для роботи із завданнями увімкніть JavaScript. Форми та навігація доступні за посиланнями.</p></noscript>
       </main>
       <footer class="demo-footer">
@@ -191,18 +203,18 @@
                 </summary>
                 <fieldset class="select__options" aria-labelledby="add-task-discipline-label">
                   <legend class="select__heading">Дисципліна</legend>
-                  <input type="radio" class="visually-hidden select__radio" name="disciplineId" value="1" required="" id="discipline-option-5">
+                  <input type="radio" class="visually-hidden select__radio" name="disciplineId" value="1" required="" id="discipline-option-5" aria-describedby="add-task-discipline-error">
                   <label class="select__option" for="discipline-option-5"><span>Архітектура комп’ютера</span><svg class="icon select__check" aria-hidden="true">
                       <use href="#icon-check"></use></svg></label>
-                  <input type="radio" class="visually-hidden select__radio" name="disciplineId" value="2" required="" id="discipline-option-6">
+                  <input type="radio" class="visually-hidden select__radio" name="disciplineId" value="2" required="" id="discipline-option-6" aria-describedby="add-task-discipline-error">
                   <label class="select__option" for="discipline-option-6"><span>Web-дизайн</span><svg class="icon select__check" aria-hidden="true">
                       <use href="#icon-check"></use></svg></label>
-                  <input type="radio" class="visually-hidden select__radio" name="disciplineId" value="3" required="" id="discipline-option-7">
+                  <input type="radio" class="visually-hidden select__radio" name="disciplineId" value="3" required="" id="discipline-option-7" aria-describedby="add-task-discipline-error">
                   <label class="select__option" for="discipline-option-7"><span>Бази даних</span><svg class="icon select__check" aria-hidden="true">
                       <use href="#icon-check"></use></svg></label>
                   <a class="select__option muted" href="#new-discipline">+ Нова дисципліна...</a>
                 </fieldset>
-              </details>
+              </details><p class="field__error" id="add-task-discipline-error"></p>
             </div>
             <div class="field">
               <label class="field__label" for="add-task-deadline">Дедлайн <span class="required">*</span>
@@ -218,7 +230,7 @@
             </div>
             <div class="field">
               <label class="field__label" for="add-task-description">Опис</label>
-              <textarea class="field__control field__control--textarea" id="add-task-description" placeholder="Необов’язково" name="description" maxlength="500"></textarea>
+              <textarea class="field__control field__control--textarea" id="add-task-description" placeholder="Необов’язково" name="description" maxlength="500" aria-describedby="add-task-description-error add-task-counter"></textarea><p class="field__error" id="add-task-description-error"></p><p class="field__hint visually-hidden" id="add-task-counter" data-description-counter="" aria-live="polite">0 / 500</p>
             </div>
           </fieldset>
           <div class="modal__actions">
@@ -227,7 +239,7 @@
             </button>
             <a class="button button--outline" href="#main">Скасувати</a>
           </div>
-        </form>
+        <p class="visually-hidden" data-form-status="" aria-live="polite"></p></form>
 
 
 
@@ -269,18 +281,18 @@
                 </summary>
                 <fieldset class="select__options" aria-labelledby="edit-task-discipline-label">
                   <legend class="select__heading">Дисципліна</legend>
-                  <input type="radio" class="visually-hidden select__radio" name="disciplineId" value="1" required="" id="discipline-option-8">
+                  <input type="radio" class="visually-hidden select__radio" name="disciplineId" value="1" required="" id="discipline-option-8" aria-describedby="edit-task-discipline-error">
                   <label class="select__option" for="discipline-option-8"><span>Архітектура комп’ютера</span><svg class="icon select__check" aria-hidden="true">
                       <use href="#icon-check"></use></svg></label>
-                  <input type="radio" class="visually-hidden select__radio" name="disciplineId" value="2" required="" id="discipline-option-9">
+                  <input type="radio" class="visually-hidden select__radio" name="disciplineId" value="2" required="" id="discipline-option-9" aria-describedby="edit-task-discipline-error">
                   <label class="select__option" for="discipline-option-9"><span>Web-дизайн</span><svg class="icon select__check" aria-hidden="true">
                       <use href="#icon-check"></use></svg></label>
-                  <input type="radio" class="visually-hidden select__radio" name="disciplineId" value="3" required="" id="discipline-option-10">
+                  <input type="radio" class="visually-hidden select__radio" name="disciplineId" value="3" required="" id="discipline-option-10" aria-describedby="edit-task-discipline-error">
                   <label class="select__option" for="discipline-option-10"><span>Бази даних</span><svg class="icon select__check" aria-hidden="true">
                       <use href="#icon-check"></use></svg></label>
                   <a class="select__option muted" href="#new-discipline">+ Нова дисципліна...</a>
                 </fieldset>
-              </details>
+              </details><p class="field__error" id="edit-task-discipline-error"></p>
             </div>
             <div class="field">
               <label class="field__label" for="edit-task-deadline">Дедлайн <span class="required">*</span>
@@ -296,7 +308,7 @@
             </div>
             <div class="field">
               <label class="field__label" for="edit-task-description">Опис</label>
-              <textarea class="field__control field__control--textarea" id="edit-task-description" placeholder="Необов’язково" name="description" maxlength="500"></textarea>
+              <textarea class="field__control field__control--textarea" id="edit-task-description" placeholder="Необов’язково" name="description" maxlength="500" aria-describedby="edit-task-description-error edit-task-counter"></textarea><p class="field__error" id="edit-task-description-error"></p><p class="field__hint visually-hidden" id="edit-task-counter" data-description-counter="" aria-live="polite">0 / 500</p>
             </div>
           </fieldset>
           <div class="modal__actions">
@@ -305,7 +317,7 @@
             </button>
             <a class="button button--outline" href="#main">Скасувати</a>
           </div>
-        </form>
+        <p class="visually-hidden" data-form-status="" aria-live="polite"></p></form>
       </div>
     </section>
 
@@ -439,4 +451,5 @@
         </section></template><template id="empty-group-template">
               <p class="muted">Немає завдань</p>
             </template>
+
 </body></html>
