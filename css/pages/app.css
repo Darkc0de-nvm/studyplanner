@@ -1,7 +1,7 @@
 /* planner pages, loaded after shared components */
 .planner-shell {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr;
   min-block-size: 100vh;
   padding-block-end: 4.5rem;
 }
@@ -425,7 +425,6 @@
 }
 
 .task-card--done .task-card__title {
-  text-decoration: line-through;
   color: var(--muted-foreground);
 }
 
@@ -468,18 +467,6 @@
 .app-empty .button {
   inline-size: 100%;
   max-inline-size: 20rem;
-}
-
-/* demo states stay outside the normal task workflow */
-.demo-footer {
-  padding: var(--space-6) var(--space-4);
-  font-size: var(--text-xs);
-  color: var(--muted-foreground);
-}
-
-.demo-footer p {
-  max-inline-size: 50rem;
-  margin-block: var(--space-3);
 }
 
 .user-menu__panel {
@@ -927,10 +914,6 @@
   .task-card__actions .button {
     inline-size: 2.75rem;
     min-block-size: 2.75rem;
-  }
-
-  .demo-footer {
-    padding: var(--space-8) 0 0;
   }
 
   /* centered dialogs retain scrolling for long forms */
@@ -1420,4 +1403,77 @@
 
 .calendar-legend li[hidden] {
   display: none;
+}
+
+html:has(.app-page) {
+  scrollbar-gutter: stable;
+}
+
+.task-slot {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.task-slot__inner {
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+.task-slot .task-card {
+  margin-block-end: var(--space-2);
+}
+
+.task-group__cards:has(.task-slot),
+.day-view__cards:has(.task-slot) {
+  gap: 0;
+  overflow-anchor: none;
+}
+
+.task-group__cards:has(.task-slot) {
+  margin-block-end: calc(-1 * var(--space-2));
+}
+
+.day-view__cards:has(.task-slot) {
+  margin-block-end: var(--space-2);
+}
+
+.task-slot--collapsing {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+
+.task-card__title a {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: left center;
+  background-repeat: no-repeat;
+  background-size: 0 var(--border-width);
+  box-decoration-break: clone;
+}
+
+.task-card--done .task-card__title a {
+  background-size: 100% var(--border-width);
+}
+
+.task-card--done [data-description] use,
+.task-card [hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .task-card {
+    transition: background-color var(--duration-complete) var(--ease), border-color var(--duration-complete) var(--ease);
+  }
+
+  .task-card__title {
+    transition: color var(--duration-complete) var(--ease);
+  }
+
+  .task-card__title a {
+    transition: background-size var(--duration-complete) var(--ease);
+  }
+
+  .task-slot {
+    transition: grid-template-rows var(--duration-collapse) var(--ease), opacity var(--duration-collapse) var(--ease);
+  }
 }

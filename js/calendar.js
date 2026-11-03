@@ -88,12 +88,12 @@
       time.dateTime = selected;
       time.textContent = longDate(date);
     }
-    const tasks = tasksOn(selected);
+    const tasks = app.render.visible(app.tasks.all().filter(task => task.deadline === selected));
     const weekday = new Intl.DateTimeFormat('uk', { weekday: 'long' }).format(date);
     document.querySelector(SELECTOR.subtitle).textContent = `${weekday} · завдань: ${tasks.length}`;
     const cards = document.querySelector(SELECTOR.cards);
-    cards.replaceChildren(...tasks.map(task => app.render.card(task, true)));
-    if (!tasks.length && location.hash === `#${TARGET.day}`) app.modals.open(TARGET.empty);
+    app.render.cards(cards, tasks, true);
+    if (!tasks.length && app.modals.current() === TARGET.day) app.modals.open(TARGET.empty);
     return tasks;
   }
 
@@ -139,14 +139,14 @@
     const requested = app.dates.parse(new URLSearchParams(location.search).get('date'));
     const queryDate = requested ? app.dates.toISO(requested) : '';
     if (queryDate) selected = queryDate;
-    if ([`#${TARGET.day}`, `#${TARGET.empty}`].includes(location.hash)) {
+    if ([`#${TARGET.day}`, `#${TARGET.empty}`].includes(app.modals.initialHash())) {
       const empty = app.dates.today();
       empty.setDate(empty.getDate() + 14);
       const tasks = app.tasks.all();
       const fallbackTask = tasks.find(task => task.id === 'seed-6') || tasks.find(task => !task.done);
-      const fallback = location.hash === `#${TARGET.day}` ? fallbackTask?.deadline || selected : app.dates.toISO(empty);
+      const fallback = app.modals.initialHash() === `#${TARGET.day}` ? fallbackTask?.deadline || selected : app.dates.toISO(empty);
       openDay(queryDate || fallback);
-    } else if (location.hash === `#${TARGET.add}` && queryDate) app.forms.fill(null, selected);
+    } else if (app.modals.initialHash() === `#${TARGET.add}` && queryDate) app.forms.fill(null, selected);
   }
 
   app.calendar = { init, render, openDay };

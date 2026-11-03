@@ -24,7 +24,7 @@
   <body class="app-page" data-page="calendar">
 
     <svg class="icon-sprite" aria-hidden="true">
-      <symbol id="icon-trash-2" viewBox="0 0 24 24">
+      <symbol id="icon-trash" viewBox="0 0 24 24">
         <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"></path>
       </symbol>
       <symbol id="icon-cap" viewBox="0 0 24 24">
@@ -191,13 +191,7 @@
         <a class="button button--primary calendar-add-mobile" href="#add-task">+ Додати завдання</a>
       </main>
 
-      <footer class="demo-footer">
-        <details>
-          <summary>Демо версія · усі стани</summary>
-          <p>Завдання зберігаються в цьому браузері. Демо-дата: 06.10.2026. Стани зі списку відкриваються окремо від ваших даних.</p>
-          <a href="states.html">Перелік сторінок і станів</a>
-        </details>
-      <p class="visually-hidden" data-storage-status="" aria-live="polite"></p></footer>
+      <p class="visually-hidden" data-storage-status aria-live="polite"></p>
     </div>
 
 
@@ -556,7 +550,7 @@
       <div class="modal__panel modal__state" id="task-delete" tabindex="-1">
         <div class="delete-dialog">
           <span class="delete-dialog__icon" aria-hidden="true"><svg class="icon" aria-hidden="true">
-              <use href="#icon-trash-2"></use></svg></span>
+              <use href="#icon-trash"></use></svg></span>
           <h2 class="delete-dialog__title" id="delete-task-title">
             Видалити завдання?
           </h2>
@@ -586,7 +580,7 @@
         </header>
         <p class="field__hint">У демоверсії доступні три дисципліни: Архітектура комп’ютера, Web-дизайн та Бази даних.</p>
       </div>
-    </section><template id="task-card-template"><article class="task-card">
+    </section><template id="task-slot-template"><div class="task-slot"><div class="task-slot__inner"></div></div></template><template id="task-card-template"><article class="task-card">
                 <input class="checkbox task-card__check" type="checkbox" data-action="toggle">
                 <div class="task-card__body">
                   <h3 class="task-card__title">
@@ -610,7 +604,7 @@
                     </a>
                     <a class="button button--ghost button--icon" href="#delete-task" data-action="delete">
                       <svg class="icon" aria-hidden="true">
-                        <use href="#icon-trash-2"></use>
+                        <use href="#icon-trash"></use>
                       </svg>
                     </a>
                   </div>

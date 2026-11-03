@@ -107,12 +107,13 @@
   }
 
   function adopt(tasks) {
-    const anchor = tasks.find(task => task.id === 'seed-4' && sameContent(task, SEED[3]));
+    const valid = tasks.filter(app.tasks.isTask);
+    const anchor = valid.find(task => task.id === 'seed-4' && sameContent(task, SEED[3]));
     const base = anchor && app.dates.parse(anchor.deadline);
     const candidate = base ? seed(base, false) : [];
-    const matches = candidate.filter(original => tasks.some(task => task.id === original.id && sameContent(task, original) && task.deadline === original.deadline));
+    const matches = candidate.filter(original => valid.some(task => task.id === original.id && sameContent(task, original) && task.deadline === original.deadline));
     const previousSeed = matches.length >= 2 ? candidate : [];
-    return tasks.filter(app.tasks.isTask).map(task => {
+    return valid.map(task => {
       if (typeof task.seed === 'boolean') return { ...task };
       const original = SEED.find(item => item.id === task.id);
       const relative = previousSeed.find(item => item.id === task.id);

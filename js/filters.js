@@ -9,6 +9,7 @@
   let render = () => {};
 
   function changed() {
+    app.render.cancelPending();
     app.storage.saveSettings(state);
     render();
   }
@@ -44,6 +45,7 @@
       if (!app.storage.isSettingsChange(event)) return;
       state = { ...state, ...app.storage.loadSettings() };
       sync();
+      app.render.cancelPending();
       render();
     });
     const search = document.querySelector(SELECTOR.search);

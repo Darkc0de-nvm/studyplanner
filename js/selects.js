@@ -33,7 +33,7 @@
         if (!event.target.matches(SELECTOR.radio)) return;
         menu.open = false;
         sync(menu);
-        menu.querySelector(SELECTOR.summary).focus();
+        menu.querySelector(SELECTOR.summary).focus({ preventScroll: true });
       });
       menu.addEventListener('click', event => {
         if (event.target.closest('label') && event.target.closest('label').control?.checked) {
@@ -49,7 +49,7 @@
       if (!opened) return;
       event.preventDefault();
       close();
-      opened.querySelector(SELECTOR.summary).focus();
+      opened.querySelector(SELECTOR.summary).focus({ preventScroll: true });
     });
   }
 

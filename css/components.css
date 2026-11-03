@@ -246,7 +246,7 @@
 }
 
 .select__trigger::-webkit-details-marker,
-.modal__variant:not(:target) {
+.modal__variant:not(:target, .modal__variant--active) {
   display: none;
 }
 
@@ -358,7 +358,7 @@
   background: var(--overlay);
 }
 
-.modal:is(:target, :has(.modal__state:target)) {
+.modal:is(:target, .modal--open, :has(.modal__state:target)) {
   display: flex;
 }
 
@@ -500,11 +500,11 @@
     animation: feedback-enter var(--duration-fast) var(--ease-enter);
   }
 
-  .modal:is(:target, :has(.modal__state:target)) {
+  .modal:is(:target, .modal--open, :has(.modal__state:target)) {
     animation: overlay-enter var(--duration-base) var(--ease);
   }
 
-  .modal:is(:target, :has(.modal__state:target)) .modal__panel {
+  .modal:is(:target, .modal--open, :has(.modal__state:target)) .modal__panel {
     animation: sheet-enter var(--duration-enter) var(--ease-enter);
   }
 
@@ -555,7 +555,7 @@
 
 /* tablet with motion: scale the dialog instead of sliding it up */
 @media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
-  .modal:is(:target, :has(.modal__state:target)) .modal__panel {
+  .modal:is(:target, .modal--open, :has(.modal__state:target)) .modal__panel {
     animation-name: dialog-enter;
   }
 }
@@ -623,4 +623,9 @@
   font-size: var(--text-title);
   line-height: 1.2;
   font-weight: 600;
+}
+
+.app-page--enhanced .modal:not(.modal--open),
+.app-page--enhanced .modal__variant:not(.modal__variant--active) {
+  display: none;
 }

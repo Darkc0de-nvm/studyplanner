@@ -84,6 +84,10 @@
   --shadow-sm: 0rem 0.0625rem 0.1875rem 0rem rgba(0, 0, 0, 0.1), 0rem 0.0625rem 0.125rem -0.0625rem rgba(0, 0, 0, 0.1);
 
   /* motion */
+  --duration-complete: 280ms;
+  --duration-collapse: 250ms;
+  --delay-complete: 1800ms;
+  --delay-complete-reduced: 600ms;
   --duration-fast: 150ms;
   --ease: cubic-bezier(0.2, 0, 0, 1);
   --duration-base: 200ms;

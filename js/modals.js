@@ -2,15 +2,20 @@
   'use strict';
 
   const app = window.StudyPlanner;
-  const SELECTOR = { modal: '.modal', panel: '.modal__panel', link: 'a[href^="#"]', close: 'a[href="#main"]', title: '#task-details h3', description: '#task-details > p:last-child', tag: '#task-details .tag', time: '#task-details time', relative: '[data-relative]', deleteTitle: '.delete-dialog__task > p', deleteTag: '.delete-dialog__task > span', confirm: '[data-confirm-delete]', focusable: 'a[href], button, input, textarea, select, summary, [tabindex="0"]', background: '.planner-shell, .bottom-tabs', add: '.app-add, .calendar-add' };
+  const SELECTOR = { modal: '.modal', panel: '.modal__panel', link: 'a[href^="#"]', close: 'a[href="#main"], a[href="#"]', title: '#task-details h3', description: '#task-details > p:last-child', tag: '#task-details .tag', time: '#task-details time', relative: '[data-relative]', deleteTitle: '.delete-dialog__task > p', deleteTag: '.delete-dialog__task > span', confirm: '[data-confirm-delete]', focusable: 'a[href], button, input, textarea, select, summary, [tabindex="0"]', background: '.planner-shell, .bottom-tabs', add: '.app-add, .calendar-add' };
   const TARGETS = { add: 'add-task', edit: 'edit-task', details: 'task-details', delete: 'delete-task' };
+  const OPEN = 'modal--open';
+  const ENHANCED = 'app-page--enhanced';
+  const VARIANT = 'modal__variant--active';
+  const VARIANT_SELECTOR = '.modal__variant';
   const LOCKED = 'app-page--modal';
   const MUTED = 'muted';
   const DATE_CELL = '[data-date]';
   let active = null;
   let trigger = null;
   let selectedId = null;
-  let baseHash = '';
+  let activeId = '';
+  let initialHash = '';
   let keyboard = false;
   let returnKeyboard = false;
 
@@ -19,54 +24,66 @@
   }
 
   function sync() {
-    if (location.hash === '#add-task-date') {
+    const id = location.hash.slice(1);
+    if (!id) return;
+    if (id === 'add-task-date') {
       app.forms.fill();
       open(TARGETS.add);
       app.datepicker.open(document.querySelector('[data-task-form="add"] [name="deadline"]'));
-      return;
+    } else if (document.getElementById(id)?.closest(SELECTOR.modal)) {
+      const action = id === 'task-delete' ? 'delete' : Object.keys(TARGETS).find(key => TARGETS[key] === id);
+      const task = app.tasks.all().find(item => item.id === selectedId) || app.tasks.all()[0];
+      if (action === 'add') { app.forms.fill(); open(id); }
+      else if (action && task) showTask(action, task);
+      else open(id);
     }
-    const target = location.hash.length > 1 ? document.getElementById(location.hash.slice(1)) : null;
-    const next = target?.closest(SELECTOR.modal) || null;
-    if (active === next) return;
-    if (active) {
-      active.removeAttribute('aria-modal');
-      active.querySelectorAll('[data-task-form]').forEach(app.forms.clear);
-      app.datepicker?.close(false);
-    }
-    active = next;
-    document.body.classList.toggle(LOCKED, Boolean(active));
-    document.querySelectorAll(SELECTOR.background).forEach(element => { element.inert = Boolean(active); });
-    if (active) {
-      active.setAttribute('aria-modal', 'true');
-      (focusable().find(element => element.matches('input:not([type="radio"]), textarea')) || active.querySelector(SELECTOR.panel)).focus({ preventScroll: true });
-    } else {
-      const date = trigger?.closest(DATE_CELL)?.dataset.date;
-      const calendarTrigger = [...document.querySelectorAll(DATE_CELL)].find(cell => cell.dataset.date === date);
-      const fallback = calendarTrigger || document.querySelector(SELECTOR.add);
-      if (returnKeyboard || !date) (trigger?.isConnected ? trigger : fallback)?.focus({ preventScroll: true, focusVisible: returnKeyboard });
-      trigger = null;
-    }
+    else return;
+    // replaceState consumes deep links without navigating to a page anchor
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+
+  function deactivate() {
+    if (!active) return;
+    active.classList.remove(OPEN);
+    active.removeAttribute('aria-modal');
+    active.querySelectorAll(VARIANT_SELECTOR).forEach(element => element.classList.remove(VARIANT));
+    active.querySelectorAll('[data-task-form]').forEach(app.forms.clear);
+    app.datepicker?.close(false);
   }
 
   function open(id, source) {
+    const target = document.getElementById(id);
+    const next = target?.closest(SELECTOR.modal);
+    if (!next || (active === next && activeId === id)) return;
     if (!active) {
-      baseHash = location.hash && !document.getElementById(location.hash.slice(1))?.closest(SELECTOR.modal) ? location.hash : '';
       trigger = source || document.activeElement;
       returnKeyboard = keyboard;
     }
     app.selects.close();
-    // Keep :target animations while replacing the transient hash history entry
-    if (active) history.replaceState(null, '', location.pathname + location.search + baseHash);
-    location.hash = id;
-    sync();
+    deactivate();
+    active = next;
+    activeId = id;
+    active.classList.add(OPEN);
+    if (target.matches(VARIANT_SELECTOR)) target.classList.add(VARIANT);
+    document.body.classList.add(LOCKED);
+    document.querySelectorAll(SELECTOR.background).forEach(element => { element.inert = true; });
+    active.setAttribute('aria-modal', 'true');
+    (focusable().find(element => element.matches('input:not([type="radio"]), textarea')) || active.querySelector(SELECTOR.panel)).focus({ preventScroll: true });
   }
 
   function close() {
+    if (!active) return;
     app.selects.close();
-    // replaceState alone leaves the browser's :target styling on the old element
-    location.replace(baseHash || '#main');
-    history.replaceState(null, '', location.pathname + location.search + baseHash);
-    sync();
+    deactivate();
+    active = null;
+    activeId = '';
+    document.body.classList.remove(LOCKED);
+    document.querySelectorAll(SELECTOR.background).forEach(element => { element.inert = false; });
+    const date = trigger?.closest(DATE_CELL)?.dataset.date;
+    const calendarTrigger = [...document.querySelectorAll(DATE_CELL)].find(cell => cell.dataset.date === date);
+    const fallback = calendarTrigger || document.querySelector(SELECTOR.add);
+    (trigger?.isConnected ? trigger : fallback)?.focus({ preventScroll: true, focusVisible: returnKeyboard });
+    trigger = null;
   }
 
   function showTask(action, task, source) {
@@ -97,6 +114,8 @@
   }
 
   function init(initialTask) {
+    initialHash = location.hash;
+    document.body.classList.add(ENHANCED);
     document.addEventListener('pointerdown', () => { keyboard = false; }, true);
     document.addEventListener('keydown', () => { keyboard = true; }, true);
     document.addEventListener('click', event => {
@@ -138,16 +157,17 @@
     });
     window.addEventListener('hashchange', sync);
     app.tasks.subscribe(() => {
-      if (![TARGETS.details, TARGETS.delete].includes(location.hash.slice(1))) return;
+      if (![TARGETS.details, TARGETS.delete].includes(activeId)) return;
       const selected = app.tasks.all().find(task => task.id === selectedId);
       if (!selected) close();
-      else showTask(location.hash.slice(1) === TARGETS.details ? 'details' : 'delete', selected);
+      else showTask(activeId === TARGETS.details ? 'details' : 'delete', selected);
     });
     const target = location.hash.slice(1);
     if (target === 'add-task-date') {
       app.forms.fill();
       open(TARGETS.add);
       app.datepicker.open(document.querySelector('[data-task-form="add"] [name="deadline"]'));
+      history.replaceState(null, '', location.pathname + location.search);
       return;
     }
     const task = initialTask || app.tasks.all()[0];
@@ -157,5 +177,5 @@
     sync();
   }
 
-  app.modals = { init, open, close, showTask };
+  app.modals = { init, open, close, showTask, current: () => activeId, initialHash: () => initialHash };
 })();

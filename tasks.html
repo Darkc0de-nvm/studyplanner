@@ -159,13 +159,7 @@
         <p class="muted" data-search-count="" hidden=""></p>
         <div class="task-groups" tabindex="-1"></div><noscript><p class="muted">Для роботи із завданнями увімкніть JavaScript. Форми та навігація доступні за посиланнями.</p></noscript>
       </main>
-      <footer class="demo-footer">
-        <details>
-          <summary>Демо версія · усі стани</summary>
-          <p>Завдання зберігаються в цьому браузері. Демо-дата: 06.10.2026. Стани зі списку відкриваються окремо від ваших даних.</p>
-          <a href="states.html">Перелік сторінок і станів</a>
-        </details>
-      <p class="visually-hidden" data-storage-status="" aria-live="polite"></p></footer>
+      <p class="visually-hidden" data-storage-status aria-live="polite"></p>
     </div>
 
     <section class="modal" role="dialog" aria-labelledby="add-task-title">
@@ -397,7 +391,7 @@
     </nav>
 
 <template id="search-mark-template"><mark></mark></template>
-<template id="task-card-template"><article class="task-card">
+<template id="task-slot-template"><div class="task-slot"><div class="task-slot__inner"></div></div></template><template id="task-card-template"><article class="task-card">
                 <input class="checkbox task-card__check" type="checkbox" data-action="toggle">
                 <div class="task-card__body">
                   <h3 class="task-card__title">
