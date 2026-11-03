@@ -1,7 +1,8 @@
 (() => {
   'use strict';
 
-  // Set to null to use the local calendar date instead of the prototype date
+  // Enable only when comparing the original prototype screenshots
+  const USE_DEMO_DATE = false;
   const DEMO_TODAY = '2026-10-06';
   const DAY_MS = 86400000;
   const app = window.StudyPlanner = window.StudyPlanner || {};
@@ -17,7 +18,7 @@
   }
 
   function today() {
-    return DEMO_TODAY ? parse(DEMO_TODAY) : new Date();
+    return USE_DEMO_DATE ? parse(DEMO_TODAY) : new Date();
   }
 
   function toISO(date) {
@@ -52,5 +53,5 @@
     return difference <= 6 - (today().getDay() + 6) % 7 ? 'week' : 'later';
   }
 
-  app.dates = { parse, today, toISO, format, relative, group };
+  app.dates = { parse, today, toISO, format, relative, group, useDemoDate: USE_DEMO_DATE };
 })();

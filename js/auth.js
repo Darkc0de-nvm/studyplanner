@@ -42,12 +42,18 @@
   }
 
   function init(preview) {
+    document.querySelectorAll(SELECTOR.toggle).forEach(button => button.addEventListener('mousedown', event => event.preventDefault()));
     document.querySelectorAll(SELECTOR.toggle).forEach(button => button.addEventListener('click', () => {
       const input = document.getElementById(button.getAttribute('aria-controls'));
+      const start = input.selectionStart;
+      const end = input.selectionEnd;
       const visible = input.type === 'password';
       input.type = visible ? 'text' : 'password';
       button.setAttribute('aria-pressed', String(visible));
-      button.setAttribute('aria-label', visible ? 'Приховати пароль' : 'Показати пароль');
+      button.setAttribute('aria-label', visible ? 'Сховати пароль' : 'Показати пароль');
+      button.querySelector('use').setAttribute('href', visible ? '#icon-eye-off' : '#icon-eye');
+      input.focus({ preventScroll: true });
+      input.setSelectionRange(start, end);
     }));
     if (preview !== 'error') return;
     const form = document.querySelector(SELECTOR.form);

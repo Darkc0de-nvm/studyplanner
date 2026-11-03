@@ -16,6 +16,7 @@
     app.tasks.init();
     app.selects.init();
     app.filters.init(state, calendar ? app.calendar.render : app.render.list);
+    app.datepicker.init();
     app.forms.init();
     if (!calendar) app.render.init({ compactTitleId: state === 'filter-open' ? OPEN_FILTER_CARD : null });
     app.modals.init(state === 'details-empty' ? app.tasks.all().find(task => !task.description) : null);

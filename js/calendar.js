@@ -3,7 +3,7 @@
 
   const app = window.StudyPlanner;
   const SELECTOR = { grid: '[data-calendar-grid]', cell: '[data-date]', heading: '.month-heading h1', month: '.month-calendar', step: '[data-month-step]', today: '[data-calendar-today]', reset: '.filter-reset', legend: '.calendar-legend [data-discipline-id]', cards: '.day-view__cards', dayTitle: '#day-title time', emptyTitle: '#day-empty-title time', subtitle: '.day-view__subtitle', addDay: '[data-add-day]' };
-  const CLASS = { outside: 'calendar-cell--outside', today: 'calendar-cell--today', selected: 'calendar-cell--selected', chip: 'calendar-chip--', dot: 'calendar-cell__dot--' };
+  const CLASS = { outside: 'calendar-cell--outside', today: 'calendar-cell--today', chip: 'calendar-chip--', dot: 'calendar-cell__dot--' };
   const TEMPLATE = { cell: 'calendar-cell-template', tasks: 'calendar-tasks-template', chip: 'calendar-chip-template', dot: 'calendar-dot-template', more: 'calendar-more-template' };
   const TARGET = { day: 'day', empty: 'day-empty', add: 'add-task' };
   const CHIP_LIMIT = 2;
@@ -63,9 +63,8 @@
       cell.href = tasks.length ? `#${TARGET.day}` : `#${TARGET.empty}`;
       cell.classList.toggle(CLASS.outside, date.getMonth() !== month.getMonth());
       cell.classList.toggle(CLASS.today, iso === app.dates.toISO(app.dates.today()));
-      cell.classList.toggle(CLASS.selected, iso === selected && iso !== app.dates.toISO(app.dates.today()));
       cell.setAttribute('aria-label', `${longDate(date)}, ${tasks.length ? `завдань: ${tasks.length}` : 'немає завдань'}`);
-      if (iso === selected) cell.setAttribute('aria-current', 'date');
+      if (iso === app.dates.toISO(app.dates.today())) cell.setAttribute('aria-current', 'date');
       const time = cell.querySelector('time');
       time.dateTime = iso;
       time.querySelector('span').textContent = date.getDate();
@@ -139,7 +138,9 @@
     const queryDate = requested ? app.dates.toISO(requested) : '';
     if (queryDate) selected = queryDate;
     if ([`#${TARGET.day}`, `#${TARGET.empty}`].includes(location.hash)) {
-      const fallback = location.hash === `#${TARGET.day}` ? DEMO_DAY.day : DEMO_DAY.empty;
+      const empty = app.dates.today();
+      empty.setDate(empty.getDate() + 14);
+      const fallback = app.dates.useDemoDate ? (location.hash === `#${TARGET.day}` ? DEMO_DAY.day : DEMO_DAY.empty) : (location.hash === `#${TARGET.day}` ? app.tasks.all().find(task => !task.done)?.deadline || selected : app.dates.toISO(empty));
       openDay(queryDate || fallback);
     } else if (location.hash === `#${TARGET.add}` && queryDate) app.forms.fill(null, selected);
   }

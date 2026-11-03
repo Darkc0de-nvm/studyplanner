@@ -2,7 +2,7 @@
   'use strict';
 
   const app = window.StudyPlanner;
-  const KEYS = { tasks: 'studyplanner.tasks.v1', settings: 'studyplanner.settings.v1', user: 'studyplanner.user.v1' };
+  const KEYS = { tasks: 'studyplanner.tasks.v2', legacyTasks: 'studyplanner.tasks.v1', settings: 'studyplanner.settings.v1', user: 'studyplanner.user.v1' };
   const STATUS = '[data-storage-status]';
   const SEED = [
   {
@@ -90,12 +90,23 @@
   }
 
   function seed() {
-    return SEED.map(task => ({ ...task }));
+    const offsets = [-2, -3, -4, 0, Math.min(2, 7 - (app.dates.today().getDay() || 7)), 9, 12];
+    return SEED.map((task, index) => {
+      const date = app.dates.today();
+      date.setDate(date.getDate() + offsets[index]);
+      return { ...task, deadline: app.dates.useDemoDate ? task.deadline : app.dates.toISO(date) };
+    });
   }
 
   function loadTasks() {
     if (preview) return previewTasks;
-    const saved = read(KEYS.tasks, null);
+    let saved = read(KEYS.tasks, null);
+    if (saved === null) {
+      const legacy = read(KEYS.legacyTasks, null);
+      // Preserve user edits and empty lists while replacing only the untouched old seed
+      if (Array.isArray(legacy) && JSON.stringify(legacy) !== JSON.stringify(SEED)) saved = legacy;
+      if (saved !== null) write(KEYS.tasks, saved);
+    }
     if (Array.isArray(saved) && saved.every(app.tasks.isTask) && new Set(saved.map(task => task.id)).size === saved.length) return saved;
     const initial = seed();
     write(KEYS.tasks, initial);

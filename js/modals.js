@@ -11,16 +11,28 @@
   let trigger = null;
   let selectedId = null;
   let baseHash = '';
+  let keyboard = false;
+  let returnKeyboard = false;
 
   function focusable() {
     return [...active.querySelectorAll(SELECTOR.focusable)].filter(item => !item.disabled && item.getClientRects().length && !item.closest('details:not([open]) .select__options'));
   }
 
   function sync() {
-    const target = document.getElementById(location.hash.slice(1));
+    if (location.hash === '#add-task-date') {
+      app.forms.fill();
+      open(TARGETS.add);
+      app.datepicker.open(document.querySelector('[data-task-form="add"] [name="deadline"]'));
+      return;
+    }
+    const target = location.hash.length > 1 ? document.getElementById(location.hash.slice(1)) : null;
     const next = target?.closest(SELECTOR.modal) || null;
     if (active === next) return;
-    if (active) active.removeAttribute('aria-modal');
+    if (active) {
+      active.removeAttribute('aria-modal');
+      active.querySelectorAll('[data-task-form]').forEach(app.forms.clear);
+      app.datepicker?.close(false);
+    }
     active = next;
     document.body.classList.toggle(LOCKED, Boolean(active));
     document.querySelectorAll(SELECTOR.background).forEach(element => { element.inert = Boolean(active); });
@@ -31,7 +43,7 @@
       const date = trigger?.closest(DATE_CELL)?.dataset.date;
       const calendarTrigger = [...document.querySelectorAll(DATE_CELL)].find(cell => cell.dataset.date === date);
       const fallback = calendarTrigger || document.querySelector(SELECTOR.add);
-      (trigger?.isConnected ? trigger : fallback)?.focus({ preventScroll: true });
+      if (returnKeyboard || !date) (trigger?.isConnected ? trigger : fallback)?.focus({ preventScroll: true, focusVisible: returnKeyboard });
       trigger = null;
     }
   }
@@ -40,6 +52,7 @@
     if (!active) {
       baseHash = location.hash && !document.getElementById(location.hash.slice(1))?.closest(SELECTOR.modal) ? location.hash : '';
       trigger = source || document.activeElement;
+      returnKeyboard = keyboard;
     }
     app.selects.close();
     // Keep :target animations while replacing the transient hash history entry
@@ -79,6 +92,8 @@
   }
 
   function init(initialTask) {
+    document.addEventListener('pointerdown', () => { keyboard = false; }, true);
+    document.addEventListener('keydown', () => { keyboard = true; }, true);
     document.addEventListener('click', event => {
       if (event.defaultPrevented) return;
       const link = event.target.closest(SELECTOR.link);
@@ -88,12 +103,14 @@
         close();
         return;
       }
-      const id = link.hash.slice(1);
-      const target = document.getElementById(id);
+      const picker = link.hash === '#add-task-date';
+      const id = picker ? TARGETS.add : link.hash.slice(1);
+      const target = id ? document.getElementById(id) : null;
       if (!target?.closest(SELECTOR.modal)) return;
       event.preventDefault();
       if (id === TARGETS.add) app.forms.fill();
       open(id, link);
+      if (picker) app.datepicker.open(document.querySelector(SELECTOR.modal + ' [name="deadline"]'));
     });
     document.querySelector(SELECTOR.confirm).addEventListener('click', () => {
       if (selectedId) app.tasks.remove(selectedId);
@@ -116,6 +133,12 @@
     });
     window.addEventListener('hashchange', sync);
     const target = location.hash.slice(1);
+    if (target === 'add-task-date') {
+      app.forms.fill();
+      open(TARGETS.add);
+      app.datepicker.open(document.querySelector('[data-task-form="add"] [name="deadline"]'));
+      return;
+    }
     const task = initialTask || app.tasks.all()[0];
     const action = target === 'task-delete' ? 'delete' : Object.keys(TARGETS).find(key => TARGETS[key] === target);
     if (action === 'add') app.forms.fill();

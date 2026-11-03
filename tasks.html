@@ -23,7 +23,7 @@
     <script src="js/storage.js" defer=""></script>
     <script src="js/selects.js" defer=""></script>
     <script src="js/modals.js" defer=""></script>
-    <script src="js/forms.js" defer=""></script>
+    <script src="js/datepicker.js" defer=""></script><script src="js/forms.js" defer=""></script>
     <script src="js/filters.js" defer=""></script>
     <script src="js/render.js" defer=""></script>
     <script src="js/calendar.js" defer=""></script>
@@ -179,7 +179,7 @@
             </svg>
           </a>
         </header>
-        <form class="task-form modal__state modal__variant" id="add-task" action="#main" data-task-form="add">
+        <form class="task-form modal__state modal__variant" id="add-task" action="#main" data-task-form="add" novalidate="">
           <fieldset class="task-form__fields">
             <legend class="visually-hidden">Параметри завдання</legend>
             <div class="field">
@@ -220,9 +220,9 @@
               <label class="field__label" for="add-task-deadline">Дедлайн <span class="required">*</span>
               </label>
               <div class="field__date">
-                <input class="field__control field__control--date" type="date" id="add-task-deadline" required="" aria-describedby="add-task-date-error" name="deadline"><svg class="icon field__date-icon" aria-hidden="true">
+                <input class="field__control field__control--date" type="text" id="add-task-deadline" required="" aria-describedby="add-task-date-error" name="deadline" inputmode="numeric" autocomplete="off" placeholder="дд.мм.рррр" maxlength="10" role="combobox" aria-expanded="false"><button class="field__date-toggle" type="button" data-date-toggle="" aria-label="Відкрити календар"><svg class="icon" aria-hidden="true">
                   <use href="#icon-calendar"></use>
-                </svg>
+                </svg></button>
               </div>
               <p class="field__error" id="add-task-date-error">
                 Вкажіть дедлайн
@@ -257,7 +257,7 @@
             </svg>
           </a>
         </header>
-        <form class="task-form" action="#main" data-task-form="edit">
+        <form class="task-form" action="#main" data-task-form="edit" novalidate="">
           <fieldset class="task-form__fields">
             <legend class="visually-hidden">Параметри завдання</legend>
             <div class="field">
@@ -298,9 +298,9 @@
               <label class="field__label" for="edit-task-deadline">Дедлайн <span class="required">*</span>
               </label>
               <div class="field__date">
-                <input class="field__control field__control--date" type="date" id="edit-task-deadline" required="" aria-describedby="edit-task-date-error" name="deadline"><svg class="icon field__date-icon" aria-hidden="true">
+                <input class="field__control field__control--date" type="text" id="edit-task-deadline" required="" aria-describedby="edit-task-date-error" name="deadline" inputmode="numeric" autocomplete="off" placeholder="дд.мм.рррр" maxlength="10" role="combobox" aria-expanded="false"><button class="field__date-toggle" type="button" data-date-toggle="" aria-label="Відкрити календар"><svg class="icon" aria-hidden="true">
                   <use href="#icon-calendar"></use>
-                </svg>
+                </svg></button>
               </div>
               <p class="field__error" id="edit-task-date-error">
                 Вкажіть дедлайн
@@ -452,4 +452,5 @@
               <p class="muted">Немає завдань</p>
             </template>
 
-</body></html>
+
+<template id="datepicker-template"><section class="datepicker" role="dialog" aria-label="Оберіть дедлайн" hidden=""><div class="datepicker__header"><button class="datepicker__arrow" type="button" data-picker-step="-1" aria-label="Попередній місяць"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-left"></use></svg></button><span class="datepicker__title" aria-live="polite"></span><button class="datepicker__arrow" type="button" data-picker-step="1" aria-label="Наступний місяць"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></button></div><table class="datepicker__table" role="grid" aria-label="Дні місяця"><thead><tr><th scope="col">Пн</th><th scope="col">Вт</th><th scope="col">Ср</th><th scope="col">Чт</th><th scope="col">Пт</th><th scope="col">Сб</th><th scope="col">Нд</th></tr></thead><tbody class="datepicker__grid"></tbody></table></section></template><template id="datepicker-row-template"><tr></tr></template><template id="datepicker-day-template"><td role="gridcell"><button class="datepicker__day" type="button" data-picker-date=""></button></td></template></body></html>
