@@ -73,6 +73,11 @@
     selectedId = task.id;
     if (action === 'edit') app.forms.fill(task);
     if (action === 'details') {
+      const details = document.getElementById(TARGETS.details);
+      const state = app.tasks.getTaskState(task);
+      if (details.dataset.taskState) details.classList.remove(`task-card--${details.dataset.taskState}`);
+      details.dataset.taskState = state;
+      details.classList.add(`task-card--${state}`);
       document.querySelector(SELECTOR.title).textContent = task.title;
       document.querySelector(SELECTOR.description).textContent = task.description || 'Опис не додано';
       document.querySelector(SELECTOR.description).classList.toggle(MUTED, !task.description);
@@ -132,6 +137,12 @@
       }
     });
     window.addEventListener('hashchange', sync);
+    app.tasks.subscribe(() => {
+      if (![TARGETS.details, TARGETS.delete].includes(location.hash.slice(1))) return;
+      const selected = app.tasks.all().find(task => task.id === selectedId);
+      if (!selected) close();
+      else showTask(location.hash.slice(1) === TARGETS.details ? 'details' : 'delete', selected);
+    });
     const target = location.hash.slice(1);
     if (target === 'add-task-date') {
       app.forms.fill();

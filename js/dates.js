@@ -34,23 +34,23 @@
     return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / DAY_MS;
   }
 
-  function distance(value) {
-    return dayNumber(parse(value)) - dayNumber(today());
+  function distance(value, base = today()) {
+    return dayNumber(parse(value)) - dayNumber(base);
   }
 
-  function relative(value) {
-    const difference = distance(value);
+  function relative(value, base = today()) {
+    const difference = distance(value, base);
     if (difference === 0) return 'сьогодні';
     const count = Math.abs(difference);
     const ending = count % 100 >= 11 && count % 100 <= 14 ? 'днів' : count % 10 === 1 ? 'день' : count % 10 >= 2 && count % 10 <= 4 ? 'дні' : 'днів';
     return difference < 0 ? `${count} ${ending} тому` : `через ${count} ${ending}`;
   }
 
-  function group(value) {
-    const difference = distance(value);
+  function group(value, base = today()) {
+    const difference = distance(value, base);
     if (difference < 0) return 'overdue';
     if (difference === 0) return 'today';
-    return difference <= 6 - (today().getDay() + 6) % 7 ? 'week' : 'later';
+    return difference <= 6 - (base.getDay() + 6) % 7 ? 'week' : 'later';
   }
 
   app.dates = { parse, today, toISO, format, relative, group, useDemoDate: USE_DEMO_DATE };

@@ -40,6 +40,12 @@
     if (preview === 'search') state.query = 'звіт';
     if (preview === 'no-results') state.query = 'Квантова фізика';
     sync();
+    window.addEventListener('storage', event => {
+      if (!app.storage.isSettingsChange(event)) return;
+      state = { ...state, ...app.storage.loadSettings() };
+      sync();
+      render();
+    });
     const search = document.querySelector(SELECTOR.search);
     function searchNow() {
       clearTimeout(timer);

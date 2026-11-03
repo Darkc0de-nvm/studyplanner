@@ -2,7 +2,11 @@
   'use strict';
 
   const app = window.StudyPlanner;
-  const KEYS = { tasks: 'studyplanner.tasks.v2', legacyTasks: 'studyplanner.tasks.v1', settings: 'studyplanner.settings.v1', user: 'studyplanner.user.v1' };
+  const KEYS = { tasks: 'studyplanner.tasks', settings: 'studyplanner.settings.v1', user: 'studyplanner.user.v1' };
+  const LEGACY_KEYS = ['studyplanner.tasks.v2', 'studyplanner.tasks.v1'];
+  const VERSION = 3;
+  const CONTENT_FIELDS = ['title', 'description', 'disciplineId', 'done'];
+  let record = null;
   const STATUS = '[data-storage-status]';
   const SEED = [
   {
@@ -62,9 +66,7 @@
     "done": false
   }
 ];
-  let preview = false;
-  let previewTasks = [];
-  let previewSettings = {};
+  let previewSettings = null;
 
   function warn() {
     const status = document.querySelector(STATUS);
@@ -84,42 +86,90 @@
   function write(key, value) {
     try {
       localStorage.setItem(key, JSON.stringify(value));
+      return true;
     } catch {
       warn();
+      return false;
     }
   }
 
-  function seed() {
-    const offsets = [-2, -3, -4, 0, Math.min(2, 7 - (app.dates.today().getDay() || 7)), 9, 12];
+  function seed(base = app.dates.today(), demo = app.dates.useDemoDate) {
+    const offsets = [-2, -3, -4, 0, Math.min(2, 7 - (base.getDay() || 7)), 9, 12];
     return SEED.map((task, index) => {
-      const date = app.dates.today();
+      const date = new Date(base);
       date.setDate(date.getDate() + offsets[index]);
-      return { ...task, deadline: app.dates.useDemoDate ? task.deadline : app.dates.toISO(date) };
+      return { ...task, deadline: demo ? task.deadline : app.dates.toISO(date), seed: true };
     });
   }
 
+  function sameContent(task, original) {
+    return original && CONTENT_FIELDS.every(field => task[field] === original[field]);
+  }
+
+  function adopt(tasks) {
+    const anchor = tasks.find(task => task.id === 'seed-4' && sameContent(task, SEED[3]));
+    const base = anchor && app.dates.parse(anchor.deadline);
+    const candidate = base ? seed(base, false) : [];
+    const matches = candidate.filter(original => tasks.some(task => task.id === original.id && sameContent(task, original) && task.deadline === original.deadline));
+    const previousSeed = matches.length >= 2 ? candidate : [];
+    return tasks.filter(app.tasks.isTask).map(task => {
+      if (typeof task.seed === 'boolean') return { ...task };
+      const original = SEED.find(item => item.id === task.id);
+      const relative = previousSeed.find(item => item.id === task.id);
+      const untouched = sameContent(task, original) && (task.deadline === original.deadline || task.deadline === relative?.deadline);
+      return { ...task, seed: Boolean(untouched) };
+    });
+  }
+
+  function migrate(saved, legacy) {
+    const current = saved && Array.isArray(saved.tasks) ? saved : null;
+    const primary = current?.tasks || (Array.isArray(saved) ? saved : legacy.find(Array.isArray));
+    const tasks = primary ? adopt(primary) : seed();
+    const merged = new Map(tasks.map(task => [task.id, task]));
+    // Older snapshots may contain user tasks missing from a newer seed-only snapshot
+    legacy.filter(Array.isArray).forEach(items => adopt(items).forEach(task => {
+      const existing = merged.get(task.id);
+      if (!task.seed && (!existing || existing.seed)) merged.set(task.id, task);
+    }));
+    const baseDate = app.dates.toISO(app.dates.today());
+    const regenerate = !current || !Number.isInteger(current.version) || current.version < VERSION || current.seedBaseDate !== baseDate;
+    const generated = new Map(seed().map(task => [task.id, task]));
+    return {
+      version: VERSION,
+      seedBaseDate: baseDate,
+      tasks: [...merged.values()].map(task => regenerate && task.seed && generated.has(task.id) ? generated.get(task.id) : task)
+    };
+  }
+
   function loadTasks() {
-    if (preview) return previewTasks;
-    let saved = read(KEYS.tasks, null);
-    if (saved === null) {
-      const legacy = read(KEYS.legacyTasks, null);
-      // Preserve user edits and empty lists while replacing only the untouched old seed
-      if (Array.isArray(legacy) && JSON.stringify(legacy) !== JSON.stringify(SEED)) saved = legacy;
-      if (saved !== null) write(KEYS.tasks, saved);
+    const saved = read(KEYS.tasks, record);
+    const legacy = LEGACY_KEYS.map(key => read(key, null));
+    record = migrate(saved, legacy);
+    const unchanged = JSON.stringify(saved) === JSON.stringify(record);
+    if (unchanged || write(KEYS.tasks, record)) {
+      LEGACY_KEYS.forEach((key, index) => {
+        if (legacy[index] === null) return;
+        try { localStorage.removeItem(key); } catch { warn(); }
+      });
     }
-    if (Array.isArray(saved) && saved.every(app.tasks.isTask) && new Set(saved.map(task => task.id)).size === saved.length) return saved;
-    const initial = seed();
-    write(KEYS.tasks, initial);
-    return initial;
+    return record.tasks.map(task => ({ ...task }));
   }
 
   function saveTasks(tasks) {
-    if (preview) previewTasks = tasks;
-    else write(KEYS.tasks, tasks);
+    record = { version: VERSION, seedBaseDate: app.dates.toISO(app.dates.today()), tasks: tasks.map(task => ({ ...task })) };
+    write(KEYS.tasks, record);
+  }
+
+  function isTaskChange(event) {
+    return event.key === null || event.key === KEYS.tasks || LEGACY_KEYS.includes(event.key);
+  }
+
+  function isSettingsChange(event) {
+    return event.key === null || event.key === KEYS.settings;
   }
 
   function loadSettings() {
-    const saved = preview ? previewSettings : read(KEYS.settings, {});
+    const saved = previewSettings || read(KEYS.settings, {});
     return {
       discipline: saved && Object.hasOwn(app.tasks.disciplines, saved.discipline) ? saved.discipline : '0',
       showDone: Boolean(saved && saved.showDone === true)
@@ -127,7 +177,7 @@
   }
 
   function saveSettings(settings) {
-    if (preview) previewSettings = settings;
+    if (previewSettings) previewSettings = settings;
     else write(KEYS.settings, settings);
   }
 
@@ -139,9 +189,6 @@
 
   function setPreview(state, discipline = '3') {
     if (!state) return;
-    preview = true;
-    previewTasks = state === 'first-run' ? [] : seed();
-    if (state === 'empty-group') previewTasks = previewTasks.filter(task => app.dates.group(task.deadline) !== 'week');
     previewSettings = { discipline: state === 'filter' ? discipline : '0', showDone: state === 'done' };
   }
 
@@ -154,5 +201,5 @@
     write(KEYS.user, user);
   }
 
-  app.storage = { loadTasks, saveTasks, loadSettings, saveSettings, reset, setPreview, seed, loadUser, saveUser };
+  app.storage = { loadTasks, saveTasks, loadSettings, saveSettings, reset, setPreview, seed, loadUser, saveUser, isTaskChange, isSettingsChange };
 })();

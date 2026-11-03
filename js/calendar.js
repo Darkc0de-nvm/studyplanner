@@ -8,7 +8,6 @@
   const TARGET = { day: 'day', empty: 'day-empty', add: 'add-task' };
   const CHIP_LIMIT = 2;
   const DAYS_PER_WEEK = 7;
-  const DEMO_DAY = { day: '2026-10-15', empty: '2026-10-20' };
   let month;
   let selected;
 
@@ -29,9 +28,12 @@
       const chip = app.render.clone(TEMPLATE.chip);
       chip.firstElementChild.classList.add(CLASS.chip + task.disciplineId);
       chip.firstElementChild.textContent = task.title;
+      chip.firstElementChild.dataset.taskId = task.id;
+      chip.firstElementChild.dataset.taskState = app.tasks.getTaskState(task);
       chips.append(chip);
       const dot = app.render.clone(TEMPLATE.dot);
       dot.firstElementChild.classList.add(CLASS.dot + task.disciplineId);
+      dot.firstElementChild.dataset.taskState = app.tasks.getTaskState(task);
       dots.append(dot);
     });
     if (tasks.length > CHIP_LIMIT) {
@@ -90,7 +92,7 @@
     const weekday = new Intl.DateTimeFormat('uk', { weekday: 'long' }).format(date);
     document.querySelector(SELECTOR.subtitle).textContent = `${weekday} · завдань: ${tasks.length}`;
     const cards = document.querySelector(SELECTOR.cards);
-    cards.replaceChildren(...tasks.map(app.render.card));
+    cards.replaceChildren(...tasks.map(task => app.render.card(task, true)));
     if (!tasks.length && location.hash === `#${TARGET.day}`) app.modals.open(TARGET.empty);
     return tasks;
   }
@@ -140,7 +142,9 @@
     if ([`#${TARGET.day}`, `#${TARGET.empty}`].includes(location.hash)) {
       const empty = app.dates.today();
       empty.setDate(empty.getDate() + 14);
-      const fallback = app.dates.useDemoDate ? (location.hash === `#${TARGET.day}` ? DEMO_DAY.day : DEMO_DAY.empty) : (location.hash === `#${TARGET.day}` ? app.tasks.all().find(task => !task.done)?.deadline || selected : app.dates.toISO(empty));
+      const tasks = app.tasks.all();
+      const fallbackTask = tasks.find(task => task.id === 'seed-6') || tasks.find(task => !task.done);
+      const fallback = location.hash === `#${TARGET.day}` ? fallbackTask?.deadline || selected : app.dates.toISO(empty);
       openDay(queryDate || fallback);
     } else if (location.hash === `#${TARGET.add}` && queryDate) app.forms.fill(null, selected);
   }

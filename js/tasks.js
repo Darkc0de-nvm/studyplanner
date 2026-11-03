@@ -27,10 +27,16 @@
 
   function init() {
     tasks = app.storage.loadTasks();
+    window.addEventListener('storage', event => {
+      if (!app.storage.isTaskChange(event)) return;
+      tasks = app.storage.loadTasks();
+      listeners.forEach(listener => listener(all()));
+    });
   }
 
   function add(values) {
-    const task = { ...values, id: `task-${Date.now()}-${Math.random().toString(36).slice(2)}`, done: false };
+    tasks = app.storage.loadTasks();
+    const task = { ...values, id: `task-${Date.now()}-${Math.random().toString(36).slice(2)}`, done: false, seed: false };
     if (!isTask(task)) return false;
     tasks.push(task);
     publish();
@@ -38,9 +44,10 @@
   }
 
   function update(id, values) {
+    tasks = app.storage.loadTasks();
     const index = tasks.findIndex(task => task.id === id);
     if (index < 0) return false;
-    const task = { ...tasks[index], ...values, id };
+    const task = { ...tasks[index], ...values, id, seed: false };
     if (!isTask(task)) return false;
     tasks[index] = task;
     publish();
@@ -48,18 +55,20 @@
   }
 
   function remove(id) {
+    tasks = app.storage.loadTasks();
     tasks = tasks.filter(task => task.id !== id);
     publish();
   }
 
   function toggle(id) {
+    tasks = app.storage.loadTasks();
     const task = tasks.find(item => item.id === id);
     if (task) update(id, { done: !task.done });
   }
 
   function replace(values) {
     if (!Array.isArray(values) || !values.every(isTask)) return;
-    tasks = values.map(task => ({ ...task }));
+    tasks = values.map(task => ({ ...task, seed: task.seed === true }));
     publish();
   }
 
@@ -68,5 +77,11 @@
     return () => listeners.delete(listener);
   }
 
-  app.tasks = { init, all, add, update, remove, toggle, replace, subscribe, isTask, disciplines };
+  function getTaskState(task, today = app.dates.today()) {
+    if (task.done) return 'done';
+    const group = app.dates.group(task.deadline, today);
+    return group === 'week' ? 'soon' : group;
+  }
+
+  app.tasks = { init, all, add, update, remove, toggle, replace, subscribe, isTask, disciplines, getTaskState };
 })();

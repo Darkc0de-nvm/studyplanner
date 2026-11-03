@@ -3,7 +3,7 @@
 
   const app = window.StudyPlanner;
   const SELECTOR = { list: '.task-groups', card: '.task-card', title: '.task-card__title a', tag: '.task-card__discipline', meta: '.task-card__meta > span', description: '[data-description]', check: '.task-card__check', action: '[data-action]', groupTitle: '.group-header__title', count: '.group-count', cards: '.task-group__cards', results: '.filter-count', reset: '.filter-reset', add: '.app-add', searchCount: '[data-search-count]' };
-  const CLASS = { done: 'task-card--done', overdue: 'task-card--overdue', soon: 'task-card--soon', hidden: 'visually-hidden', results: 'filter-count--visible', countOverdue: 'group-count--overdue', countSoon: 'group-count--soon' };
+  const CLASS = { state: 'task-card--', stacked: 'task-card--stacked', hidden: 'visually-hidden', results: 'filter-count--visible', countOverdue: 'group-count--overdue', countSoon: 'group-count--soon' };
   const GROUPS = { overdue: 'Прострочені', today: 'Сьогодні', week: 'Цей тиждень', later: 'Пізніше' };
   const TEMPLATE = { card: 'task-card-template', group: 'task-group-template', first: 'first-run-template', noResults: 'no-results-template', empty: 'empty-group-template', mark: 'search-mark-template' };
   let compactTitleId = null;
@@ -12,14 +12,15 @@
     return document.getElementById(id).content.cloneNode(true);
   }
 
-  function card(task) {
+  function card(task, stacked = false) {
     const fragment = clone(TEMPLATE.card);
     const element = fragment.querySelector(SELECTOR.card);
-    const group = app.dates.group(task.deadline);
+    const today = app.dates.today();
+    const state = app.tasks.getTaskState(task, today);
     element.dataset.taskId = task.id;
-    element.classList.toggle(CLASS.done, task.done);
-    element.classList.toggle(CLASS.overdue, group === 'overdue');
-    element.classList.toggle(CLASS.soon, group === 'week');
+    element.classList.add(CLASS.state + state);
+    element.classList.toggle(CLASS.stacked, stacked === true);
+    element.dataset.taskState = state;
     element.querySelector(SELECTOR.title).textContent = task.title;
     highlight(element.querySelector(SELECTOR.title), task.title);
     // The Lab 3 open-filter frame has no space before this description icon
@@ -32,7 +33,7 @@
     time.textContent = app.dates.format(task.deadline);
     const relative = element.querySelector(SELECTOR.meta);
     if (task.done) relative.remove();
-    else relative.textContent = `· ${app.dates.relative(task.deadline)}`;
+    else relative.textContent = `· ${app.dates.relative(task.deadline, today)}`;
     if (!task.description) element.querySelector(SELECTOR.description).remove();
     else if (task.done) element.querySelector(SELECTOR.description).querySelector('use').remove();
     const check = element.querySelector(SELECTOR.check);

@@ -304,8 +304,7 @@
 }
 
 /* done overrides urgency through local card colors */
-.task-card--done,
-.task-card:has(.task-card__check:checked) {
+.task-card--done {
   --task-color: var(--done);
   --task-bg: var(--done-bg);
 }
@@ -425,7 +424,7 @@
   padding: var(--space-1);
 }
 
-.task-card:has(.task-card__check:checked) .task-card__title {
+.task-card--done .task-card__title {
   text-decoration: line-through;
   color: var(--muted-foreground);
 }
@@ -958,20 +957,20 @@
     max-inline-size: 35rem;
   }
 
-  .modal--day .task-card {
+  .task-card--stacked {
     align-items: flex-start;
   }
 
-  .modal--day .task-card__body {
+  .task-card--stacked .task-card__body {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
-  .modal--day .task-card__title {
+  .task-card--stacked .task-card__title {
     font-size: 1rem;
   }
 
-  .modal--day .task-card__meta {
+  .task-card--stacked .task-card__meta {
     max-inline-size: none;
   }
 
