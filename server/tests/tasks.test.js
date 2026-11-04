@@ -199,6 +199,53 @@ describe('PATCH /api/tasks/:id', () => {
       .send({ done: true });
     expect(res.status).toBe(404);
   });
+
+  it('updates description and deadline', async () => {
+    const ag = await loginUser(USER_A);
+    const disc = await createDisc(ag);
+    const { body: { task } } = await createTask(ag, disc.id);
+
+    const res = await ag
+      .patch(`/api/tasks/${task.id}`)
+      .set('Content-Type', 'application/json')
+      .send({ description: 'Оновлений опис', deadline: '2027-02-01' });
+
+    expect(res.status).toBe(200);
+    expect(res.body.task.description).toBe('Оновлений опис');
+    expect(res.body.task.deadline).toBe('2027-02-01');
+  });
+
+  it('moves a task to another discipline of the same user', async () => {
+    const ag = await loginUser(USER_A);
+    const disc1 = await createDisc(ag, 'Discipline One');
+    const disc2 = await createDisc(ag, 'Discipline Two');
+    const { body: { task } } = await createTask(ag, disc1.id);
+
+    const res = await ag
+      .patch(`/api/tasks/${task.id}`)
+      .set('Content-Type', 'application/json')
+      .send({ disciplineId: disc2.id });
+
+    expect(res.status).toBe(200);
+    expect(res.body.task.disciplineId).toBe(disc2.id);
+    expect(res.body.task.discipline.name).toBe('Discipline Two');
+  });
+
+  it('rejects moving a task to another user discipline with 404', async () => {
+    const agA = await loginUser(USER_A);
+    const agB = await loginUser(USER_B);
+    const discA = await createDisc(agA, 'User A Discipline');
+    const discB = await createDisc(agB, 'User B Discipline');
+    const { body: { task } } = await createTask(agA, discA.id);
+
+    const res = await agA
+      .patch(`/api/tasks/${task.id}`)
+      .set('Content-Type', 'application/json')
+      .send({ disciplineId: discB.id });
+
+    expect(res.status).toBe(404);
+    expect(res.body.error.message).toBe('Дисципліну не знайдено.');
+  });
 });
 
 describe('DELETE /api/tasks/:id', () => {
@@ -328,6 +375,13 @@ describe('Filtering and search', () => {
     expect(res.status).toBe(422);
   });
 
+  it('rejects a non-boolean done filter with a Ukrainian message', async () => {
+    const ag = await loginUser(USER_A);
+    const res = await ag.get('/api/tasks?done=yes');
+    expect(res.status).toBe(422);
+    expect(res.body.error.fields.done).toBe('Параметр done має бути true або false.');
+  });
+
   it('SQL injection in q param does not break query', async () => {
     const ag = await loginUser(USER_A);
     const res = await ag.get("/api/tasks?q='; DROP TABLE tasks; --");
@@ -346,5 +400,95 @@ describe('Request size limits', () => {
       .send({ title: 'T'.repeat(3), description: 'D'.repeat(20000), disciplineId: disc.id, deadline: '2027-01-01' });
     // Either 413 (too large) or 422 (description too long for Zod)
     expect([413, 422]).toContain(res.status);
+  });
+});
+
+describe('Malformed identifiers', () => {
+  it('GET /api/tasks/:id returns 404 for a non-UUID id', async () => {
+    const ag = await loginUser(USER_A);
+    const res = await ag.get('/api/tasks/not-a-uuid');
+    expect(res.status).toBe(404);
+    expect(res.body.error.code).toBe('NOT_FOUND');
+  });
+
+  it('PATCH /api/tasks/:id returns 404 for a non-UUID id', async () => {
+    const ag = await loginUser(USER_A);
+    const res = await ag
+      .patch('/api/tasks/not-a-uuid')
+      .set('Content-Type', 'application/json')
+      .send({ done: true });
+    expect(res.status).toBe(404);
+  });
+
+  it('DELETE /api/tasks/:id returns 404 for a non-UUID id', async () => {
+    const ag = await loginUser(USER_A);
+    const res = await ag
+      .delete('/api/tasks/not-a-uuid')
+      .set('Content-Type', 'application/json')
+      .send({});
+    expect(res.status).toBe(404);
+  });
+
+  it('returns 404 when creating a task for another user discipline', async () => {
+    const agA = await loginUser(USER_A);
+    const agB = await loginUser(USER_B);
+    const disc = await createDisc(agA);
+    const res = await createTask(agB, disc.id);
+    expect(res.status).toBe(404);
+    expect(res.body.error.message).toBe('Дисципліну не знайдено.');
+  });
+});
+
+describe('Filter date validation', () => {
+  it('rejects from with a non-existent date', async () => {
+    const ag = await loginUser(USER_A);
+    const res = await ag.get('/api/tasks?from=2027-02-31');
+    expect(res.status).toBe(422);
+    expect(res.body.error.fields).toHaveProperty('from');
+  });
+
+  it('rejects to with a wrong format', async () => {
+    const ag = await loginUser(USER_A);
+    const res = await ag.get('/api/tasks?to=31.02.2027');
+    expect(res.status).toBe(422);
+    expect(res.body.error.fields).toHaveProperty('to');
+  });
+});
+
+describe('PATCH validation messages', () => {
+  it('uses Ukrainian messages for a short title', async () => {
+    const ag = await loginUser(USER_A);
+    const disc = await createDisc(ag);
+    const { body: { task } } = await createTask(ag, disc.id);
+    const res = await ag
+      .patch(`/api/tasks/${task.id}`)
+      .set('Content-Type', 'application/json')
+      .send({ title: 'ab' });
+    expect(res.status).toBe(422);
+    expect(res.body.error.fields.title).toBe('Назва має містити від 3 до 100 символів.');
+  });
+
+  it('uses a Ukrainian message for a non-boolean done', async () => {
+    const ag = await loginUser(USER_A);
+    const disc = await createDisc(ag);
+    const { body: { task } } = await createTask(ag, disc.id);
+    const res = await ag
+      .patch(`/api/tasks/${task.id}`)
+      .set('Content-Type', 'application/json')
+      .send({ done: 'yes' });
+    expect(res.status).toBe(422);
+    expect(res.body.error.fields.done).toBe('Поле done має бути true або false.');
+  });
+
+  it('rejects an empty update body', async () => {
+    const ag = await loginUser(USER_A);
+    const disc = await createDisc(ag);
+    const { body: { task } } = await createTask(ag, disc.id);
+    const res = await ag
+      .patch(`/api/tasks/${task.id}`)
+      .set('Content-Type', 'application/json')
+      .send({});
+    expect(res.status).toBe(422);
+    expect(res.body.error.fields._).toBe('Вкажіть хоча б одне поле для оновлення.');
   });
 });

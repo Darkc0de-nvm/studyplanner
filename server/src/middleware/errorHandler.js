@@ -1,5 +1,6 @@
 'use strict';
 const config = require('../config');
+const { mapPgError } = require('../db/pgErrors');
 
 function errorHandler(err, req, res, _next) {
   // Zod validation error
@@ -41,6 +42,13 @@ function errorHandler(err, req, res, _next) {
     return res.status(413).json({
       error: { code: 'PAYLOAD_TOO_LARGE', message: 'Тіло запиту занадто велике.' },
     });
+  }
+
+  // PostgreSQL errors that no service handled explicitly (constraint, bad uuid,
+  // out-of-range date). Translate them before falling back to 500.
+  const pgError = mapPgError(err);
+  if (pgError !== err) {
+    return errorHandler(pgError, req, res, _next);
   }
 
   // Unknown errors

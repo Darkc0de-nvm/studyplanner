@@ -13,6 +13,11 @@ const schema = z.object({
   SESSION_MAX_AGE: z.coerce.number().int().positive().default(2592000),
   TRUST_PROXY: z.coerce.number().int().min(0).default(0),
   COOKIE_DOMAIN: z.string().optional(),
+  // auto: Secure only in production; true/false force the flag (useful locally).
+  COOKIE_SECURE: z.enum(['auto', 'true', 'false']).default('auto'),
+  // auto: SSL for production or known cloud hosts; true/false force it.
+  DATABASE_SSL: z.enum(['auto', 'true', 'false']).default('auto'),
+  DATABASE_SSL_REJECT_UNAUTHORIZED: z.enum(['true', 'false']).default('true'),
 });
 
 let config;

@@ -1,6 +1,7 @@
 'use strict';
 const pool = require('../db/pool');
 const AppError = require('../middleware/AppError');
+const { isForeignKeyViolation } = require('../db/pgErrors');
 
 const BASE_SELECT = `
   SELECT
@@ -26,7 +27,7 @@ function formatTask(row) {
       colorIndex: row.discipline_color_index,
     },
     title: row.title,
-    description: row.description !== undefined ? row.description : null,
+    description: row.description ?? null,
     deadline: row.deadline,
     done: row.done,
     completedAt: row.completed_at || null,
@@ -83,11 +84,21 @@ async function create(userId, data) {
   );
   if (disc.length === 0) throw new AppError(404, 'NOT_FOUND', 'Дисципліну не знайдено.');
 
-  const { rows: [task] } = await pool.query(
-    `INSERT INTO tasks (user_id, discipline_id, title, description, deadline)
-     VALUES ($1, $2, $3, $4, $5) RETURNING id`,
-    [userId, data.disciplineId, data.title, data.description || null, data.deadline]
-  );
+  let task;
+  try {
+    const { rows } = await pool.query(
+      `INSERT INTO tasks (user_id, discipline_id, title, description, deadline)
+       VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+      [userId, data.disciplineId, data.title, data.description || null, data.deadline]
+    );
+    task = rows[0];
+  } catch (err) {
+    // The discipline can disappear between the ownership check and the insert.
+    if (isForeignKeyViolation(err)) {
+      throw new AppError(404, 'NOT_FOUND', 'Дисципліну не знайдено.');
+    }
+    throw err;
+  }
   return getById(userId, task.id);
 }
 
@@ -121,10 +132,18 @@ async function update(userId, id, data) {
   sets.push('updated_at = NOW()');
   params.push(id, userId);
 
-  await pool.query(
-    `UPDATE tasks SET ${sets.join(', ')} WHERE id = $${idx++} AND user_id = $${idx++}`,
-    params
-  );
+  try {
+    await pool.query(
+      `UPDATE tasks SET ${sets.join(', ')} WHERE id = $${idx++} AND user_id = $${idx++}`,
+      params
+    );
+  } catch (err) {
+    // A discipline moved/deleted concurrently.
+    if (isForeignKeyViolation(err)) {
+      throw new AppError(404, 'NOT_FOUND', 'Дисципліну не знайдено.');
+    }
+    throw err;
+  }
   return getById(userId, id);
 }
 

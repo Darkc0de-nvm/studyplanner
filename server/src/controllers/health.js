@@ -8,8 +8,9 @@ async function health(req, res) {
   } catch {
     dbStatus = 'error';
   }
-  res.json({
-    status: 'ok',
+  const healthy = dbStatus === 'ok';
+  res.status(healthy ? 200 : 503).json({
+    status: healthy ? 'ok' : 'degraded',
     db: dbStatus,
     uptime: Math.floor(process.uptime()),
     timestamp: new Date().toISOString(),

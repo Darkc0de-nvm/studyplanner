@@ -1,6 +1,7 @@
 'use strict';
 const pool = require('../db/pool');
 const AppError = require('../middleware/AppError');
+const { isUniqueViolation, isForeignKeyViolation } = require('../db/pgErrors');
 
 function format(row) {
   return { id: row.id, userId: row.user_id, name: row.name, colorIndex: row.color_index };
@@ -37,10 +38,20 @@ async function create(userId, name, colorIndex = 1) {
     throw new AppError(409, 'DISCIPLINE_CONFLICT', 'Дисципліна з такою назвою вже існує.');
   }
 
-  const { rows: [disc] } = await pool.query(
-    'INSERT INTO disciplines (user_id, name, color_index) VALUES ($1, $2, $3) RETURNING id, user_id, name, color_index',
-    [userId, name, colorIndex]
-  );
+  let disc;
+  try {
+    const { rows } = await pool.query(
+      'INSERT INTO disciplines (user_id, name, color_index) VALUES ($1, $2, $3) RETURNING id, user_id, name, color_index',
+      [userId, name, colorIndex]
+    );
+    disc = rows[0];
+  } catch (err) {
+    // Concurrent create can slip past the SELECT above.
+    if (isUniqueViolation(err)) {
+      throw new AppError(409, 'DISCIPLINE_CONFLICT', 'Дисципліна з такою назвою вже існує.');
+    }
+    throw err;
+  }
   return format(disc);
 }
 
@@ -53,10 +64,20 @@ async function remove(userId, id) {
     throw new AppError(409, 'DISCIPLINE_HAS_TASKS', 'Неможливо видалити дисципліну — є прив\'язані завдання.');
   }
 
-  const { rowCount } = await pool.query(
-    'DELETE FROM disciplines WHERE id = $1 AND user_id = $2',
-    [id, userId]
-  );
+  let rowCount;
+  try {
+    ({ rowCount } = await pool.query(
+      'DELETE FROM disciplines WHERE id = $1 AND user_id = $2',
+      [id, userId]
+    ));
+  } catch (err) {
+    // A task created between the COUNT above and this DELETE is rejected by the
+    // ON DELETE RESTRICT constraint; report it as a conflict, not a 500.
+    if (isForeignKeyViolation(err)) {
+      throw new AppError(409, 'DISCIPLINE_HAS_TASKS', 'Неможливо видалити дисципліну — є прив\'язані завдання.');
+    }
+    throw err;
+  }
   if (rowCount === 0) throw new AppError(404, 'NOT_FOUND', 'Дисципліну не знайдено.');
 }
 

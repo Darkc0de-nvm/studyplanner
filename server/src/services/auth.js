@@ -3,6 +3,7 @@ const argon2 = require('argon2');
 const pool = require('../db/pool');
 const config = require('../config');
 const AppError = require('../middleware/AppError');
+const { isUniqueViolation } = require('../db/pgErrors');
 
 async function register(name, email, password) {
   const { rows: existing } = await pool.query(
@@ -20,10 +21,20 @@ async function register(name, email, password) {
     parallelism: 1,
   });
 
-  const { rows: [user] } = await pool.query(
-    'INSERT INTO users (email, name, password_hash) VALUES ($1, $2, $3) RETURNING id, email, name',
-    [email.toLowerCase(), name, passwordHash]
-  );
+  let user;
+  try {
+    const { rows } = await pool.query(
+      'INSERT INTO users (email, name, password_hash) VALUES ($1, $2, $3) RETURNING id, email, name',
+      [email.toLowerCase(), name, passwordHash]
+    );
+    user = rows[0];
+  } catch (err) {
+    // Concurrent registration can slip past the SELECT above.
+    if (isUniqueViolation(err)) {
+      throw new AppError(409, 'EMAIL_CONFLICT', 'Користувач із такою електронною поштою вже зареєстрований.');
+    }
+    throw err;
+  }
 
   return user;
 }

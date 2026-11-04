@@ -1,6 +1,7 @@
 'use strict';
 const { request } = require('./helpers/app');
 const { runMigrations } = require('./helpers/db');
+const pool = require('../src/db/pool');
 
 beforeAll(async () => { await runMigrations(); });
 
@@ -12,6 +13,18 @@ describe('GET /api/health', () => {
     expect(res.body.db).toBe('ok');
     expect(typeof res.body.uptime).toBe('number');
     expect(res.body.timestamp).toBeTruthy();
+  });
+
+  it('returns 503 degraded when the database is unavailable', async () => {
+    const spy = vi.spyOn(pool, 'query').mockRejectedValueOnce(new Error('db down'));
+    try {
+      const res = await request().get('/api/health');
+      expect(res.status).toBe(503);
+      expect(res.body.status).toBe('degraded');
+      expect(res.body.db).toBe('error');
+    } finally {
+      spy.mockRestore();
+    }
   });
 });
 

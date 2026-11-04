@@ -1,6 +1,8 @@
 'use strict';
 const { agent, request } = require('./helpers/app');
 const { runMigrations, cleanDb } = require('./helpers/db');
+const { serialize } = require('../src/utils/sessionCookie');
+const { randomUUID } = require('crypto');
 
 const VALID_USER = {
   name: 'Test User',
@@ -214,5 +216,104 @@ describe('XSS payload storage', () => {
     }
     // If status 422 it means name failed validation (which is acceptable since length may be fine)
     expect([201, 422]).toContain(res.status);
+  });
+});
+
+describe('Session cookie integrity', () => {
+  it('sets a signed cookie value', async () => {
+    const res = await request()
+      .post('/api/auth/register')
+      .set('Content-Type', 'application/json')
+      .send(VALID_USER);
+    const cookie = res.headers['set-cookie'][0].split(';')[0];
+    const value = cookie.replace('sp_session=', '');
+    expect(value).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.[A-Za-z0-9_-]{43}$/);
+  });
+
+  it('returns 401 SESSION_EXPIRED for a malformed cookie', async () => {
+    const res = await request().get('/api/auth/me').set('Cookie', 'sp_session=not-a-uuid');
+    expect(res.status).toBe(401);
+    expect(res.body.error.code).toBe('SESSION_EXPIRED');
+    expect(res.headers['set-cookie']).toBeDefined();
+  });
+
+  it('returns 401 SESSION_EXPIRED for a tampered signature', async () => {
+    const reg = await request()
+      .post('/api/auth/register')
+      .set('Content-Type', 'application/json')
+      .send(VALID_USER);
+    const raw = reg.headers['set-cookie'][0].split(';')[0].replace('sp_session=', '');
+    const id = raw.split('.')[0];
+
+    const res = await request()
+      .get('/api/auth/me')
+      .set('Cookie', `sp_session=${id}.${'A'.repeat(43)}`);
+    expect(res.status).toBe(401);
+    expect(res.body.error.code).toBe('SESSION_EXPIRED');
+  });
+
+  it('returns 401 SESSION_EXPIRED for a well-formed but unknown session', async () => {
+    const res = await request()
+      .get('/api/auth/me')
+      .set('Cookie', `sp_session=${serialize(randomUUID())}`);
+    expect(res.status).toBe(401);
+    expect(res.body.error.code).toBe('SESSION_EXPIRED');
+  });
+
+  it('returns 401 SESSION_EXPIRED for a cookie with an empty signature', async () => {
+    const res = await request()
+      .get('/api/auth/me')
+      .set('Cookie', `sp_session=${randomUUID()}.`);
+    expect(res.status).toBe(401);
+    expect(res.body.error.code).toBe('SESSION_EXPIRED');
+  });
+
+  it('returns 401 SESSION_EXPIRED for a signed value with a malformed UUID', async () => {
+    const res = await request()
+      .get('/api/auth/me')
+      .set('Cookie', `sp_session=not-a-uuid.${'A'.repeat(43)}`);
+    expect(res.status).toBe(401);
+    expect(res.body.error.code).toBe('SESSION_EXPIRED');
+  });
+
+  it('returns 401 AUTH_REQUIRED when no cookie is sent', async () => {
+    const res = await request().get('/api/auth/me');
+    expect(res.status).toBe(401);
+    expect(res.body.error.code).toBe('AUTH_REQUIRED');
+  });
+});
+
+describe('CSRF Origin validation', () => {
+  it('rejects a cross-origin state-changing request with 403', async () => {
+    const res = await request()
+      .post('/api/auth/register')
+      .set('Content-Type', 'application/json')
+      .set('Origin', 'http://evil.example')
+      .send(VALID_USER);
+
+    expect(res.status).toBe(403);
+    expect(res.body.error.code).toBe('CSRF_FORBIDDEN');
+  });
+
+  it('rejects a malformed Origin header with 400', async () => {
+    const res = await request()
+      .post('/api/auth/register')
+      .set('Content-Type', 'application/json')
+      .set('Origin', 'not a url')
+      .send(VALID_USER);
+
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe('BAD_ORIGIN');
+  });
+
+  it('accepts a same-origin request whose Origin matches Host', async () => {
+    const res = await request()
+      .post('/api/auth/register')
+      .set('Host', 'example.test')
+      .set('Origin', 'http://example.test')
+      .set('Content-Type', 'application/json')
+      .send(VALID_USER);
+
+    expect(res.status).toBe(201);
   });
 });

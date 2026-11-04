@@ -1,6 +1,7 @@
 'use strict';
 const { agent } = require('./helpers/app');
-const { runMigrations, cleanDb } = require('./helpers/db');
+const { runMigrations, cleanDb, pool } = require('./helpers/db');
+const disciplinesService = require('../src/services/disciplines');
 
 const USER = { name: 'Disc User', email: 'disc@example.com', password: 'Password1!' };
 
@@ -82,5 +83,32 @@ describe('DELETE /api/disciplines/:id', () => {
     const ag = await setup();
     const res = await ag.delete('/api/disciplines/00000000-0000-0000-0000-000000000000').set('Content-Type', 'application/json').send({});
     expect(res.status).toBe(404);
+  });
+
+  it('returns 404 for a non-UUID discipline id', async () => {
+    const ag = await setup();
+    const res = await ag.delete('/api/disciplines/not-a-uuid').set('Content-Type', 'application/json').send({});
+    expect(res.status).toBe(404);
+    expect(res.body.error.code).toBe('NOT_FOUND');
+  });
+});
+
+describe('disciplinesService.findOrCreate', () => {
+  it('returns the existing discipline instead of creating a duplicate', async () => {
+    await setup();
+
+    const { rows: [user] } = await pool.query('SELECT id FROM users WHERE email = $1', [USER.email]);
+    const first = await disciplinesService.findOrCreate(user.id, 'Physics', 4);
+    const second = await disciplinesService.findOrCreate(user.id, 'PHYSICS', 2);
+
+    expect(first.name).toBe('Physics');
+    expect(first.colorIndex).toBe(4);
+    expect(second).toEqual(first);
+
+    const { rows: [{ count }] } = await pool.query(
+      'SELECT COUNT(*)::int AS count FROM disciplines WHERE user_id = $1',
+      [user.id]
+    );
+    expect(count).toBe(1);
   });
 });

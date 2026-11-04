@@ -1,48 +1,41 @@
 'use strict';
 const { randomBytes } = require('crypto');
-const pool = require('./pool');
 const argon2 = require('argon2');
+const pool = require('./pool');
+const { localToday, addDays, clampToWeekEnd } = require('./seedDates');
 
-function addDays(date, n) {
-  const d = new Date(date);
-  d.setDate(d.getDate() + n);
-  return d.toISOString().slice(0, 10);
-}
-
-// Clamp future date to end of same week (Sunday)
-function clampToWeekEnd(isoDate) {
-  const d = new Date(isoDate + 'T00:00:00');
-  const day = d.getDay(); // 0=Sun, 1=Mon...6=Sat
-  if (day === 0) return isoDate; // already Sunday
-  // Find next Sunday
-  const daysToSun = 7 - day;
-  return addDays(d, daysToSun);
-}
-
-async function seed() {
-  // Credentials: from env or generated
-  const email = process.env.SEED_EMAIL || `demo_${randomBytes(4).toString('hex')}@example.com`;
-  const password = process.env.SEED_PASSWORD || randomBytes(8).toString('hex') + 'A1!';
-  const name = process.env.SEED_NAME || 'Demo User';
+/**
+ * Creates the demo user together with three disciplines and seven tasks.
+ * Everything runs in a single transaction so a failure cannot leave a
+ * half-seeded account behind.
+ */
+async function seed(options = {}) {
+  const email = options.email || process.env.SEED_EMAIL || `demo_${randomBytes(4).toString('hex')}@example.com`;
+  const password = options.password || process.env.SEED_PASSWORD || randomBytes(8).toString('hex') + 'A1!';
+  const name = options.name || process.env.SEED_NAME || 'Demo User';
+  const credentialsGenerated = !options.password && !process.env.SEED_PASSWORD;
 
   const client = await pool.connect();
   try {
-    // Check if already seeded
-    const { rows: existing } = await client.query('SELECT id FROM users WHERE email = $1', [email.toLowerCase()]);
+    await client.query('BEGIN');
+
+    const { rows: existing } = await client.query(
+      'SELECT id FROM users WHERE email = $1',
+      [email.toLowerCase()]
+    );
     if (existing.length > 0) {
+      await client.query('ROLLBACK');
       console.log(`Demo user already exists: ${email}`);
-      return;
+      return { created: false, email };
     }
 
     const passwordHash = await argon2.hash(password, { type: argon2.argon2id });
 
-    // Create user
     const { rows: [user] } = await client.query(
       'INSERT INTO users (email, name, password_hash) VALUES ($1, $2, $3) RETURNING id',
       [email.toLowerCase(), name, passwordHash]
     );
 
-    // Create 3 disciplines
     const disciplines = [
       { name: 'Архітектура комп\'ютера', colorIndex: 1 },
       { name: 'Web-дизайн', colorIndex: 2 },
@@ -58,7 +51,8 @@ async function seed() {
       discIds.push(disc.id);
     }
 
-    const today = new Date().toISOString().slice(0, 10);
+    // Local calendar date, then offsets in UTC so DST cannot shift the result.
+    const today = localToday();
     const [archId, webId, dbId] = discIds;
 
     // 7 seed tasks matching Lab 4 offsets: -2, -3, -4, 0, +2(clamped), +9, +12
@@ -80,8 +74,9 @@ async function seed() {
       );
     }
 
-    // Print credentials if generated (not in env)
-    if (!process.env.SEED_EMAIL) {
+    await client.query('COMMIT');
+
+    if (credentialsGenerated) {
       console.log('\n🌱 Demo user created:');
       console.log(`   Email:    ${email}`);
       console.log(`   Password: ${password}`);
@@ -89,13 +84,24 @@ async function seed() {
     } else {
       console.log(`\n🌱 Demo user created: ${email}`);
     }
+
+    return { created: true, email };
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    throw err;
   } finally {
     client.release();
-    await pool.end();
   }
 }
 
-seed().catch((err) => {
-  console.error('Seed error:', err.message);
-  process.exit(1);
-});
+if (require.main === module) {
+  seed()
+    .then(() => pool.end())
+    .catch(async (err) => {
+      console.error('Seed error:', err.message);
+      await pool.end().catch(() => {});
+      process.exit(1);
+    });
+}
+
+module.exports = { seed };

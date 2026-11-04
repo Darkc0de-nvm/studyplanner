@@ -1,11 +1,19 @@
 'use strict';
 const pool = require('../db/pool');
 const AppError = require('./AppError');
+const { readSessionId, clearSessionCookie } = require('../utils/sessionCookie');
 
 async function requireAuth(req, res, next) {
-  const sessionId = req.cookies && req.cookies.sp_session;
-  if (!sessionId) {
+  const rawCookie = req.cookies && req.cookies.sp_session;
+  if (!rawCookie) {
     return next(new AppError(401, 'AUTH_REQUIRED', 'Необхідна автентифікація.'));
+  }
+
+  // Malformed or tampered cookie values never reach the database.
+  const sessionId = readSessionId(req.cookies);
+  if (!sessionId) {
+    clearSessionCookie(res);
+    return next(new AppError(401, 'SESSION_EXPIRED', 'Сесія недійсна або прострочена.'));
   }
 
   try {
@@ -19,7 +27,7 @@ async function requireAuth(req, res, next) {
     );
 
     if (rows.length === 0) {
-      res.clearCookie('sp_session', { path: '/' });
+      clearSessionCookie(res);
       return next(new AppError(401, 'SESSION_EXPIRED', 'Сесія недійсна або прострочена.'));
     }
 
