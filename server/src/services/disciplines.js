@@ -1,0 +1,63 @@
+'use strict';
+const pool = require('../db/pool');
+const AppError = require('../middleware/AppError');
+
+function format(row) {
+  return { id: row.id, userId: row.user_id, name: row.name, colorIndex: row.color_index };
+}
+
+async function list(userId) {
+  const { rows } = await pool.query(
+    'SELECT id, user_id, name, color_index FROM disciplines WHERE user_id = $1 ORDER BY name ASC',
+    [userId]
+  );
+  return rows.map(format);
+}
+
+async function findOrCreate(userId, name, colorIndex = 1) {
+  const { rows } = await pool.query(
+    'SELECT id, user_id, name, color_index FROM disciplines WHERE user_id = $1 AND lower(name) = lower($2)',
+    [userId, name]
+  );
+  if (rows.length > 0) return format(rows[0]);
+
+  const { rows: [created] } = await pool.query(
+    'INSERT INTO disciplines (user_id, name, color_index) VALUES ($1, $2, $3) RETURNING id, user_id, name, color_index',
+    [userId, name, colorIndex]
+  );
+  return format(created);
+}
+
+async function create(userId, name, colorIndex = 1) {
+  const { rows: existing } = await pool.query(
+    'SELECT id FROM disciplines WHERE user_id = $1 AND lower(name) = lower($2)',
+    [userId, name]
+  );
+  if (existing.length > 0) {
+    throw new AppError(409, 'DISCIPLINE_CONFLICT', 'Дисципліна з такою назвою вже існує.');
+  }
+
+  const { rows: [disc] } = await pool.query(
+    'INSERT INTO disciplines (user_id, name, color_index) VALUES ($1, $2, $3) RETURNING id, user_id, name, color_index',
+    [userId, name, colorIndex]
+  );
+  return format(disc);
+}
+
+async function remove(userId, id) {
+  const { rows: withTasks } = await pool.query(
+    'SELECT COUNT(*)::int AS cnt FROM tasks WHERE discipline_id = $1 AND user_id = $2',
+    [id, userId]
+  );
+  if (withTasks[0].cnt > 0) {
+    throw new AppError(409, 'DISCIPLINE_HAS_TASKS', 'Неможливо видалити дисципліну — є прив\'язані завдання.');
+  }
+
+  const { rowCount } = await pool.query(
+    'DELETE FROM disciplines WHERE id = $1 AND user_id = $2',
+    [id, userId]
+  );
+  if (rowCount === 0) throw new AppError(404, 'NOT_FOUND', 'Дисципліну не знайдено.');
+}
+
+module.exports = { list, findOrCreate, create, remove };

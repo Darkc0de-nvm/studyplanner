@@ -1,0 +1,36 @@
+{
+  "name": "studyplanner-server",
+  "version": "1.0.0",
+  "description": "StudyPlanner REST API server — Lab 5",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --env-file=.env --watch src/index.js",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest --reporter verbose",
+    "lint": "eslint src tests",
+    "migrate": "node --env-file=.env src/db/migrate.js",
+    "migrate:status": "node --env-file=.env src/db/migrate.js --status",
+    "seed": "node --env-file=.env src/db/seed.js"
+  },
+  "dependencies": {
+    "argon2": "^0.41.1",
+    "compression": "^1.7.5",
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.1",
+    "express-rate-limit": "^7.4.1",
+    "helmet": "^8.0.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.13.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^2.1.4",
+    "eslint": "^9.14.0",
+    "supertest": "^7.0.0",
+    "vitest": "^2.1.4"
+  }
+}
