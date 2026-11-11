@@ -1,5 +1,5 @@
 'use strict';
-const { localToday, addDays, clampToWeekEnd } = require('../src/db/seedDates');
+const { localToday, resolveBaseDate, addDays, clampToWeekEnd } = require('../src/db/seedDates');
 
 describe('seedDates', () => {
   it('addDays crosses month and year boundaries', () => {
@@ -22,5 +22,29 @@ describe('seedDates', () => {
   it('localToday returns the local calendar date', () => {
     const fixed = new Date(2026, 0, 2, 23, 30, 0); // local time, late evening
     expect(localToday(fixed)).toBe('2026-01-02');
+  });
+
+  it('resolveBaseDate falls back to localToday when unset', () => {
+    const fixed = new Date(2026, 0, 2, 23, 30, 0);
+    expect(resolveBaseDate(undefined, fixed)).toBe('2026-01-02');
+    expect(resolveBaseDate(null, fixed)).toBe('2026-01-02');
+    expect(resolveBaseDate('', fixed)).toBe('2026-01-02');
+  });
+
+  it('resolveBaseDate accepts a valid ISO calendar date', () => {
+    expect(resolveBaseDate('2026-10-06')).toBe('2026-10-06');
+    expect(resolveBaseDate('2028-02-29')).toBe('2028-02-29');
+  });
+
+  it('resolveBaseDate rejects a malformed value', () => {
+    for (const value of ['06.10.2026', '2026-10-6', '2026-1-06', '2026/10/06', 20261006]) {
+      expect(() => resolveBaseDate(value)).toThrow(/YYYY-MM-DD/);
+    }
+  });
+
+  it('resolveBaseDate rejects an impossible calendar date', () => {
+    expect(() => resolveBaseDate('2026-02-30')).toThrow(/valid calendar date/);
+    expect(() => resolveBaseDate('2027-02-29')).toThrow(/valid calendar date/);
+    expect(() => resolveBaseDate('2026-13-01')).toThrow(/valid calendar date/);
   });
 });

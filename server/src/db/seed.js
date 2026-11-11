@@ -2,7 +2,7 @@
 const { randomBytes } = require('crypto');
 const argon2 = require('argon2');
 const pool = require('./pool');
-const { localToday, addDays, clampToWeekEnd } = require('./seedDates');
+const { resolveBaseDate, addDays, clampToWeekEnd } = require('./seedDates');
 
 /**
  * Creates the demo user together with three disciplines and seven tasks.
@@ -14,6 +14,7 @@ async function seed(options = {}) {
   const password = options.password || process.env.SEED_PASSWORD || randomBytes(8).toString('hex') + 'A1!';
   const name = options.name || process.env.SEED_NAME || 'Demo User';
   const credentialsGenerated = !options.password && !process.env.SEED_PASSWORD;
+  const baseDate = resolveBaseDate(options.baseDate ?? process.env.SEED_BASE_DATE);
 
   const client = await pool.connect();
   try {
@@ -37,7 +38,7 @@ async function seed(options = {}) {
     );
 
     const disciplines = [
-      { name: 'Архітектура комп\'ютера', colorIndex: 1 },
+      { name: 'Архітектура комп’ютера', colorIndex: 1 },
       { name: 'Web-дизайн', colorIndex: 2 },
       { name: 'Бази даних', colorIndex: 3 },
     ];
@@ -51,19 +52,21 @@ async function seed(options = {}) {
       discIds.push(disc.id);
     }
 
-    // Local calendar date, then offsets in UTC so DST cannot shift the result.
-    const today = localToday();
+    // Base date comes from SEED_BASE_DATE (or today) and is shifted in UTC so
+    // DST and local offsets cannot change the seeded deadline groups.
     const [archId, webId, dbId] = discIds;
+    const description = 'Додати скриншоти виконання, схему алгоритму та висновки. Здати до практичного заняття через Moodle.';
 
-    // 7 seed tasks matching Lab 4 offsets: -2, -3, -4, 0, +2(clamped), +9, +12
+    // 7 tasks mirroring the Lab 4 client seed exactly:
+    // offsets -2, -3, -4, 0, +2 (clamped to week end), +9, +12.
     const tasks = [
-      { title: 'Звіт з лабораторної роботи', description: 'Підготувати звіт відповідно до вимог кафедри', disciplineId: archId, deadline: addDays(today, -2), done: false },
-      { title: 'Контрольна робота з Web-дизайну', description: 'Повторити теми: Flexbox, Grid, адаптивна верстка', disciplineId: webId, deadline: addDays(today, -3), done: false },
-      { title: 'Звіт з практики', description: 'Скласти звіт за результатами практики', disciplineId: dbId, deadline: addDays(today, -4), done: false },
-      { title: 'Скласти план проекту', description: 'Визначити технічний стек та архітектуру', disciplineId: archId, deadline: today, done: false },
-      { title: 'Реферат з Web-дизайну', description: null, disciplineId: webId, deadline: clampToWeekEnd(addDays(today, 2)), done: false },
-      { title: 'Курсова робота', description: 'Реалізація основних модулів системи', disciplineId: dbId, deadline: addDays(today, 9), done: false },
-      { title: 'Підготовка до іспиту', description: 'Переглянути лекційний матеріал', disciplineId: archId, deadline: addDays(today, 12), done: true },
+      { title: 'Оформити звіт з лабораторної роботи №3', description, disciplineId: archId, deadline: addDays(baseDate, -2), done: false },
+      { title: 'Додати інтерактивні елементи на головну сторінку', description, disciplineId: webId, deadline: addDays(baseDate, -3), done: false },
+      { title: 'Скласти конспект за темою «Кеш-пам’ять»', description, disciplineId: archId, deadline: addDays(baseDate, -4), done: true },
+      { title: 'Виконати нормоконтроль лекційного матеріалу', description: '', disciplineId: dbId, deadline: baseDate, done: false },
+      { title: 'Підготувати презентацію до захисту проєкту', description, disciplineId: archId, deadline: clampToWeekEnd(addDays(baseDate, 2)), done: false },
+      { title: 'Оновити базу даних для фінального проєкту', description, disciplineId: dbId, deadline: addDays(baseDate, 9), done: false },
+      { title: 'Підготувати підсумковий звіт за курсовий проєкт', description, disciplineId: archId, deadline: addDays(baseDate, 12), done: false },
     ];
 
     for (const t of tasks) {

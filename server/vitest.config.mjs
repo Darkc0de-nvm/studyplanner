@@ -4,6 +4,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    include: ['tests/**/*.test.js'],
     setupFiles: ['./tests/helpers/setup.js'],
     pool: 'forks',
     poolOptions: {
