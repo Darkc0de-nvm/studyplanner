@@ -27,10 +27,9 @@
         if (!banner) {
           banner = document.createElement('div');
           banner.id = 'network-offline-banner';
-          banner.className = 'alert alert--error';
+          banner.className = 'alert alert--error network-banner';
           banner.setAttribute('role', 'status');
           banner.setAttribute('aria-live', 'polite');
-          banner.style.cssText = 'position:sticky;top:0;z-index:9999;margin:0;border-radius:0;text-align:center;padding:0.75rem;';
           banner.textContent = 'Відсутнє підключення до мережі. Перевірте зв’язок.';
           document.body.prepend(banner);
         }

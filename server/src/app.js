@@ -76,7 +76,7 @@ app.use('/api', (_req, res) => {
   res.status(404).json({ error: { code: 'NOT_FOUND', message: 'API endpoint не знайдено.' } });
 });
 
-// Static client (client/ will exist after Phase 2 git mv)
+// Static client served by the same origin as the API
 const CLIENT_DIR = path.resolve(__dirname, '../../client');
 mountClientStatic(app, CLIENT_DIR);
 

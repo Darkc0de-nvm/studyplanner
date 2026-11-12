@@ -1,88 +1,133 @@
 # StudyPlanner
 
-Вебзастосунок для планування навчальних завдань і дедлайнів.
+Вебзастосунок для планування навчальних завдань і дедлайнів. Це full-stack проєкт: статичний клієнт на HTML, CSS і JavaScript, REST API на Node.js та Express і PostgreSQL для зберігання даних.
 
-Вебзастосунок для планування навчальних завдань і дедлайнів.
+## Стек
 
-Лабораторна робота №5: клієнт з Lab 3–4 перетворено на full-stack застосунок із REST API, PostgreSQL, серверною авторизацією та e2e-тестами.
+- **Клієнт:** HTML5, CSS3, JavaScript без збирача; локальний шрифт Geist.
+- **Сервер:** Node.js 22+, Express 4, Zod для валідації.
+- **Дані й авторизація:** PostgreSQL 16, сесійні HttpOnly cookie, хешування паролів Argon2id.
+- **Перевірки:** Vitest і Supertest для API; Playwright для наскрізних сценаріїв у Chromium та Firefox; ESLint.
+- **Локальна інфраструктура:** Docker Compose для PostgreSQL.
 
 ## Структура
 
 ```text
 StudyPlanner/
-├── client/                     # Статичний клієнт без збірки
-│   ├── index.html              # Головна сторінка
-│   ├── tasks.html              # Список завдань
-│   ├── tasks-*.html            # Короткі переходи до станів tasks.html
-│   ├── calendar.html           # Календар завдань
-│   ├── calendar-*.html         # Стани фільтрації календаря
-│   ├── login*.html             # Вхід і стан помилки
-│   ├── register*.html          # Реєстрація і стан помилки
-│   ├── privacy.html, terms.html # Політика конфіденційності та умови
-│   ├── 404.html, 500.html, offline.html # Системні сторінки
-│   ├── states.html             # Каталог станів інтерфейсу
-│   ├── js/                     # Звичайні defer-скрипти (window.StudyPlanner)
-│   ├── css/                    # tokens, base, layout, components, utilities, pages
-│   └── assets/fonts/           # Локальні файли Geist
-├── server/                     # Express 4 + PostgreSQL + Zod
-│   ├── src/                    # app, routes, controllers, services, schemas, db
-│   ├── tests/                  # Vitest + supertest
-│   ├── e2e/                    # Playwright-сценарії та e2e-БД
-│   └── playwright.config.js
-├── docs/                       # Документація для звіту
-├── docker-compose.yml          # PostgreSQL для розробки й тестів
-└── README.md
+├── client/                     # Статичний клієнт, який віддає Express
+│   ├── *.html                  # Сторінки та стани інтерфейсу
+│   ├── css/                    # Загальні стилі й стилі сторінок
+│   ├── js/                     # Скрипти клієнта
+│   └── assets/fonts/           # Локальні шрифти Geist
+├── server/
+│   ├── src/
+│   │   ├── routes/             # Маршрути API
+│   │   ├── controllers/        # HTTP-обробники
+│   │   ├── services/           # Бізнес-логіка
+│   │   ├── schemas/            # Схеми валідації
+│   │   ├── middleware/         # Авторизація та проміжні обробники
+│   │   └── db/                 # Підключення, міграції та seed
+│   ├── tests/                  # API-тести
+│   ├── e2e/                    # Playwright і налаштування e2e-БД
+│   └── package.json
+└── docker-compose.yml           # PostgreSQL для розробки й тестів
 ```
 
-## Запуск
+## Локальний запуск
 
-Потрібні Node.js ≥22, PostgreSQL 16 (або `docker compose up -d db`) і залежності сервера:
+Потрібні Node.js 22+ і Docker із Docker Compose.
+
+1. Створіть конфігурацію сервера з шаблону:
+
+   ```powershell
+   Copy-Item server/.env.example server/.env
+   ```
+
+   У `server/.env` замініть `SESSION_SECRET` на випадковий секрет. Наприклад, з каталогу `server` згенеруйте його так:
+
+   ```powershell
+   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+   ```
+
+2. Із кореня проєкту запустіть локальну базу:
+
+   ```powershell
+   docker compose --env-file server/.env up -d db
+   ```
+
+3. Встановіть залежності, застосуйте міграції й запустіть сервер:
+
+   ```powershell
+   cd server
+   npm ci
+   npm run migrate
+   npm run dev
+   ```
+
+Відкрийте [http://localhost:3000](http://localhost:3000). Express віддає клієнт із `client/` і API з `/api`; окремої збірки клієнта немає. Перевірка сервера та бази доступна за адресою [http://localhost:3000/api/health](http://localhost:3000/api/health).
+
+## Демонстраційні дані
+
+Команда `npm run seed` створює демокористувача, три дисципліни й сім завдань. Якщо `SEED_EMAIL` і `SEED_PASSWORD` не задані, email і пароль генеруються випадково; ім’я за замовчуванням — `Demo User`. Значення можна задати через `SEED_EMAIL`, `SEED_PASSWORD` і `SEED_NAME`. Коли пароль генерується, команда виводить облікові дані в консоль.
+
+`SEED_BASE_DATE` задає базову дату дедлайнів у форматі `YYYY-MM-DD`. Типово береться локальна дата запуску. Щоб відтворити візуальну базу Lab 4, задайте `SEED_BASE_DATE=2026-10-06` у `server/.env` перед запуском seed. Некоректна дата зупиняє seed.
+
+## API
+
+Основні маршрути:
+
+| Метод                    | Шлях                   | Призначення                           |
+| ------------------------ | ---------------------- | ------------------------------------- |
+| `GET`                    | `/api/health`          | Перевірка сервера й бази даних        |
+| `POST`                   | `/api/auth/register`   | Реєстрація користувача                |
+| `POST`                   | `/api/auth/login`      | Вхід                                  |
+| `GET`                    | `/api/auth/me`         | Дані поточного користувача            |
+| `POST`                   | `/api/auth/logout`     | Вихід                                 |
+| `GET`, `POST`            | `/api/tasks`           | Список і створення завдань            |
+| `GET`, `PATCH`, `DELETE` | `/api/tasks/:id`       | Перегляд, зміна й видалення завдання  |
+| `GET`, `POST`            | `/api/disciplines`     | Список і створення дисциплін          |
+| `DELETE`                 | `/api/disciplines/:id` | Видалення дисципліни                  |
+| `DELETE`                 | `/api/account`         | Видалення акаунта та пов’язаних даних |
+
+Маршрути завдань, дисциплін і акаунта потребують активної сесії. Повний опис форматів запитів і відповідей дивіться у [`docs/api.md`](docs/api.md).
+
+## Тести та перевірки
+
+Перед тестами запустіть PostgreSQL для тестів із кореня проєкту:
+
+```powershell
+docker compose --env-file server/.env up -d db_test
+```
+
+Потім виконайте тести з каталогу `server`:
 
 ```powershell
 cd server
-npm install
-Copy-Item .env.example .env
-npm run migrate
-npm run seed
-npm start
+npm test
+npm run e2e
 ```
 
-Відкрийте http://localhost:3000. Клієнт лежить у `client/` і віддається тим самим Express-сервером; окремої збірки немає.
+API-тести використовують `studyplanner_test` на порту `5433`. E2E-тести запускають тестовий сервер і використовують окрему базу `studyplanner_e2e` на тому самому порту. **E2E-підготовка щоразу пересоздає цю окрему базу**, тому не вказуйте тут базу з потрібними даними.
 
-`states.html` перелічує демонстраційні стани `tasks.html?state=...`. Вони потребують входу й читають дані з API.
-
-## Демо-дані та SEED_BASE_DATE
-
-`npm run seed` створює демо-користувача з трьома дисциплінами та сімома завданнями. Облікові дані беруться з `SEED_EMAIL`, `SEED_PASSWORD`, `SEED_NAME`; якщо пароль не задано, він генерується і друкується один раз.
-
-`SEED_BASE_DATE` у форматі `YYYY-MM-DD` задає базову дату для дедлайнів; типово використовується локальна дата запуску. Для відтворення baseline Lab 4 встановіть `SEED_BASE_DATE=2026-10-06`. Некоректне або неможливе значення зупиняє seed до звернення до бази.
-
-## Що використано
-
-HTML5, CSS3 (Flexbox, Grid, змінні, медіазапити, `:target`, переходи й анімації), JavaScript і локальний шрифт Geist. Сервер: Node.js 22, Express 4, PostgreSQL 16, Zod, Argon2id. Тести: Vitest + supertest для API, Playwright для e2e у Chromium і Firefox.
-
-## Як це зроблено
-
-- Стилі поділені на загальні (`base`, `layout`, `components`, `utilities`) і сторінкові (`css/pages/`). Кольори, розміри й відступи лежать у `css/tokens.css`, тому в компонентах вони не дублюються.
-- Верстка підлаштовується під телефон, планшет і широкий екран. Медіазапити є в `css/layout.css` та файлах у `css/pages/`.
-- Випадаючі меню використовують `<details>`, діалоги — клас `.modal--open` із запасним `:target` без JavaScript. На сторінці завдань JavaScript додає закриття меню, фокус, клавіатуру та зміну даних; картки й порожні стани клонуються з `<template>`.
-- Модальні вікна й елементи керування анімовані. Для тих, у кого в системі ввімкнено зменшення руху, анімації вимикаються через `prefers-reduced-motion`.
-
-## Календар та авторизація
-
-Календар генерує місяці з понеділка, показує завдання з API, відкриває день і підставляє дату в додавання. Поле дати використовує спільний власний календар і ручне введення дд.мм.рррр.
-
-Авторизація серверна: сесія зберігається в HttpOnly cookie `sp_session`, пароль хешується Argon2id. Клієнт не зберігає завдання, користувача чи пароль у localStorage; єдиний ключ — `studyplanner.ui.v1` з `{showDone}`.
-
-Завдання, дисципліни та акаунт зберігаються в PostgreSQL і доступні через `/api/*`. Сторінки списку й календаря використовують спільні маршрути API та ревалідують дані при поверненні фокусу або вкладки. `tasks.html#add-task-date` відкриває форму додавання з календарем.
-
-## ����������
+Playwright-браузери за потреби встановлюються командою `npm run e2e:install`. Інші команди з каталогу `server`:
 
 ```powershell
-cd server
-docker compose -f ../docker-compose.yml up -d db_test
-npm test          # Vitest + supertest, PostgreSQL studyplanner_test
-npm run e2e       # Playwright, ������ �� studyplanner_e2e, Chromium + Firefox
+npm start                 # Запуск сервера
+npm run dev               # Розробка з перезапуском при змінах
+npm run migrate:status    # Статус SQL-міграцій
+npm run seed              # Створення демонстраційних даних
+npm run lint              # ESLint для сервера й e2e
+npm run e2e:chromium      # E2E лише у Chromium
 ```
 
-E2E-������ ��� ����������� `studyplanner_e2e` � ��������� ������� ����� ��������. ��������� Playwright (`test-results/`, `playwright-report/`) �� ���������.
+Щоб запустити e2e у Firefox окремо, використайте `npx playwright test --project=firefox`.
+
+### Візуальна база
+
+`npm run e2e` також порівнює скриншоти сторінок у Chromium і Firefox на ширинах 1440, 768 і 390 px, а також 19 ключових станів (діалоги, помилки форм, фільтри, datepicker, меню користувача) на 1440 і 390 px. Для детермінованості e2e-сервер створює акаунт `demo.visual@studyplanner.test` з паролем `Study2026!` і дедлайнами відносно `2026-10-06`, а тест фіксує годинник браузера на цій даті. 118 еталонних знімків лежать у `server/e2e/specs/visual.spec.js-snapshots/`. Після навмисних змін інтерфейсу оновіть їх командою `npx playwright test e2e/specs/visual.spec.js --update-snapshots`.
+
+## Інтерфейс
+
+`states.html` показує демонстраційні стани `tasks.html?state=...`; для перегляду приватних станів потрібен вхід. Список і календар читають дані з API та оновлюють їх спільно. Календар генерує сітку місяця з понеділка, а поле дедлайну підтримує власний календар і ручне введення у форматі `дд.мм.рррр`.
+
+Клієнт не зберігає завдання, пароль або профіль у `localStorage`. Там залишається лише UI-налаштування `studyplanner.ui.v1`.

@@ -4,6 +4,8 @@
   const app = window.StudyPlanner;
   const SELECTOR = { modal: '.modal', panel: '.modal__panel', link: 'a[href^="#"]', close: 'a[href="#main"], a[href="#"]', title: '#task-details h3', description: '#task-details > p:last-child', tag: '#task-details .tag', time: '#task-details time', relative: '[data-relative]', deleteTitle: '.delete-dialog__task > p', deleteTag: '.delete-dialog__task > span', confirm: '[data-confirm-delete]', focusable: 'a[href], button, input, textarea, select, summary, [tabindex="0"]', background: '.planner-shell, .bottom-tabs', add: '.app-add, .calendar-add' };
   const TARGETS = { add: 'add-task', edit: 'edit-task', details: 'task-details', delete: 'delete-task' };
+  const NEW_DISCIPLINE = 'new-discipline';
+  const RESTORABLE = new Set([TARGETS.add, TARGETS.edit]);
   const OPEN = 'modal--open';
   const ENHANCED = 'app-page--enhanced';
   const VARIANT = 'modal__variant--active';
@@ -18,6 +20,7 @@
   let initialHash = '';
   let keyboard = false;
   let returnKeyboard = false;
+  let returnTo = '';
 
   function focusable() {
     return [...active.querySelectorAll(SELECTOR.focusable)].filter(item => !item.disabled && item.getClientRects().length && !item.closest('details:not([open]) .select__options'));
@@ -55,6 +58,10 @@
     const target = document.getElementById(id);
     const next = target?.closest(SELECTOR.modal);
     if (!next || (active === next && activeId === id)) return;
+    // Creating a discipline from a task form returns to that form afterwards.
+    if (active && id === NEW_DISCIPLINE && RESTORABLE.has(activeId)) {
+      returnTo = activeId;
+    }
     if (!active) {
       trigger = source || document.activeElement;
       returnKeyboard = keyboard;
@@ -79,6 +86,14 @@
     activeId = '';
     document.body.classList.remove(LOCKED);
     document.querySelectorAll(SELECTOR.background).forEach(element => { element.inert = false; });
+    const restore = returnTo;
+    returnTo = '';
+    if (restore) {
+      const source = trigger;
+      trigger = null;
+      open(restore, source);
+      return;
+    }
     const date = trigger?.closest(DATE_CELL)?.dataset.date;
     const calendarTrigger = [...document.querySelectorAll(DATE_CELL)].find(cell => cell.dataset.date === date);
     const fallback = calendarTrigger || document.querySelector(SELECTOR.add);
@@ -141,12 +156,22 @@
       if (picker) app.datepicker.open(document.querySelector(SELECTOR.modal + ' [name="deadline"]'));
     });
     document.querySelector(SELECTOR.confirm).addEventListener('click', async () => {
-      if (selectedId) {
-        try {
-          await app.tasks.remove(selectedId);
-        } catch {
-          // Handled and announced by tasks.remove
+      const button = document.querySelector(SELECTOR.confirm);
+      if (button.disabled) return;
+      const originalText = button.textContent;
+      button.disabled = true;
+      button.textContent = 'Видалення...';
+      try {
+        if (selectedId) {
+          try {
+            await app.tasks.remove(selectedId);
+          } catch {
+            // Handled and announced by tasks.remove
+          }
         }
+      } finally {
+        button.disabled = false;
+        button.textContent = originalText;
       }
       close();
     });

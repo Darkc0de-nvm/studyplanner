@@ -16,7 +16,12 @@
   const disciplinesColorsMap = Object.create(null);
 
   const listeners = new Set();
+  const busy = new Set();
   let isRevalidating = false;
+  // Mutations in flight own the local snapshot; a focus revalidation must not
+  // replace optimistic entries with data that predates them.
+  let activeMutations = 0;
+  let revision = 0;
 
   // CSS only defines colour modifiers 1..3. Server colour indexes 4 and 5
   // are mapped cyclically until the full palette is implemented.
@@ -41,12 +46,17 @@
   function setDisciplines(list) {
     if (!Array.isArray(list)) return;
     disciplines = list.slice();
-    list.forEach(d => {
+    Object.keys(disciplinesMap).forEach(id => { delete disciplinesMap[id]; });
+    Object.keys(disciplinesColorsMap).forEach(id => { delete disciplinesColorsMap[id]; });
+    disciplines.forEach(d => {
       disciplinesMap[d.id] = d.name;
       disciplinesColorsMap[d.id] = getColorClass(d.colorIndex);
     });
     if (app.selects && typeof app.selects.updateDisciplines === 'function') {
       app.selects.updateDisciplines(disciplines);
+    }
+    if (app.filters && typeof app.filters.reconcile === 'function') {
+      app.filters.reconcile(disciplines.map(d => String(d.id)));
     }
   }
 
@@ -116,26 +126,34 @@
     if (status) {
       status.textContent = message;
     }
+    // The visible API banner reports failures; any successful action clears it
+    // so a stale error does not outlive the operation it described.
+    const banner = document.querySelector('[data-api-error]');
+    if (!banner) return;
     if (isError) {
-      const liveAlert = document.querySelector('.alert--error');
-      if (liveAlert) {
-        liveAlert.textContent = message;
-        liveAlert.hidden = false;
-      }
+      banner.textContent = message;
+      banner.hidden = false;
+    } else {
+      banner.textContent = '';
+      banner.hidden = true;
     }
   }
 
   async function revalidate() {
-    if (isRevalidating) return;
+    if (isRevalidating || activeMutations > 0) return;
     // Don't revalidate during preview modes
     if (new URLSearchParams(location.search).get('state')) return;
 
+    const startedAt = revision;
     isRevalidating = true;
     try {
       const [discList, taskList] = await Promise.all([
         app.api.disciplines.list(),
         app.api.tasks.list(),
       ]);
+      // A mutation started or finished while the request was in flight; its
+      // response is older than the optimistic state.
+      if (startedAt !== revision || activeMutations > 0) return;
       setDisciplines(discList);
       tasks = taskList.map(normalizeTask);
       publish();
@@ -184,6 +202,28 @@
     });
   }
 
+  function beginMutation() {
+    activeMutations += 1;
+    revision += 1;
+  }
+
+  function endMutation() {
+    activeMutations = Math.max(0, activeMutations - 1);
+    revision += 1;
+  }
+
+  function upsert(raw) {
+    const next = normalizeTask(raw);
+    const idx = tasks.findIndex(t => t.id === next.id);
+    if (idx === -1) tasks.push(next);
+    else tasks[idx] = next;
+    return next;
+  }
+
+  function isBusy(id) {
+    return busy.has(id);
+  }
+
   async function add(values) {
     const tempId = `temp-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     const tempTask = normalizeTask({
@@ -200,6 +240,7 @@
     tasks.push(tempTask);
     publish();
 
+    beginMutation();
     try {
       const created = await app.api.tasks.create({
         title: values.title,
@@ -208,10 +249,8 @@
         deadline: values.deadline,
       });
 
-      const idx = tasks.findIndex(t => t.id === tempId);
-      if (idx !== -1) {
-        tasks[idx] = normalizeTask(created);
-      }
+      tasks = tasks.filter(t => t.id !== tempId);
+      upsert(created);
       publish();
       notifyStatus('Завдання успішно додано.');
       return created.id;
@@ -221,6 +260,8 @@
       publish();
       notifyStatus(`Не вдалося додати завдання: ${err.message || 'помилка сервера'}`, true);
       throw err;
+    } finally {
+      endMutation();
     }
   }
 
@@ -230,8 +271,10 @@
 
     const previous = { ...tasks[idx] };
     tasks[idx] = { ...previous, ...values };
+    busy.add(id);
     publish();
 
+    beginMutation();
     try {
       const updated = await app.api.tasks.update(id, {
         title: values.title !== undefined ? values.title : undefined,
@@ -241,15 +284,14 @@
         done: values.done !== undefined ? values.done : undefined,
       });
 
-      const currentIdx = tasks.findIndex(t => t.id === id);
-      if (currentIdx !== -1) {
-        tasks[currentIdx] = normalizeTask(updated);
-      }
+      busy.delete(id);
+      upsert(updated);
       publish();
       notifyStatus('Зміни збережено.');
       return true;
     } catch (err) {
       // Rollback optimistic update
+      busy.delete(id);
       const currentIdx = tasks.findIndex(t => t.id === id);
       if (currentIdx !== -1) {
         tasks[currentIdx] = previous;
@@ -257,6 +299,8 @@
       publish();
       notifyStatus(`Не вдалося зберегти зміни: ${err.message || 'помилка сервера'}`, true);
       throw err;
+    } finally {
+      endMutation();
     }
   }
 
@@ -268,8 +312,12 @@
     tasks.splice(idx, 1);
     publish();
 
+    beginMutation();
     try {
       await app.api.tasks.remove(id);
+      // Drop it again in case a late list response re-added it.
+      tasks = tasks.filter(t => t.id !== id);
+      publish();
       notifyStatus('Завдання видалено.');
     } catch (err) {
       // Rollback optimistic delete
@@ -277,6 +325,8 @@
       publish();
       notifyStatus(`Не вдалося видалити завдання: ${err.message || 'помилка сервера'}`, true);
       throw err;
+    } finally {
+      endMutation();
     }
   }
 
@@ -290,22 +340,34 @@
 
     task.done = nextDone;
     task.completedAt = nextDone ? new Date().toISOString() : null;
+    busy.add(id);
     publish();
 
+    beginMutation();
     try {
       const updated = await app.api.tasks.update(id, { done: nextDone });
-      task.done = updated.done;
-      task.completedAt = updated.completedAt;
+      busy.delete(id);
+      const current = tasks.find(t => t.id === id);
+      if (current) {
+        current.done = updated.done;
+        current.completedAt = updated.completedAt;
+      }
       publish();
     } catch (err) {
       // Rollback optimistic toggle
-      task.done = previousDone;
-      task.completedAt = previousCompleted;
+      busy.delete(id);
+      const current = tasks.find(t => t.id === id);
+      if (current) {
+        current.done = previousDone;
+        current.completedAt = previousCompleted;
+      }
       if (app.render && typeof app.render.cancel === 'function') {
         app.render.cancel(id);
       }
       publish();
       notifyStatus(`Не вдалося оновити статус завдання: ${err.message || 'помилка сервера'}`, true);
+    } finally {
+      endMutation();
     }
   }
 
@@ -347,6 +409,7 @@
     replace,
     subscribe,
     isTask,
+    isBusy,
     disciplines: disciplinesProxy,
     getDisciplineName,
     getDisciplineColor,

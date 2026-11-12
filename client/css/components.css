@@ -367,6 +367,20 @@
   inset: 0;
 }
 
+/* Shared dialog panel: static pages (privacy/terms) do not load app.css,
+   so the base stacking and surface must live in the component layer. */
+.modal__panel {
+  position: relative;
+  inline-size: 100%;
+  max-inline-size: 30rem;
+  max-block-size: 92vh;
+  overflow-y: auto;
+  padding: var(--space-6);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
+}
+
 .modal__actions {
   display: flex;
   flex-direction: column;
@@ -388,6 +402,26 @@
   border-color: var(--overdue);
   color: var(--destructive);
   background: var(--overdue-bg);
+}
+
+/* author display rules would otherwise defeat the hidden attribute */
+.alert[hidden] {
+  display: none;
+}
+
+.app-alert {
+  margin-block-end: var(--space-4);
+}
+
+/* Offline banner stays visible above the page while scrolling. */
+.network-banner {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 60;
+  margin: 0;
+  border-radius: 0;
+  padding: var(--space-3);
+  text-align: center;
 }
 
 .empty-state {

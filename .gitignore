@@ -23,8 +23,10 @@ test-results/
 playwright-report/
 .playwright/
 
-# Ignore personal docs
-docs/
+# Ignore personal docs and screenshots, but keep the phase reports
+*-snapshots/
+docs/*
+!docs/phases/
 
 # Legacy work folder
 work/

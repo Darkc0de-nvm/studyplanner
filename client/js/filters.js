@@ -75,5 +75,16 @@
     sync();
   }
 
-  app.filters = { init, reset, matches, setDiscipline, current: () => ({ ...state }) };
+  // A focus revalidation can remove or replace disciplines. Drop a filter that
+  // no longer points at an existing discipline instead of silently hiding all
+  // tasks behind a stale UUID.
+  function reconcile(ids) {
+    if (!Array.isArray(ids)) return;
+    if (state.discipline !== '0' && !ids.includes(state.discipline)) {
+      state.discipline = '0';
+      sync();
+    }
+  }
+
+  app.filters = { init, reset, matches, setDiscipline, reconcile, current: () => ({ ...state }) };
 })();

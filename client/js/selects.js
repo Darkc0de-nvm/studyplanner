@@ -75,8 +75,19 @@
     return wrapper;
   }
 
+  function appendNewDisciplineOption(container) {
+    const link = document.createElement('a');
+    link.className = 'select__option muted';
+    link.href = '#new-discipline';
+    link.textContent = '+ Нова дисципліна...';
+    container.appendChild(link);
+  }
+
   function updateDisciplines(disciplinesList) {
-    if (!Array.isArray(disciplinesList) || !disciplinesList.length) return;
+    // The HTML contains a static demo palette for no-JS previews. Always
+    // rebuild the lists so a user without disciplines never sees fake
+    // non-UUID values that the API would reject.
+    const list = Array.isArray(disciplinesList) ? disciplinesList : [];
 
     // 1. Filter dropdown
     const filterContainer = document.querySelector(SELECTOR.filterSelect);
@@ -88,7 +99,7 @@
       const allOption = renderRadioOption('discipline-filter', 'discipline-filter-all', 'Усі дисципліни', '0');
       filterContainer.appendChild(allOption);
 
-      disciplinesList.forEach((d, idx) => {
+      list.forEach((d, idx) => {
         const option = renderRadioOption(
           'discipline-filter',
           `discipline-filter-${d.id || idx}`,
@@ -103,73 +114,42 @@
       sync(filterContainer.closest('.select'));
     }
 
-    // 2. Add task dropdown
-    const addContainer = document.querySelector(SELECTOR.addSelect);
-    if (addContainer) {
-      const currentChecked = addContainer.querySelector('input[type="radio"]:checked')?.value;
-      addContainer.replaceChildren();
+    // 2. Add and edit task dropdowns
+    [
+      { selector: SELECTOR.addSelect, idPrefix: 'add-task-discipline', errorId: 'add-task-discipline-error' },
+      { selector: SELECTOR.editSelect, idPrefix: 'edit-task-discipline', errorId: 'edit-task-discipline-error' },
+    ].forEach(({ selector, idPrefix, errorId }) => {
+      const container = document.querySelector(selector);
+      if (!container) return;
+      const currentChecked = container.querySelector('input[type="radio"]:checked')?.value;
+      container.replaceChildren();
 
-      disciplinesList.forEach((d, idx) => {
+      list.forEach((d, idx) => {
         const option = renderRadioOption(
           'disciplineId',
-          `add-task-discipline-${d.id || idx}`,
+          `${idPrefix}-${d.id || idx}`,
           d.name,
           String(d.id),
           true,
-          'add-task-discipline-error'
+          errorId
         );
-        addContainer.appendChild(option);
+        container.appendChild(option);
       });
 
-      const newDisciplineLink = document.createElement('a');
-      newDisciplineLink.className = 'select__option muted';
-      newDisciplineLink.href = '#new-discipline';
-      newDisciplineLink.textContent = '+ Нова дисципліна...';
-      addContainer.appendChild(newDisciplineLink);
+      appendNewDisciplineOption(container);
 
       if (currentChecked) {
-        const toCheck = addContainer.querySelector(`input[value="${currentChecked}"]`);
+        const toCheck = container.querySelector(`input[value="${currentChecked}"]`);
         if (toCheck) toCheck.checked = true;
       }
-      sync(addContainer.closest('.select'));
-    }
+      sync(container.closest('.select'));
+    });
 
-    // 3. Edit task dropdown
-    const editContainer = document.querySelector(SELECTOR.editSelect);
-    if (editContainer) {
-      const currentChecked = editContainer.querySelector('input[type="radio"]:checked')?.value;
-      editContainer.replaceChildren();
-
-      disciplinesList.forEach((d, idx) => {
-        const option = renderRadioOption(
-          'disciplineId',
-          `edit-task-discipline-${d.id || idx}`,
-          d.name,
-          String(d.id),
-          true,
-          'edit-task-discipline-error'
-        );
-        editContainer.appendChild(option);
-      });
-
-      const newDisciplineLink = document.createElement('a');
-      newDisciplineLink.className = 'select__option muted';
-      newDisciplineLink.href = '#new-discipline';
-      newDisciplineLink.textContent = '+ Нова дисципліна...';
-      editContainer.appendChild(newDisciplineLink);
-
-      if (currentChecked) {
-        const toCheck = editContainer.querySelector(`input[value="${currentChecked}"]`);
-        if (toCheck) toCheck.checked = true;
-      }
-      sync(editContainer.closest('.select'));
-    }
-
-    // 4. Calendar legend
+    // 3. Calendar legend
     const legend = document.querySelector(SELECTOR.legend);
     if (legend) {
       legend.replaceChildren();
-      disciplinesList.forEach(d => {
+      list.forEach(d => {
         const li = document.createElement('li');
         li.dataset.disciplineId = String(d.id);
         const dot = document.createElement('span');

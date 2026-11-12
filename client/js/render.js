@@ -3,7 +3,7 @@
 
   const app = window.StudyPlanner;
   const SELECTOR = { list: '.task-groups', card: '.task-card', title: '.task-card__title a', tag: '.task-card__discipline', meta: '.task-card__meta > span', description: '[data-description]', check: '.task-card__check', action: '[data-action]', groupTitle: '.group-header__title', count: '.group-count', cards: '.task-group__cards', results: '.filter-count', reset: '.filter-reset', add: '.app-add', searchCount: '[data-search-count]', slot: '.task-slot', inner: '.task-slot__inner', group: '.task-group', status: '[data-storage-status]', modal: '.modal', heading: 'h2' };
-  const CLASS = { state: 'task-card--', stacked: 'task-card--stacked', hidden: 'visually-hidden', results: 'filter-count--visible', countOverdue: 'group-count--overdue', countSoon: 'group-count--soon', collapsing: 'task-slot--collapsing' };
+  const CLASS = { state: 'task-card--', stacked: 'task-card--stacked', pending: 'task-card--pending', hidden: 'visually-hidden', results: 'filter-count--visible', countOverdue: 'group-count--overdue', countSoon: 'group-count--soon', collapsing: 'task-slot--collapsing' };
   const GROUPS = { overdue: 'Прострочені', today: 'Сьогодні', week: 'Цей тиждень', later: 'Пізніше' };
   const TEMPLATE = { card: 'task-card-template', group: 'task-group-template', first: 'first-run-template', noResults: 'no-results-template', empty: 'empty-group-template', mark: 'search-mark-template', slot: 'task-slot-template' };
   let compactTitleId = null;
@@ -123,6 +123,9 @@
     element.classList.add(CLASS.state + state);
     element.classList.toggle(CLASS.stacked, stacked === true);
     element.dataset.taskState = state;
+    const pending = Boolean(task.pending) || (app.tasks.isBusy ? app.tasks.isBusy(task.id) : false);
+    element.classList.toggle(CLASS.pending, pending);
+    element.setAttribute('aria-busy', String(pending));
     element.querySelector(SELECTOR.title).textContent = task.title;
     highlight(element.querySelector(SELECTOR.title), task.title);
     // The Lab 3 open-filter frame has no space before this description icon
@@ -140,10 +143,15 @@
     element.querySelector(SELECTOR.description).hidden = !task.description;
     const check = element.querySelector(SELECTOR.check);
     check.checked = task.done;
+    check.disabled = pending;
     check.setAttribute('aria-label', `${task.done ? 'Позначити невиконаним' : 'Позначити виконаним'}: ${task.title}`);
     element.querySelectorAll(SELECTOR.action).forEach(action => {
       const label = { edit: 'Редагувати', delete: 'Видалити' }[action.dataset.action];
       if (label) action.setAttribute('aria-label', `${label}: ${task.title}`);
+      if (action.dataset.action !== 'toggle') {
+        if (pending) action.setAttribute('aria-disabled', 'true');
+        else action.removeAttribute('aria-disabled');
+      }
     });
   }
 
@@ -211,12 +219,16 @@
       if (!action || !container.contains(action)) return;
       const element = action.closest(SELECTOR.card);
       const task = app.tasks.all().find(item => item.id === element.dataset.taskId);
-      if (!task) return;
+      // Optimistic entries have a temporary id and cannot be mutated until the
+      // server assigns the real one; busy cards ignore repeated actions.
+      if (!task || task.pending || (app.tasks.isBusy && app.tasks.isBusy(task.id))) return;
       if (action.dataset.action === 'toggle') {
+        const completing = !task.done;
         if (task.done) cancel(task.id);
         else complete(task.id);
         app.tasks.toggle(task.id);
-        document.querySelector(SELECTOR.status).textContent = task.done ? 'Виконання скасовано' : 'Завдання виконано';
+        const status = document.querySelector(SELECTOR.status);
+        if (status) status.textContent = completing ? 'Завдання виконано' : 'Виконання скасовано';
       } else {
         event.preventDefault();
         app.modals.showTask(action.dataset.action, task, action);

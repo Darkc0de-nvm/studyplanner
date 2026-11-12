@@ -183,19 +183,37 @@
   }
 
   async function saveTask(form) {
+    const values = {
+      title: form.elements.title.value.trim(),
+      description: form.elements.description.value.trim(),
+      disciplineId: form.elements.disciplineId ? form.elements.disciplineId.value : '',
+      deadline: app.dates ? app.dates.toISO(app.dates.parse(form.elements.deadline.value)) : form.elements.deadline.value,
+    };
+
+    // A user with no disciplines has no radio controls, so checkValidity()
+    // passes while the API would reject the empty discipline id.
+    if (!values.disciplineId) {
+      const select = form.querySelector(SELECTOR.select);
+      const field = select ? select.closest(SELECTOR.field) : null;
+      const error = field ? field.querySelector(SELECTOR.error) : null;
+      if (field) field.classList.add(CLASS.error);
+      if (error) error.textContent = 'Оберіть дисципліну у списку';
+      if (select) {
+        select.open = true;
+        if (app.selects) app.selects.sync(select);
+      }
+      form.querySelectorAll('[name="disciplineId"]').forEach(radio => touched.add(radio));
+      const status = form.querySelector(SELECTOR.status);
+      if (status) status.textContent = 'Оберіть дисципліну у списку';
+      return;
+    }
+
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn ? submitBtn.textContent : '';
     if (submitBtn) {
       submitBtn.disabled = true;
       submitBtn.textContent = 'Збереження...';
     }
-
-    const values = {
-      title: form.elements.title.value.trim(),
-      description: form.elements.description.value.trim(),
-      disciplineId: form.elements.disciplineId.value,
-      deadline: app.dates ? app.dates.toISO(app.dates.parse(form.elements.deadline.value)) : form.elements.deadline.value,
-    };
 
     try {
       if (form.dataset.taskForm === 'edit') {
@@ -280,6 +298,9 @@
       control.form
         .querySelectorAll(SELECTOR.radio)
         .forEach(radio => validateControl(radio, touched.has(radio)));
+      // Clear the custom "choose a discipline" error as soon as a value exists.
+      const field = control.closest(SELECTOR.field);
+      if (field && control.value) field.classList.remove(CLASS.error);
     } else {
       validateControl(control, touched.has(control));
     }
