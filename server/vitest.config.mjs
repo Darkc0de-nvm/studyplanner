@@ -7,9 +7,11 @@ export default defineConfig({
     include: ['tests/**/*.test.js'],
     setupFiles: ['./tests/helpers/setup.js'],
     pool: 'forks',
-    poolOptions: {
-      forks: { singleFork: true },
-    },
+    // Vitest 4+ removed poolOptions.forks.singleFork; the API tests share one
+    // PostgreSQL database, so files must never run in parallel.
+    fileParallelism: false,
+    maxWorkers: 1,
+    minWorkers: 1,
     sequence: { concurrent: false },
     testTimeout: 15000,
     env: {

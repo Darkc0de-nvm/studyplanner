@@ -54,7 +54,7 @@ beforeEach(async () => { await cleanDb(); });
 afterEach(() => { vi.restoreAllMocks(); });
 
 describe('Registration under a concurrent duplicate', () => {
-  it('maps PostgreSQL 23505 on INSERT to 409 EMAIL_CONFLICT', async () => {
+  it('maps PostgreSQL 23505 on INSERT to a neutral 409 REGISTRATION_FAILED', async () => {
     injectFailure('INSERT INTO users', '23505');
 
     const res = await request()
@@ -63,7 +63,7 @@ describe('Registration under a concurrent duplicate', () => {
       .send({ ...USER, email: 'race@example.com' });
 
     expect(res.status).toBe(409);
-    expect(res.body.error.code).toBe('EMAIL_CONFLICT');
+    expect(res.body.error.code).toBe('REGISTRATION_FAILED');
   });
 
   it('rethrows unexpected insert errors as 500, not 409', async () => {

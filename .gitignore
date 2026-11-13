@@ -23,6 +23,9 @@ test-results/
 playwright-report/
 .playwright/
 
+# Local Lighthouse reports, header captures and temporary server files
+server/perf/
+
 # Ignore personal docs and screenshots, but keep the phase reports
 *-snapshots/
 docs/*

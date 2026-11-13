@@ -25,8 +25,8 @@ try {
   config = schema.parse(process.env);
 } catch (err) {
   console.error('❌ Configuration error — missing or invalid environment variables:');
-  if (err.errors) {
-    for (const e of err.errors) {
+  if (err.issues) {
+    for (const e of err.issues) {
       console.error(`   ${e.path.join('.')}: ${e.message}`);
     }
   }

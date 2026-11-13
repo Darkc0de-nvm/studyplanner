@@ -310,7 +310,7 @@
   border-radius: var(--radius-full);
   font-size: var(--text-xs);
   background: var(--discipline-bg);
-  color: var(--primary-foreground);
+  color: var(--foreground);
 }
 
 .tag::before {
@@ -324,19 +324,22 @@
 .tag--1 {
   --discipline-color: var(--discipline-1);
   --discipline-bg: var(--discipline-1-bg);
-  color: var(--primary-foreground);
+  --discipline-fill: var(--discipline-1-fill);
+  color: var(--foreground);
 }
 
 .tag--2 {
   --discipline-color: var(--discipline-2);
   --discipline-bg: var(--discipline-2-bg);
-  color: var(--primary-foreground);
+  --discipline-fill: var(--discipline-2-fill);
+  color: var(--foreground);
 }
 
 .tag--3 {
   --discipline-color: var(--discipline-3);
   --discipline-bg: var(--discipline-3-bg);
-  color: var(--primary-foreground);
+  --discipline-fill: var(--discipline-3-fill);
+  color: var(--foreground);
 }
 
 /* compact task markers for mobile calendar cells */
@@ -400,7 +403,7 @@
 
 .alert--error {
   border-color: var(--overdue);
-  color: var(--destructive);
+  color: var(--destructive-strong);
   background: var(--overdue-bg);
 }
 

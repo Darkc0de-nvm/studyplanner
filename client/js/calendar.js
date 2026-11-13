@@ -66,12 +66,18 @@
       cell.href = tasks.length ? `#${TARGET.day}` : `#${TARGET.empty}`;
       cell.classList.toggle(CLASS.outside, date.getMonth() !== month.getMonth());
       cell.classList.toggle(CLASS.today, iso === app.dates.toISO(app.dates.today()));
-      cell.setAttribute('aria-label', `${longDate(date)}, ${tasks.length ? `завдань: ${tasks.length}` : 'немає завдань'}`);
+      const countLabel = tasks.length ? `завдань: ${tasks.length}` : 'немає завдань';
       if (iso === app.dates.toISO(app.dates.today())) cell.setAttribute('aria-current', 'date');
       const time = cell.querySelector('time');
       time.dateTime = iso;
       time.querySelector('span').textContent = date.getDate();
       appendMarkers(cell, tasks);
+      // The visible cell text (date + task titles) must stay the start of the
+      // accessible name, so the full date is appended as hidden content.
+      const description = document.createElement('span');
+      description.className = 'visually-hidden';
+      description.textContent = `${longDate(date)}, ${countLabel}`;
+      cell.append(description);
       content.append(fragment);
     }
     document.querySelector(SELECTOR.grid).replaceChildren(content);

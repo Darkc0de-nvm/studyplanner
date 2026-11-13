@@ -1,5 +1,7 @@
 # StudyPlanner
 
+[![CI](https://github.com/Darkc0de-nvm/studyplanner/actions/workflows/ci.yml/badge.svg)](https://github.com/Darkc0de-nvm/studyplanner/actions/workflows/ci.yml)
+
 Вебзастосунок для планування навчальних завдань і дедлайнів. Це full-stack проєкт: статичний клієнт на HTML, CSS і JavaScript, REST API на Node.js та Express і PostgreSQL для зберігання даних.
 
 ## Стек

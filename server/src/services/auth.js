@@ -11,7 +11,7 @@ async function register(name, email, password) {
     [email.toLowerCase()]
   );
   if (existing.length > 0) {
-    throw new AppError(409, 'EMAIL_CONFLICT', 'Користувач із такою електронною поштою вже зареєстрований.');
+    throw new AppError(409, 'REGISTRATION_FAILED', 'Не вдалося створити акаунт. Перевірте введені дані або увійдіть, якщо вже маєте акаунт.');
   }
 
   const passwordHash = await argon2.hash(password, {
@@ -31,7 +31,7 @@ async function register(name, email, password) {
   } catch (err) {
     // Concurrent registration can slip past the SELECT above.
     if (isUniqueViolation(err)) {
-      throw new AppError(409, 'EMAIL_CONFLICT', 'Користувач із такою електронною поштою вже зареєстрований.');
+      throw new AppError(409, 'REGISTRATION_FAILED', 'Не вдалося створити акаунт. Перевірте введені дані або увійдіть, якщо вже маєте акаунт.');
     }
     throw err;
   }

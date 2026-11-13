@@ -39,6 +39,7 @@ app.use(
         fontSrc:     ["'self'"],
         connectSrc:  ["'self'"],
         frameSrc:    ["'none'"],
+        frameAncestors: ["'none'"],
         objectSrc:   ["'none'"],
         baseUri:     ["'self'"],
         formAction:  ["'self'"],
@@ -46,6 +47,7 @@ app.use(
     },
     // Needed for fonts served from same origin
     crossOriginEmbedderPolicy: false,
+    frameguard: { action: 'deny' },
   })
 );
 

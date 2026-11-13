@@ -6,7 +6,7 @@ function errorHandler(err, req, res, _next) {
   // Zod validation error
   if (err.name === 'ZodError') {
     const fields = {};
-    for (const issue of err.errors) {
+    for (const issue of err.issues) {
       const key = issue.path.join('.') || '_';
       fields[key] = issue.message;
     }

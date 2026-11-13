@@ -15,6 +15,7 @@
   --transparent: rgba(0, 0, 0, 0);
   --card: #FFFFFF;
   --destructive: #DC2626;
+  --destructive-strong: #B91C1C;
   --muted: #F5F5F5;
   --muted-foreground: #737373;
   /* page dimming behind dialogs and sheets */
@@ -35,10 +36,13 @@
   /* discipline colors */
   --discipline-1: #3B82F6;
   --discipline-1-bg: #DBEAFE;
+  --discipline-1-fill: #1D4ED8;
   --discipline-2: #8B5CF6;
   --discipline-2-bg: #EDE9FE;
+  --discipline-2-fill: #6D28D9;
   --discipline-3: #10B981;
   --discipline-3-bg: #D1FAE5;
+  --discipline-3-fill: #047857;
 
   /* radii */
   --radius-sm: 0.625rem;

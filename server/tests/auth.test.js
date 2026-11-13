@@ -37,7 +37,10 @@ describe('POST /api/auth/register', () => {
       .set('Content-Type', 'application/json')
       .send(VALID_USER);
     expect(res.status).toBe(409);
-    expect(res.body.error.code).toBe('EMAIL_CONFLICT');
+    expect(res.body.error.code).toBe('REGISTRATION_FAILED');
+    // Neutral message: it must not confirm that the email is registered.
+    expect(res.body.error.message).not.toMatch(/вже зареєстрован|already registered/i);
+    expect(res.body.error.message).not.toContain('test@example.com');
   });
 
   it('is case-insensitive on email duplicate check', async () => {
@@ -220,14 +223,18 @@ describe('XSS payload storage', () => {
 });
 
 describe('Session cookie integrity', () => {
-  it('sets a signed cookie value', async () => {
+  it('sets a signed cookie value with hardened flags', async () => {
     const res = await request()
       .post('/api/auth/register')
       .set('Content-Type', 'application/json')
       .send(VALID_USER);
-    const cookie = res.headers['set-cookie'][0].split(';')[0];
+    const setCookie = res.headers['set-cookie'][0];
+    const cookie = setCookie.split(';')[0];
     const value = cookie.replace('sp_session=', '');
     expect(value).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.[A-Za-z0-9_-]{43}$/);
+    expect(setCookie).toMatch(/;\s*HttpOnly/i);
+    expect(setCookie).toMatch(/;\s*SameSite=Lax/i);
+    expect(setCookie).toMatch(/;\s*Path=\//i);
   });
 
   it('returns 401 SESSION_EXPIRED for a malformed cookie', async () => {

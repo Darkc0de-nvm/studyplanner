@@ -442,7 +442,7 @@
 .task-card .tag,
 .task-details .tag {
   line-height: 1rem;
-  background: var(--discipline-color);
+  background: var(--discipline-fill);
   color: var(--primary-foreground);
 }
 
@@ -666,6 +666,18 @@
   border-radius: var(--radius-md);
   overflow: hidden;
   background: var(--card);
+}
+
+/* Reserve the tallest month (six rows) until the calendar script renders the
+   real grid, so the legend below it cannot cause a layout shift on load. */
+.calendar-grid:empty {
+  min-block-size: 18rem;
+}
+
+@media (min-width: 48rem) {
+  .calendar-grid:empty {
+    min-block-size: 45rem;
+  }
 }
 
 .calendar-weekdays {
