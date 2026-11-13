@@ -5,8 +5,8 @@ const { setSessionCookie, clearSessionCookie } = require('../utils/sessionCookie
 
 async function register(req, res, next) {
   try {
-    const { name, email, password } = registerSchema.parse(req.body);
-    const user = await authService.register(name, email, password);
+    const { name, email, password, acceptedTerms } = registerSchema.parse(req.body);
+    const user = await authService.register(name, email, password, acceptedTerms);
     const { sessionId, expiresAt } = await authService.createSession(user.id);
     setSessionCookie(res, sessionId, expiresAt);
     res.status(201).json({ user: { id: user.id, name: user.name, email: user.email } });

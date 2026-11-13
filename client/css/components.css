@@ -368,6 +368,7 @@
 .modal__backdrop {
   position: absolute;
   inset: 0;
+  cursor: default;
 }
 
 /* Shared dialog panel: static pages (privacy/terms) do not load app.css,
@@ -545,6 +546,14 @@
     animation: sheet-enter var(--duration-enter) var(--ease-enter);
   }
 
+  .modal.modal--closing {
+    animation: overlay-exit var(--duration-enter) var(--ease);
+  }
+
+  .modal.modal--closing .modal__panel {
+    animation: sheet-exit var(--duration-enter) var(--ease);
+  }
+
   @keyframes feedback-enter {
     from {
       opacity: 0;
@@ -588,12 +597,36 @@
       transform: scale(1);
     }
   }
+
+  @keyframes overlay-exit {
+    to {
+      background-color: var(--transparent);
+    }
+  }
+
+  @keyframes sheet-exit {
+    to {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+  }
 }
 
 /* tablet with motion: scale the dialog instead of sliding it up */
 @media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
   .modal:is(:target, .modal--open, :has(.modal__state:target)) .modal__panel {
     animation-name: dialog-enter;
+  }
+
+  .modal.modal--closing .modal__panel {
+    animation: dialog-exit var(--duration-enter) var(--ease);
+  }
+
+  @keyframes dialog-exit {
+    to {
+      opacity: 0;
+      transform: scale(0.98);
+    }
   }
 }
 

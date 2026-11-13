@@ -1,19 +1,31 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="uk">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="preload" href="assets/fonts/geist-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="assets/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-    <meta name="description" content="StudyPlanner — Умови використання">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-cyrillic-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <meta name="description" content="StudyPlanner — Умови використання" />
     <title>Умови використання — StudyPlanner</title>
-    <link rel="stylesheet" href="css/tokens.css">
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/utilities.css">
-    <link rel="stylesheet" href="css/pages/landing.css">
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/utilities.css" />
+    <link rel="stylesheet" href="css/pages/landing.css" />
 
     <script src="js/api.js" defer></script>
     <script src="js/navigation.js" defer></script>
@@ -21,46 +33,131 @@
   </head>
   <body class="site-shell" data-page="static">
     <svg class="icon-sprite" aria-hidden="true">
-      <symbol id="icon-shape-1" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5Z"></path><path d="M6 12v5c3 3 9 3 12 0v-5M22 10v6"></path></symbol>
+      <symbol id="icon-shape-1" viewBox="0 0 24 24">
+        <path d="M22 10 12 5 2 10l10 5 10-5Z"></path>
+        <path d="M6 12v5c3 3 9 3 12 0v-5M22 10v6"></path>
+      </symbol>
     </svg>
 
     <a class="skip-link" href="#main">Перейти до вмісту</a>
 
     <header class="navbar">
       <nav class="navbar__inner container" aria-label="Головна навігація">
-        <a class="brand" href="index.html" aria-label="StudyPlanner — головна">
-          <svg class="icon icon--large" aria-hidden="true"><use href="#icon-shape-1"></use></svg>
+        <a
+          class="brand"
+          href="index.html"
+          data-auth-home
+          aria-label="StudyPlanner — головна"
+        >
+          <svg class="icon icon--large" aria-hidden="true">
+            <use href="#icon-shape-1"></use>
+          </svg>
           <span>StudyPlanner</span>
         </a>
-        <div class="navbar__actions">
-          <a class="button button--ghost" href="tasks.html">До завдань</a>
-        </div>
       </nav>
     </header>
 
     <main id="main" class="container legal">
       <article>
         <h1>Умови використання сервісу</h1>
-        <p class="muted">Останнє оновлення: 11 листопада 2026 року</p>
+        <p class="muted">Останнє оновлення: 13 листопада 2026 року</p>
 
         <section>
           <h2>1. Загальні положення</h2>
           <p>
-            StudyPlanner — це навчальний вебзастосунок для планування навчальних завдань, контролю термінів виконання та моніторингу завантаженості.
+            StudyPlanner — навчальний вебзастосунок для створення дисциплін і
+            завдань, обліку дедлайнів та позначення виконаних завдань.
+            Користуючись сервісом або створюючи обліковий запис, ви погоджуєтеся
+            з цими умовами; під час реєстрації потрібно підтвердити згоду
+            позначкою у формі. Реєстраційна форма не запитує вік і сервіс не
+            проводить вікової перевірки.
           </p>
         </section>
 
         <section>
           <h2>2. Обліковий запис</h2>
           <p>
-            Користувач несе відповідальність за збереження конфіденційності своїх облікових даних. Реєструючись, ви погоджуєтеся надавати коректну електронну адресу.
+            Для реєстрації потрібні ім’я, адреса електронної пошти та пароль;
+            адреса має відповідати формату email, а пароль — вимогам форми
+            реєстрації. Повторно зареєструвати вже використану адресу не можна,
+            але сервіс не перевіряє, чи належить адреса вам, і не обмежує
+            кількість акаунтів на одну особу. Ви відповідаєте за збереження
+            пароля; якщо підозрюєте сторонній доступ, завершіть поточну сесію
+            кнопкою виходу та надалі не використовуйте скомпрометований пароль.
           </p>
         </section>
 
         <section>
-          <h2>3. Відмова від відповідальності</h2>
+          <h2>3. Правила користування</h2>
           <p>
-            Програмне забезпечення надається «як є» (as is) у навчальних цілях в межах навчального курсу.
+            Використовуйте лише власний обліковий запис і не намагайтеся
+            отримати доступ до чужих завдань, дисциплін чи сесій, обійти
+            перевірку авторизації або підмінити сесійний cookie. Заборонені
+            спроби зламу, автоматизовані масові запити та обхід установлених
+            лімітів запитів. Назви й описи завдань та назви дисциплін призначені
+            для звичайного тексту: не надсилайте через них код або інший вміст
+            із метою пошкодити сервіс, обійти його перевірки чи вплинути на
+            інших користувачів.
+          </p>
+        </section>
+
+        <section>
+          <h2>4. Ваші дані та вміст</h2>
+          <p>
+            Ви зберігаєте права на вміст, який додаєте до сервісу; StudyPlanner
+            обробляє його, щоб показувати й оновлювати ваші дисципліни,
+            завдання, дедлайни та статуси. Докладніше про дані й їх обробку
+            розповідає <a href="privacy.html">Політика конфіденційності</a>. Ви
+            можете безповоротно видалити обліковий запис через відповідну дію в
+            профілі; разом із ним каскадно видаляються пов’язані дисципліни,
+            завдання та сесії. У сервісі немає функції експорту даних.
+          </p>
+        </section>
+
+        <section>
+          <h2>5. Доступність і зміни сервісу</h2>
+          <p>
+            StudyPlanner є навчальним проєктом і надається без гарантії
+            безперервної доступності; технічні роботи, помилки або інші
+            обставини можуть тимчасово перервати роботу. Функції сервісу можуть
+            змінюватися, зокрема без збереження попереднього вигляду чи способу
+            роботи окремих елементів. Сервіс не видаляє облікові записи лише
+            через неактивність.
+          </p>
+        </section>
+
+        <section>
+          <h2>6. Відмова від відповідальності</h2>
+          <p>
+            Сервіс надається «як є» (as is), без гарантій точності, безперервної
+            роботи чи придатності для конкретної мети. У межах, дозволених
+            застосовним правом, StudyPlanner не відповідає за втрату даних,
+            недоступність сервісу або пропущені через це дедлайни. Зберігайте
+            важливу інформацію та строки окремо, якщо їх втрата матиме для вас
+            наслідки.
+          </p>
+        </section>
+
+        <section>
+          <h2>7. Призупинення та припинення доступу</h2>
+          <p>
+            Сервіс відхиляє запити, які не проходять перевірку сесії, валідацію
+            або встановлені обмеження частоти, тому доступ до відповідної
+            функції може бути тимчасово недоступним. Ви можете припинити
+            користування в будь-який час, вийшовши з облікового запису або
+            видаливши його; після видалення відновити пов’язані дані через
+            сервіс не можна.
+          </p>
+        </section>
+
+        <section>
+          <h2>8. Зміни умов</h2>
+          <p>
+            Ми можемо оновлювати ці умови; дата останнього оновлення вказана на
+            початку сторінки. Продовження користування StudyPlanner після
+            публікації оновленої редакції означає згоду з нею. Якщо ви не
+            погоджуєтеся зі змінами, припиніть користування сервісом і за
+            потреби видаліть обліковий запис.
           </p>
         </section>
       </article>
@@ -68,7 +165,10 @@
 
     <footer class="site-footer">
       <div class="container site-footer__inner">
-        <p class="muted">StudyPlanner © 2026. <a href="terms.html">Умови використання</a> · <a href="privacy.html">Політика конфіденційності</a></p>
+        <p class="muted">
+          StudyPlanner © 2026. <a href="terms.html">Умови використання</a> ·
+          <a href="privacy.html">Політика конфіденційності</a>
+        </p>
       </div>
     </footer>
   </body>

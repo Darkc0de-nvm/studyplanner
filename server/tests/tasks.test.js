@@ -2,8 +2,8 @@
 const { agent } = require('./helpers/app');
 const { runMigrations, cleanDb } = require('./helpers/db');
 
-const USER_A = { name: 'User A', email: 'usera@example.com', password: 'PasswordA1!' };
-const USER_B = { name: 'User B', email: 'userb@example.com', password: 'PasswordB1!' };
+const USER_A = { name: 'User A', email: 'usera@example.com', password: 'PasswordA1!', acceptedTerms: true };
+const USER_B = { name: 'User B', email: 'userb@example.com', password: 'PasswordB1!', acceptedTerms: true };
 
 async function loginUser(userData) {
   const ag = agent();

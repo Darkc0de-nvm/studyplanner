@@ -43,6 +43,76 @@
     if (!navigator.onLine) updateBanner();
   }
 
+  function initPageTransitions() {
+    const body = document.body;
+    const storageKey = 'studyplanner-page-transition';
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let shouldEnter = false;
+    try {
+      shouldEnter = sessionStorage.getItem(storageKey) === '1';
+      sessionStorage.removeItem(storageKey);
+    } catch {
+      // Page transitions remain optional when storage is unavailable.
+    }
+
+    let pendingEnter = shouldEnter && !reducedMotion;
+    function enterPage() {
+      if (!pendingEnter) return;
+      pendingEnter = false;
+      body.classList.add('page-entering');
+      body.addEventListener('animationend', event => {
+        if (event.target === body && event.animationName === 'page-enter') {
+          body.classList.remove('page-entering');
+        }
+      });
+    }
+
+    document.addEventListener('click', event => {
+      if (event.defaultPrevented || reducedMotion || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const link = event.target.closest('a[href]');
+      if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+
+      let destination;
+      try {
+        destination = new URL(link.href, location.href);
+      } catch {
+        return;
+      }
+      if (destination.origin !== location.origin || (destination.pathname === location.pathname && destination.search === location.search)) return;
+      if (body.classList.contains('page-leaving')) return;
+
+      event.preventDefault();
+      body.classList.add('page-leaving');
+      try {
+        sessionStorage.setItem(storageKey, '1');
+      } catch {
+        // The outgoing animation still works when storage is unavailable.
+      }
+      let navigated = false;
+      let fallback;
+      const finishOnLeave = event => {
+        if (event.target === body && event.animationName === 'page-leave') navigate();
+      };
+      const navigate = () => {
+        if (navigated) return;
+        navigated = true;
+        window.clearTimeout(fallback);
+        body.removeEventListener('animationend', finishOnLeave);
+        location.assign(destination.href);
+      };
+      body.addEventListener('animationend', finishOnLeave);
+      const duration = getComputedStyle(body).animationDuration
+        .split(',')[0]
+        .trim()
+        .replace('ms', '');
+      const durationMs = duration.endsWith('s') ? parseFloat(duration) * 1000 : parseFloat(duration);
+      fallback = window.setTimeout(navigate, Number.isFinite(durationMs) ? durationMs + 80 : 400);
+    });
+
+    return enterPage;
+  }
+
   async function initPlanner(page) {
     const calendar = page === PAGE.calendar;
     const requested = new URLSearchParams(location.search).get('state');
@@ -101,6 +171,7 @@
   }
 
   function init() {
+    const enterPage = initPageTransitions();
     initNetworkBanner();
     app.navigation?.init();
 
@@ -113,6 +184,7 @@
       return;
     }
     if ([PAGE.tasks, PAGE.calendar].includes(document.body.dataset.page)) {
+      enterPage();
       initPlanner(document.body.dataset.page);
     }
     if ([PAGE.login, PAGE.register].includes(document.body.dataset.page)) {
@@ -122,11 +194,22 @@
     if (document.body.dataset.page === PAGE.static) {
       app.selects?.init();
       app.account?.init();
+      const authHome = document.querySelector('[data-auth-home]');
+      authHome?.addEventListener('click', async event => {
+        event.preventDefault();
+        try {
+          await app.api.auth.me();
+          location.assign('tasks.html');
+        } catch {
+          location.assign('index.html');
+        }
+      });
     }
     const deletedAlert = document.getElementById('deleted-alert');
     if (deletedAlert && new URLSearchParams(location.search).get('deleted') === '1') {
       deletedAlert.hidden = false;
     }
+    if (![PAGE.tasks, PAGE.calendar].includes(document.body.dataset.page)) enterPage();
   }
 
   init();

@@ -3,7 +3,7 @@
 
   const app = window.StudyPlanner;
   const SELECTOR = { list: '.task-groups', card: '.task-card', title: '.task-card__title a', tag: '.task-card__discipline', meta: '.task-card__meta > span', description: '[data-description]', check: '.task-card__check', action: '[data-action]', groupTitle: '.group-header__title', count: '.group-count', cards: '.task-group__cards', results: '.filter-count', reset: '.filter-reset', add: '.app-add', searchCount: '[data-search-count]', slot: '.task-slot', inner: '.task-slot__inner', group: '.task-group', status: '[data-storage-status]', modal: '.modal', heading: 'h2' };
-  const CLASS = { state: 'task-card--', stacked: 'task-card--stacked', pending: 'task-card--pending', hidden: 'visually-hidden', results: 'filter-count--visible', countOverdue: 'group-count--overdue', countSoon: 'group-count--soon', collapsing: 'task-slot--collapsing' };
+  const CLASS = { state: 'task-card--', stacked: 'task-card--stacked', pending: 'task-card--pending', hidden: 'visually-hidden', results: 'filter-count--visible', countOverdue: 'group-count--overdue', countSoon: 'group-count--soon', collapsing: 'task-slot--collapsing', entering: 'task-slot--entering', removing: 'task-slot--removing' };
   const GROUPS = { overdue: 'Прострочені', today: 'Сьогодні', week: 'Цей тиждень', later: 'Пізніше' };
   const TEMPLATE = { card: 'task-card-template', group: 'task-group-template', first: 'first-run-template', noResults: 'no-results-template', empty: 'empty-group-template', mark: 'search-mark-template', slot: 'task-slot-template' };
   let compactTitleId = null;
@@ -13,6 +13,7 @@
   const groups = new Map();
   const MOTION = '(prefers-reduced-motion: reduce)';
   const TOKEN = { delay: '--delay-complete', reduced: '--delay-complete-reduced', collapse: '--duration-collapse' };
+  const removals = new Map();
 
   function duration(token) {
     return parseFloat(window.getComputedStyle(document.documentElement).getPropertyValue(token));
@@ -91,16 +92,86 @@
   }
 
   function cards(container, tasks, stacked = false) {
+    const entering = [];
     const children = tasks.map(task => {
       let slot = nodes.get(task.id);
       if (!slot) {
         slot = clone(TEMPLATE.slot).firstElementChild;
+        slot.dataset.taskId = task.id;
         slot.querySelector(SELECTOR.inner).append(card(task, stacked));
         nodes.set(task.id, slot);
-      } else updateCard(slot.querySelector(SELECTOR.card), task, stacked);
+      } else {
+        if (!slot.isConnected && slot.classList.contains(CLASS.entering)) entering.push(slot);
+        updateCard(slot.querySelector(SELECTOR.card), task, stacked);
+      }
       return slot;
     });
     reconcile(container, children);
+    entering.forEach(animateEntry);
+  }
+
+  function animateEntry(slot) {
+    if (window.matchMedia(MOTION).matches) return;
+    slot.classList.remove(CLASS.entering);
+    void slot.offsetWidth;
+    slot.classList.add(CLASS.entering);
+    slot.addEventListener('animationend', event => {
+      if (event.target === slot && event.animationName === 'task-slot-enter') {
+        slot.classList.remove(CLASS.entering);
+      }
+    }, { once: true });
+  }
+
+  function animateRemoval(id) {
+    const slot = nodes.get(id);
+    if (!slot?.isConnected || window.matchMedia(MOTION).matches) return Promise.resolve();
+
+    slot.inert = true;
+    slot.classList.remove(CLASS.entering);
+    slot.classList.add(CLASS.removing);
+
+    return new Promise(resolve => {
+      let timer;
+      const finish = remove => {
+        clearTimeout(timer);
+        slot.removeEventListener('animationend', onAnimationEnd);
+        if (remove) slot.remove();
+        removals.delete(id);
+        resolve();
+      };
+      const onAnimationEnd = event => {
+        if (event.target === slot && event.animationName === 'task-slot-exit') finish(true);
+      };
+      slot.addEventListener('animationend', onAnimationEnd);
+      timer = window.setTimeout(() => finish(true), duration(TOKEN.collapse) + 80);
+      removals.set(id, { cancel: () => finish(false) });
+    });
+  }
+
+  function cancelRemoval(id) {
+    removals.get(id)?.cancel();
+    const slot = nodes.get(id);
+    if (!slot) return;
+    const wasConnected = slot.isConnected;
+    slot.classList.remove(CLASS.removing);
+    slot.inert = false;
+    if (wasConnected) animateEntry(slot);
+    else slot.classList.add(CLASS.entering);
+  }
+
+  function finalizeRemoval(id) {
+    removals.get(id)?.cancel();
+    nodes.get(id)?.remove();
+    nodes.delete(id);
+  }
+
+  function remap(oldId, newId) {
+    const slot = nodes.get(oldId);
+    if (!slot) return;
+    nodes.delete(oldId);
+    nodes.set(newId, slot);
+    slot.dataset.taskId = newId;
+    if (slot.isConnected) animateEntry(slot);
   }
 
 
@@ -244,5 +315,5 @@
   }
 
   window.addEventListener('pagehide', cancelPending);
-  app.render = { init, list, card, cards, visible, cancelPending, bind, clone };
+  app.render = { init, list, card, cards, visible, cancelPending, bind, clone, animateRemoval, cancelRemoval, finalizeRemoval, remap };
 })();

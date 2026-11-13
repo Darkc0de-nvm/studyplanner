@@ -17,6 +17,7 @@ const registerSchema = z.object({
     .string(stringError('Пароль обов\'язковий.', 'Пароль має бути рядком.'))
     .min(8, 'Пароль має містити щонайменше 8 символів.')
     .max(128, 'Пароль не може перевищувати 128 символів.'),
+  acceptedTerms: z.literal(true, { error: 'Щоб створити акаунт, потрібно погодитися з умовами' }),
 }).strict();
 
 const loginSchema = z.object({

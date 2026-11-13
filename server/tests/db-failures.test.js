@@ -2,7 +2,7 @@
 const { agent, request } = require('./helpers/app');
 const { runMigrations, cleanDb, pool } = require('./helpers/db');
 
-const USER = { name: 'Fault User', email: 'fault@example.com', password: 'Password1!' };
+const USER = { name: 'Fault User', email: 'fault@example.com', password: 'Password1!', acceptedTerms: true };
 
 /**
  * Replaces pool.query with a wrapper that fails for statements containing

@@ -2,7 +2,7 @@
 const { agent } = require('./helpers/app');
 const { runMigrations, cleanDb, pool } = require('./helpers/db');
 
-const USER = { name: 'Account User', email: 'account@example.com', password: 'Password1!' };
+const USER = { name: 'Account User', email: 'account@example.com', password: 'Password1!', acceptedTerms: true };
 
 beforeAll(async () => { await runMigrations(); });
 beforeEach(async () => { await cleanDb(); });

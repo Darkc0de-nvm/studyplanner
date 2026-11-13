@@ -63,6 +63,17 @@
   async function submit(form) {
     const button = form.querySelector(SELECTOR.submit);
     if (!button || button.disabled) return;
+    const isRegister = form.dataset.authForm === 'register';
+    const acceptedTerms = form.querySelector('#acceptedTerms');
+    if (isRegister && acceptedTerms && !acceptedTerms.checked) {
+      const field = acceptedTerms.closest('.field');
+      const feedback = field?.querySelector('.field__error');
+      field?.classList.add(CLASS.error);
+      if (feedback) feedback.textContent = 'Щоб створити акаунт, потрібно погодитися з умовами';
+      acceptedTerms.setAttribute('aria-invalid', 'true');
+      acceptedTerms.focus();
+      return;
+    }
     button.disabled = true;
     const originalText = button.textContent;
     button.textContent = 'Зачекайте...';
@@ -72,13 +83,12 @@
     if (errorBanner) errorBanner.hidden = true;
 
     try {
-      const isRegister = form.dataset.authForm === 'register';
       const email = form.querySelector('#email').value.trim().toLowerCase();
       const password = form.querySelector('#password').value;
 
       if (isRegister) {
         const name = form.querySelector('#name').value.trim();
-        await app.api.auth.register({ name, email, password });
+        await app.api.auth.register({ name, email, password, acceptedTerms: acceptedTerms.checked });
       } else {
         await app.api.auth.login({ email, password });
       }
@@ -105,6 +115,18 @@
         if (emailInput) emailInput.focus();
       } else if (err.fields) {
         Object.entries(err.fields).forEach(([fName, fMsg]) => {
+          if (fName === 'acceptedTerms') {
+            const checkbox = form.querySelector('#acceptedTerms');
+            const field = checkbox?.closest('.field');
+            const feedback = field?.querySelector('.field__error');
+            field?.classList.add(CLASS.error);
+            if (feedback) feedback.textContent = fMsg;
+            if (checkbox) {
+              checkbox.setAttribute('aria-invalid', 'true');
+              checkbox.focus();
+            }
+            return;
+          }
           showFieldError(form, fName, fMsg);
         });
         if (status) status.textContent = 'Перевірте позначені поля';
@@ -123,6 +145,35 @@
   }
 
   function init(preview) {
+    const consent = document.getElementById('acceptedTerms');
+    if (consent) {
+      consent.addEventListener('change', () => {
+        const field = consent.closest('.field');
+        const feedback = field?.querySelector('.field__error');
+        if (consent.checked) {
+          if (feedback) feedback.textContent = '';
+          field?.classList.remove(CLASS.error);
+          consent.removeAttribute('aria-invalid');
+        }
+      });
+      consent.closest('label')?.addEventListener('click', event => {
+        if (event.target.closest('a')) event.stopPropagation();
+      });
+    }
+    // Auth pages are also reachable while a session is active. The brand
+    // should take signed-in users back to their planner, while guests go home.
+    document.querySelectorAll('.brand').forEach(brand => {
+      brand.addEventListener('click', async event => {
+        event.preventDefault();
+        try {
+          await app.api.auth.me();
+          location.assign('tasks.html');
+        } catch {
+          location.assign('index.html');
+        }
+      });
+    });
+
     document.querySelectorAll(SELECTOR.toggle).forEach(button => {
       button.addEventListener('mousedown', event => event.preventDefault());
       button.addEventListener('click', () => {
@@ -196,7 +247,7 @@
         } catch {
           // Ignore logout error and redirect anyway
         }
-        location.replace('login.html');
+        location.replace('index.html');
       });
     });
   }

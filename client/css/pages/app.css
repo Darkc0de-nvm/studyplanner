@@ -493,6 +493,16 @@
   border-block-start: var(--border-width) solid var(--border);
 }
 
+.user-menu__panel [data-action="logout"] {
+  transition: color var(--duration-fast) var(--ease), background-color var(--duration-fast) var(--ease);
+}
+
+.user-menu__panel [data-action="logout"]:hover,
+.user-menu__panel [data-action="logout"]:focus-visible {
+  background: var(--destructive);
+  color: var(--primary-foreground);
+}
+
 /* bottom sheet by default, centered dialog from the tablet breakpoint */
 .modal__panel {
   position: relative;
@@ -562,6 +572,11 @@
 
 .task-form .modal__actions {
   margin-block-start: var(--space-2);
+}
+
+#new-discipline .modal__actions {
+  flex-direction: row;
+  justify-content: flex-end;
 }
 
 .task-details h3 {
@@ -1497,5 +1512,30 @@ html:has(.app-page) {
 
   .task-slot {
     transition: grid-template-rows var(--duration-collapse) var(--ease), opacity var(--duration-collapse) var(--ease);
+  }
+
+  .task-slot--entering {
+    animation: task-slot-enter var(--duration-enter) var(--ease-enter) both;
+  }
+
+  .task-slot--removing {
+    animation: task-slot-exit var(--duration-collapse) var(--ease) both;
+    pointer-events: none;
+  }
+
+  @keyframes task-slot-enter {
+    from {
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transform: translateY(var(--space-2));
+    }
+  }
+
+  @keyframes task-slot-exit {
+    to {
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transform: translateY(calc(-1 * var(--space-1)));
+    }
   }
 }

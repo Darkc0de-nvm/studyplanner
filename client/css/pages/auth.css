@@ -90,6 +90,76 @@
   text-decoration: underline;
 }
 
+.field--consent .field__error:empty {
+  display: none;
+}
+
+.field--consent.field--error .field__consent-label {
+  color: var(--destructive);
+}
+
+.auth-card__form .field--consent .field__consent-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  font-weight: 400;
+}
+
+.auth-card__form .field--consent .field__consent-label input {
+  margin-block-start: 0;
+  flex: none;
+  transition: accent-color var(--duration-fast) var(--ease), transform var(--duration-fast) var(--ease);
+}
+
+.auth-card__form .field--consent .field__consent-label input:checked {
+  animation: consent-check-pop var(--duration-fast) var(--ease);
+}
+
+@keyframes consent-check-pop {
+  50% {
+    transform: scale(1.16);
+  }
+}
+
+.auth-card__form .field--consent .field__consent-label input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.auth-card__form .field--consent .field__consent-label a {
+  position: relative;
+  z-index: 1;
+  color: var(--primary);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  transition: border-bottom-color var(--duration-fast) var(--ease);
+}
+
+.auth-card__form .field--consent .field__consent-label a:hover,
+.auth-card__form .field--consent .field__consent-label a:focus-visible {
+  border-bottom-color: var(--primary);
+}
+
+.field--consent {
+  margin-block-start: -4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-card__form .field--consent .field__consent-label input,
+  .auth-card__form .field--consent .field__consent-label input:checked {
+    animation: none;
+    transition: none;
+  }
+}
+
 /* tablet: center the form in a bordered card */
 @media (min-width: 48rem) {
   .auth-page {

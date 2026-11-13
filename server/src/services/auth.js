@@ -5,7 +5,7 @@ const config = require('../config');
 const AppError = require('../middleware/AppError');
 const { isUniqueViolation } = require('../db/pgErrors');
 
-async function register(name, email, password) {
+async function register(name, email, password, acceptedTerms) {
   const { rows: existing } = await pool.query(
     'SELECT id FROM users WHERE email = $1',
     [email.toLowerCase()]
@@ -24,8 +24,8 @@ async function register(name, email, password) {
   let user;
   try {
     const { rows } = await pool.query(
-      'INSERT INTO users (email, name, password_hash) VALUES ($1, $2, $3) RETURNING id, email, name',
-      [email.toLowerCase(), name, passwordHash]
+      'INSERT INTO users (email, name, password_hash, terms_accepted_at) VALUES ($1, $2, $3, CASE WHEN $4 THEN NOW() ELSE NULL END) RETURNING id, email, name',
+      [email.toLowerCase(), name, passwordHash, acceptedTerms]
     );
     user = rows[0];
   } catch (err) {

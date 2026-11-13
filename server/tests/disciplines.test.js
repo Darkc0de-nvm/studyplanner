@@ -3,7 +3,7 @@ const { agent } = require('./helpers/app');
 const { runMigrations, cleanDb, pool } = require('./helpers/db');
 const disciplinesService = require('../src/services/disciplines');
 
-const USER = { name: 'Disc User', email: 'disc@example.com', password: 'Password1!' };
+const USER = { name: 'Disc User', email: 'disc@example.com', password: 'Password1!', acceptedTerms: true };
 
 async function setup() {
   const ag = agent();

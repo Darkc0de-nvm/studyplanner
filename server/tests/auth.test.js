@@ -8,6 +8,7 @@ const VALID_USER = {
   name: 'Test User',
   email: 'test@example.com',
   password: 'ValidPass1!',
+  acceptedTerms: true,
 };
 
 beforeAll(async () => {
@@ -28,6 +29,20 @@ describe('POST /api/auth/register', () => {
     expect(res.body.user).toMatchObject({ name: 'Test User', email: 'test@example.com' });
     expect(res.body.user.id).toBeTruthy();
     expect(res.headers['set-cookie']).toBeDefined();
+    const { rows: [storedUser] } = await require('../src/db/pool').query('SELECT terms_accepted_at FROM users WHERE id = $1', [res.body.user.id]);
+    expect(storedUser.terms_accepted_at).toBeTruthy();
+    expect(res.body.user).not.toHaveProperty('termsAcceptedAt');
+  });
+
+  it.each([undefined, false])('rejects registration when acceptedTerms is %s', async acceptedTerms => {
+    const payload = { ...VALID_USER };
+    if (acceptedTerms === undefined) delete payload.acceptedTerms;
+    else payload.acceptedTerms = acceptedTerms;
+    const res = await request().post('/api/auth/register').set('Content-Type', 'application/json').send(payload);
+    expect(res.status).toBe(422);
+    expect(res.body.error.fields.acceptedTerms).toBe('Щоб створити акаунт, потрібно погодитися з умовами');
+    const { rows } = await require('../src/db/pool').query('SELECT id FROM users WHERE email = $1', [VALID_USER.email]);
+    expect(rows).toHaveLength(0);
   });
 
   it('returns 409 when email already registered', async () => {

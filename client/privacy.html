@@ -23,20 +23,16 @@
   <body class="site-shell" data-page="static">
     <svg class="icon-sprite" aria-hidden="true">
       <symbol id="icon-shape-1" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5Z"></path><path d="M6 12v5c3 3 9 3 12 0v-5M22 10v6"></path></symbol>
-      <symbol id="icon-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"></path></symbol>
     </svg>
 
     <a class="skip-link" href="#main">Перейти до вмісту</a>
 
     <header class="navbar">
       <nav class="navbar__inner container" aria-label="Головна навігація">
-        <a class="brand" href="index.html" aria-label="StudyPlanner — головна">
+        <a class="brand" href="index.html" data-auth-home aria-label="StudyPlanner — головна">
           <svg class="icon icon--large" aria-hidden="true"><use href="#icon-shape-1"></use></svg>
           <span>StudyPlanner</span>
         </a>
-        <div class="navbar__actions">
-          <a class="button button--ghost" href="tasks.html">До завдань</a>
-        </div>
       </nav>
     </header>
 
@@ -51,7 +47,7 @@
             StudyPlanner зберігає лише ті дані, які необхідні для функціонування планувальника завдань:
           </p>
           <ul>
-            <li><strong>Обліковий запис:</strong> ім’я користувача, адреса електронної пошти та криптографічний хеш пароля (створений за допомогою алгоритму Argon2id). Паролі у відкритому вигляді ніколи не зберігаються і не передаються.</li>
+            <li><strong>Обліковий запис:</strong> ім’я користувача, адреса електронної пошти, криптографічний хеш пароля (Argon2id) і дата та час згоди з умовами, якщо її зафіксовано під час реєстрації. Паролі у відкритому вигляді ніколи не зберігаються і не передаються.</li>
             <li><strong>Навчальні завдання:</strong> назви завдань, описи, обрані дисципліни, терміни виконання (дедлайни) та статус виконання.</li>
             <li><strong>Дисципліни:</strong> персоналізований список навчальних предметів користувача та обрані колірні позначки.</li>
           </ul>
@@ -73,34 +69,49 @@
             При натисканні кнопки нижче та підтвердженні дії в базі даних буде виконано каскадне видалення вашого облікового запису, усіх дисциплін, завдань та сесійних ключів.
           </p>
 
-          <div class="legal-card">
-            <h3>Управління даними профілю</h3>
-            <p id="delete-status" class="muted">Натисніть кнопку нижче, щоб видалити профіль та збережені дані.</p>
-            <button type="button" class="button button--destructive" id="btn-open-delete-modal">Видалити збережені дані</button>
+          <div class="legal-card legal-card--danger" id="account-data-card" hidden>
+            <div class="legal-card__heading">
+              <h3>Управління даними профілю</h3>
+              <p class="legal-card__description">Видаліть профіль і всі пов’язані з ним завдання та дисципліни.</p>
+            </div>
+            <div class="legal-card__footer">
+              <p class="muted">Цю дію неможливо скасувати.</p>
+              <div class="legal-card__actions">
+                <button type="button" class="button button--destructive legal-card__delete-button" id="btn-open-delete-modal">Видалити збережені дані</button>
+                <p class="legal-card__status" id="delete-status" role="status" aria-live="polite" hidden></p>
+              </div>
+            </div>
           </div>
         </section>
       </article>
     </main>
 
-    <!-- Modal for Account Deletion -->
-    <div id="delete-account-dialog" class="modal" role="dialog" aria-labelledby="del-modal-title" aria-modal="true" hidden>
-      <div class="modal__backdrop" id="del-backdrop"></div>
-      <div class="modal__panel" tabindex="-1">
-        <header class="modal__header">
-          <h2 id="del-modal-title">Видалити всі збережені дані?</h2>
-          <button type="button" class="button button--ghost button--icon" id="del-close" aria-label="Закрити">
-            <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
-          </button>
-        </header>
-        <p>
-          Ця дія <strong>безповоротно видалить</strong> ваш обліковий запис, усі дисципліни, завдання та активні сесії. Відновити дані після видалення буде неможливо.
-        </p>
-        <div class="modal__actions">
-          <button type="button" class="button button--secondary" id="del-cancel">Скасувати</button>
-          <button type="button" class="button button--destructive" id="del-confirm">Так, видалити назавжди</button>
+    <dialog id="delete-account-dialog" class="confirm-dialog" aria-labelledby="del-title" aria-describedby="del-desc">
+      <span class="confirm-dialog__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.3 3.9 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3l-7.5-13.1a2 2 0 0 0-3.4 0Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path>
+        </svg>
+      </span>
+      <div class="confirm-dialog__body">
+        <h2 id="del-title">Видалити профіль назавжди?</h2>
+        <p id="del-desc">Буде безповоротно видалено:</p>
+        <ul class="confirm-dialog__list">
+          <li>ваш обліковий запис</li>
+          <li>усі дисципліни та завдання</li>
+          <li>сесійні ключі на всіх пристроях</li>
+        </ul>
+        <label class="confirm-dialog__check" for="del-ack">
+          <input class="checkbox" type="checkbox" id="del-ack">
+          <span>Я розумію, що цю дію неможливо скасувати</span>
+        </label>
+        <div class="confirm-dialog__actions">
+          <button type="button" class="button button--outline" id="del-cancel">Скасувати</button>
+          <button type="button" class="button button--destructive" id="del-confirm" disabled>Видалити назавжди</button>
         </div>
       </div>
-    </div>
+    </dialog>
 
     <footer class="site-footer">
       <div class="container site-footer__inner">

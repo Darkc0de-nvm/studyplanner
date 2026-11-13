@@ -4,9 +4,8 @@
   const app = window.StudyPlanner;
   const SELECTOR = { modal: '.modal', panel: '.modal__panel', link: 'a[href^="#"]', close: 'a[href="#main"], a[href="#"]', title: '#task-details h3', description: '#task-details > p:last-child', tag: '#task-details .tag', time: '#task-details time', relative: '[data-relative]', deleteTitle: '.delete-dialog__task > p', deleteTag: '.delete-dialog__task > span', confirm: '[data-confirm-delete]', focusable: 'a[href], button, input, textarea, select, summary, [tabindex="0"]', background: '.planner-shell, .bottom-tabs', add: '.app-add, .calendar-add' };
   const TARGETS = { add: 'add-task', edit: 'edit-task', details: 'task-details', delete: 'delete-task' };
-  const NEW_DISCIPLINE = 'new-discipline';
-  const RESTORABLE = new Set([TARGETS.add, TARGETS.edit]);
   const OPEN = 'modal--open';
+  const CLOSING = 'modal--closing';
   const ENHANCED = 'app-page--enhanced';
   const VARIANT = 'modal__variant--active';
   const VARIANT_SELECTOR = '.modal__variant';
@@ -20,7 +19,9 @@
   let initialHash = '';
   let keyboard = false;
   let returnKeyboard = false;
-  let returnTo = '';
+  let modalHistory = [];
+  let closeTimer = null;
+  let closing = false;
 
   function focusable() {
     return [...active.querySelectorAll(SELECTOR.focusable)].filter(item => !item.disabled && item.getClientRects().length && !item.closest('details:not([open]) .select__options'));
@@ -48,6 +49,7 @@
   function deactivate() {
     if (!active) return;
     active.classList.remove(OPEN);
+    active.classList.remove(CLOSING);
     active.removeAttribute('aria-modal');
     active.querySelectorAll(VARIANT_SELECTOR).forEach(element => element.classList.remove(VARIANT));
     active.querySelectorAll('[data-task-form]').forEach(app.forms.clear);
@@ -57,10 +59,16 @@
   function open(id, source) {
     const target = document.getElementById(id);
     const next = target?.closest(SELECTOR.modal);
+    if (closing) {
+      clearTimeout(closeTimer);
+      closeTimer = null;
+      closing = false;
+      active?.classList.remove(CLOSING);
+    }
     if (!next || (active === next && activeId === id)) return;
-    // Creating a discipline from a task form returns to that form afterwards.
-    if (active && id === NEW_DISCIPLINE && RESTORABLE.has(activeId)) {
-      returnTo = activeId;
+    // Keep the current modal when opening a child dialog from within it.
+    if (active && source?.closest(SELECTOR.modal) === active) {
+      modalHistory.push(activeId);
     }
     if (!active) {
       trigger = source || document.activeElement;
@@ -78,16 +86,17 @@
     (focusable().find(element => element.matches('input:not([type="radio"]), textarea')) || active.querySelector(SELECTOR.panel)).focus({ preventScroll: true });
   }
 
-  function close() {
+  function finishClose() {
     if (!active) return;
+    closeTimer = null;
+    closing = false;
     app.selects.close();
     deactivate();
     active = null;
     activeId = '';
     document.body.classList.remove(LOCKED);
     document.querySelectorAll(SELECTOR.background).forEach(element => { element.inert = false; });
-    const restore = returnTo;
-    returnTo = '';
+    const restore = modalHistory.pop();
     if (restore) {
       const source = trigger;
       trigger = null;
@@ -99,6 +108,18 @@
     const fallback = calendarTrigger || document.querySelector(SELECTOR.add);
     (trigger?.isConnected ? trigger : fallback)?.focus({ preventScroll: true, focusVisible: returnKeyboard });
     trigger = null;
+  }
+
+  function close() {
+    if (!active || closing) return;
+    app.selects.close();
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      finishClose();
+      return;
+    }
+    closing = true;
+    active.classList.add(CLOSING);
+    closeTimer = window.setTimeout(finishClose, 240);
   }
 
   function showTask(action, task, source) {
@@ -159,12 +180,14 @@
       const button = document.querySelector(SELECTOR.confirm);
       if (button.disabled) return;
       const originalText = button.textContent;
+      const id = selectedId;
       button.disabled = true;
       button.textContent = 'Видалення...';
+      close();
       try {
-        if (selectedId) {
+        if (id) {
           try {
-            await app.tasks.remove(selectedId);
+            await app.tasks.remove(id);
           } catch {
             // Handled and announced by tasks.remove
           }
@@ -173,7 +196,6 @@
         button.disabled = false;
         button.textContent = originalText;
       }
-      close();
     });
     document.addEventListener('keydown', event => {
       if (!active || event.defaultPrevented) return;
@@ -192,6 +214,7 @@
     });
     window.addEventListener('hashchange', sync);
     app.tasks.subscribe(() => {
+      if (closing) return;
       if (![TARGETS.details, TARGETS.delete].includes(activeId)) return;
       const selected = app.tasks.all().find(task => task.id === selectedId);
       if (!selected) close();

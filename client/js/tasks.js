@@ -249,6 +249,7 @@
         deadline: values.deadline,
       });
 
+      app.render?.remap?.(tempId, created.id);
       tasks = tasks.filter(t => t.id !== tempId);
       upsert(created);
       publish();
@@ -308,20 +309,17 @@
     const idx = tasks.findIndex(t => t.id === id);
     if (idx === -1) return;
 
-    const previous = tasks[idx];
-    tasks.splice(idx, 1);
-    publish();
-
     beginMutation();
+    const removalAnimation = app.render?.animateRemoval?.(id) || Promise.resolve();
     try {
-      await app.api.tasks.remove(id);
-      // Drop it again in case a late list response re-added it.
+      await Promise.all([app.api.tasks.remove(id), removalAnimation]);
       tasks = tasks.filter(t => t.id !== id);
+      app.render?.finalizeRemoval?.(id);
       publish();
       notifyStatus('Завдання видалено.');
     } catch (err) {
-      // Rollback optimistic delete
-      tasks.splice(idx, 0, previous);
+      // Keep the task and restore its card if the delete request failed.
+      app.render?.cancelRemoval?.(id);
       publish();
       notifyStatus(`Не вдалося видалити завдання: ${err.message || 'помилка сервера'}`, true);
       throw err;

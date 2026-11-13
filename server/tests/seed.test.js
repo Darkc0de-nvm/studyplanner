@@ -12,6 +12,7 @@ describe('demo seed', () => {
     const result = await seed({
       email: 'seed-test@example.com',
       password: 'SeedPass1!',
+      acceptedTerms: true,
       name: 'Seed Test',
       baseDate: '2026-10-06',
     });
@@ -82,6 +83,7 @@ describe('demo seed', () => {
       seed({
         email: 'seed-test@example.com',
         password: 'SeedPass1!',
+      acceptedTerms: true,
         baseDate: '2026-02-30',
       })
     ).rejects.toThrow(/valid calendar date/);

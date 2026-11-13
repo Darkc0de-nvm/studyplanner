@@ -52,6 +52,7 @@
 html {
   font-size: 100%;
   color-scheme: light;
+  background: var(--background);
 }
 
 body {
@@ -120,6 +121,29 @@ svg {
 ::selection {
   background: var(--primary);
   color: var(--primary-foreground);
+}
+
+body.page-entering {
+  animation: page-enter 320ms var(--ease-enter) both;
+}
+
+body.page-leaving {
+  animation: page-leave 280ms var(--ease) both;
+  pointer-events: none;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-2));
+  }
+}
+
+@keyframes page-leave {
+  to {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--space-1)));
+  }
 }
 
 /* reduced motion: disable animation and smooth scrolling */
