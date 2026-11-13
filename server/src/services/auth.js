@@ -4,6 +4,20 @@ const pool = require('../db/pool');
 const config = require('../config');
 const AppError = require('../middleware/AppError');
 const { isUniqueViolation } = require('../db/pgErrors');
+const INVALID_CURRENT_PASSWORD = 'Невірний пароль.';
+
+function hashPassword(password) {
+  return argon2.hash(password, {
+    type: argon2.argon2id,
+    memoryCost: 65536,
+    timeCost: 3,
+    parallelism: 1,
+  });
+}
+
+function verifyPasswordHash(passwordHash, password) {
+  return argon2.verify(passwordHash, password);
+}
 
 async function register(name, email, password, acceptedTerms) {
   const { rows: existing } = await pool.query(
@@ -14,12 +28,7 @@ async function register(name, email, password, acceptedTerms) {
     throw new AppError(409, 'REGISTRATION_FAILED', 'Не вдалося створити акаунт. Перевірте введені дані або увійдіть, якщо вже маєте акаунт.');
   }
 
-  const passwordHash = await argon2.hash(password, {
-    type: argon2.argon2id,
-    memoryCost: 65536, // 64 MiB
-    timeCost: 3,
-    parallelism: 1,
-  });
+  const passwordHash = await hashPassword(password);
 
   let user;
   try {
@@ -52,7 +61,7 @@ async function login(email, password) {
   }
 
   const user = rows[0];
-  const valid = await argon2.verify(user.password_hash, password);
+  const valid = await verifyPasswordHash(user.password_hash, password);
   if (!valid) {
     throw new AppError(401, 'INVALID_CREDENTIALS', 'Невірна пошта або пароль.');
   }
@@ -73,4 +82,29 @@ async function deleteSession(sessionId) {
   await pool.query('DELETE FROM sessions WHERE id = $1', [sessionId]);
 }
 
-module.exports = { register, login, createSession, deleteSession };
+async function verifyUserPassword(userId, password) {
+  const { rows } = await pool.query('SELECT password_hash FROM users WHERE id = $1', [userId]);
+  if (!rows.length) return false;
+  return verifyPasswordHash(rows[0].password_hash, password);
+}
+
+async function changePassword(userId, currentPassword, newPassword, currentSessionId) {
+  const valid = await verifyUserPassword(userId, currentPassword);
+  if (!valid) throw new AppError(403, 'INVALID_CURRENT_PASSWORD', INVALID_CURRENT_PASSWORD);
+
+  const passwordHash = await hashPassword(newPassword);
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await client.query('UPDATE users SET password_hash = $1 WHERE id = $2', [passwordHash, userId]);
+    await client.query('DELETE FROM sessions WHERE user_id = $1 AND id <> $2', [userId, currentSessionId]);
+    await client.query('COMMIT');
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+module.exports = { register, login, createSession, deleteSession, verifyUserPassword, changePassword };

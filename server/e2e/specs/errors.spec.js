@@ -83,12 +83,13 @@ test.describe('API error banner', () => {
 });
 
 test.describe('account deletion', () => {
-  test('deletes the account from the privacy page and ends the session', async ({ page }) => {
+  test('deletes the account from account settings and ends the session', async ({ page }) => {
     await registerAndSignIn(page);
 
-    await page.goto('/privacy.html');
+    await page.goto('/account.html');
     await page.locator('#btn-open-delete-modal').click();
     await expect(page.locator('#delete-account-dialog')).toBeVisible();
+    await page.locator('#del-password').fill('Study2026!');
     await page.locator('#del-confirm').click();
 
     await expect(page).toHaveURL(/\/index\.html\?deleted=1$/);

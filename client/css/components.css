@@ -350,6 +350,304 @@
   background: var(--primary);
 }
 
+/* account cards and native confirmation dialogs */
+.legal-card {
+  margin-block-start: var(--space-4);
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-lg);
+  background-color: var(--card);
+}
+
+.legal-card p {
+  margin-block-end: var(--space-4);
+}
+
+.legal-card--danger {
+  border-inline-start: 0.25rem solid var(--destructive);
+  box-shadow: var(--shadow-sm);
+}
+
+.legal-card__heading {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.legal-card__heading h2,
+.legal-card__heading h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+}
+
+.legal-card .legal-card__description {
+  margin-block: var(--space-1) 0;
+  color: var(--muted-foreground);
+  font-size: var(--text-sm);
+  line-height: 1.4rem;
+}
+
+.legal-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-block-start: var(--space-5);
+  padding-block-start: var(--space-4);
+  border-block-start: var(--border-width) solid var(--border);
+}
+
+.legal-card__footer p {
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+.legal-card__status[data-error="true"] {
+  color: var(--destructive-strong);
+}
+
+button.legal-card__delete-button {
+  border-color: color-mix(in srgb, var(--destructive) 45%, var(--border));
+  background: var(--card);
+  color: var(--destructive-strong);
+  transition: color var(--duration-fast) var(--ease), background-color var(--duration-fast) var(--ease), border-color var(--duration-fast) var(--ease);
+}
+
+button.legal-card__delete-button:hover,
+button.legal-card__delete-button:focus-visible {
+  border-color: var(--destructive-strong);
+  background: var(--destructive-strong);
+  color: var(--primary-foreground);
+}
+
+button.legal-card__delete-button:focus-visible {
+  outline: 0.125rem solid var(--focus-strong);
+  outline-offset: 0.125rem;
+}
+
+.legal-card .legal-card__status {
+  margin: 0;
+  color: var(--destructive-strong);
+  font-size: var(--text-sm);
+}
+
+.legal-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.legal-card__status {
+  flex-basis: 100%;
+  text-align: end;
+}
+
+.confirm-dialog {
+  inline-size: min(440px, calc(100vw - 32px));
+  max-inline-size: none;
+  max-block-size: calc(100vh - 32px);
+  margin: auto;
+  padding: 24px;
+  overflow: auto;
+  border: 0;
+  border-inline-start: 4px solid #e5484d;
+  border-radius: 16px;
+  background: #fff;
+  color: var(--foreground);
+  box-shadow: 0 20px 48px rgba(15, 15, 20, 0.2);
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+  transition: opacity 180ms var(--ease-enter), transform 180ms var(--ease-enter), overlay 180ms allow-discrete, display 180ms allow-discrete;
+}
+
+.confirm-dialog[open] {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+@starting-style {
+  .confirm-dialog[open] {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+.confirm-dialog::backdrop {
+  background: rgba(15, 15, 20, 0.55);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 180ms var(--ease-enter), overlay 180ms allow-discrete, display 180ms allow-discrete;
+}
+
+.confirm-dialog[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .confirm-dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.confirm-dialog__icon {
+  display: grid;
+  flex: 0 0 44px;
+  place-items: center;
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: 50%;
+  background: #fdecec;
+  color: #d92d20;
+}
+
+.confirm-dialog__icon svg {
+  inline-size: 22px;
+  block-size: 22px;
+}
+
+.confirm-dialog__body {
+  display: grid;
+  flex: 1 1 auto;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+
+.confirm-dialog__body h2 {
+  font-size: var(--text-lg);
+  line-height: var(--leading-lg);
+}
+
+.confirm-dialog__body > p {
+  margin: 0;
+  color: var(--muted-foreground);
+}
+
+.confirm-dialog--neutral {
+  border-inline-start: 1px solid var(--border);
+}
+
+.confirm-dialog--neutral .confirm-dialog__body {
+  inline-size: 100%;
+}
+
+.confirm-dialog__password-field {
+  margin-block-start: var(--space-2);
+}
+
+.confirm-dialog__password-field .field__control {
+  min-block-size: var(--control-height);
+}
+
+.confirm-dialog__error:not(:empty) {
+  display: block;
+}
+
+#change-password-form {
+  display: grid;
+  gap: var(--space-2);
+}
+
+#change-password-form .confirm-dialog__actions {
+  margin-block-start: var(--space-2);
+}
+
+.confirm-dialog__list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-inline-start: var(--space-5);
+  color: var(--foreground);
+  font-size: var(--text-sm);
+}
+
+.confirm-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-block-start: var(--space-2);
+}
+
+.confirm-dialog__actions .button {
+  min-inline-size: 8rem;
+}
+
+.confirm-dialog .button--destructive:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.confirm-dialog .button:focus-visible {
+  outline: 0.125rem solid var(--focus-strong);
+  outline-offset: 0.125rem;
+}
+
+.site-footer__inner {
+  padding-block: var(--space-6);
+  text-align: center;
+}
+
+.site-footer__inner a {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  text-decoration: none;
+  transition: border-bottom-color var(--duration-fast) var(--ease);
+}
+
+.site-footer__inner a:hover,
+.site-footer__inner a:focus-visible {
+  border-bottom-color: var(--primary);
+}
+
+@media (max-width: 480px) {
+  .confirm-dialog[open] {
+    flex-direction: column;
+  }
+
+  .confirm-dialog__actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .confirm-dialog__actions .button {
+    inline-size: 100%;
+  }
+}
+
+@media (max-width: 35rem) {
+  .legal-card__footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .legal-card__delete-button {
+    inline-size: 100%;
+  }
+
+  .legal-card__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .legal-card__actions > button {
+    inline-size: 100%;
+  }
+
+  .legal-card__status {
+    text-align: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confirm-dialog,
+  .confirm-dialog::backdrop {
+    transition: none;
+  }
+}
+
 /* target opens the dialog, a link to another anchor closes it */
 .modal {
   display: none;

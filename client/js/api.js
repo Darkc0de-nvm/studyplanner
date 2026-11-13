@@ -203,10 +203,17 @@
     },
 
     account: {
-      async deleteAccount() {
-        await request('/account', {
-          method: 'DELETE',
-          body: {},
+      async deleteAccount(password) {
+        await request('/account/delete', {
+          method: 'POST',
+          body: { password },
+          skipAuthRedirect: true,
+        });
+      },
+      async changePassword(currentPassword, newPassword) {
+        await request('/account/password', {
+          method: 'POST',
+          body: { currentPassword, newPassword },
           skipAuthRedirect: true,
         });
       },

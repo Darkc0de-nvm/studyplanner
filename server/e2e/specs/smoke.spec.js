@@ -24,7 +24,8 @@ test.describe('client smoke', () => {
       ['/', 'h1'],
       ['/login.html', '[data-auth-form="login"]'],
       ['/register.html', '[data-auth-form="register"]'],
-      ['/privacy.html', '#btn-open-delete-modal'],
+      ['/states.html', '.user-menu'],
+      ['/privacy.html', 'h1'],
       ['/terms.html', 'h1'],
     ];
 
@@ -32,13 +33,20 @@ test.describe('client smoke', () => {
       await page.goto(path);
       await expect(page.locator(selector)).toBeVisible();
     }
+    await page.goto('/states.html');
+    await expect(page.locator('.user-menu__panel > a.select__option')).toHaveText([
+      'Налаштування',
+      'Конфіденційність',
+      'Вийти',
+    ]);
+    await expect(page.locator('#account-data-card, #delete-account-dialog, #change-password-dialog')).toHaveCount(0);
     expect(errors).toEqual([]);
   });
 
   test('planner pages load API data without console errors', async ({ page, request }) => {
     const email = uniqueEmail('smoke');
     const registered = await request.post('/api/auth/register', {
-      data: { name: 'Smoke User', email, password: PASSWORD },
+      data: { name: 'Smoke User', email, password: PASSWORD, acceptedTerms: true },
     });
     expect(registered.status()).toBe(201);
 
@@ -53,10 +61,41 @@ test.describe('client smoke', () => {
     await page.goto('/tasks.html');
     await expect(page.locator('.task-groups > *').first()).toBeVisible();
     await expect(page.locator('.user-menu')).toBeVisible();
+    await expect(page.locator('.user-menu a[href="account.html"]')).toContainText('Налаштування');
+    await expect(page.locator('.user-menu a[href="privacy.html"]')).toHaveText('Конфіденційність');
+    await expect(page.locator('.user-menu__panel > a.select__option')).toHaveText([
+      'Налаштування',
+      'Конфіденційність',
+      'Вийти',
+    ]);
 
     await page.goto('/calendar.html');
     await expect(page.locator('[data-date]').first()).toBeVisible();
     await expect(page.locator('.user-menu')).toBeVisible();
+    await expect(page.locator('.user-menu a[href="account.html"]')).toContainText('Налаштування');
+    await expect(page.locator('.user-menu a[href="privacy.html"]')).toHaveText('Конфіденційність');
+    await expect(page.locator('.user-menu__panel > a.select__option')).toHaveText([
+      'Налаштування',
+      'Конфіденційність',
+      'Вийти',
+    ]);
+
+    await page.goto('/account.html');
+    await expect(page.locator('h1')).toHaveText('Налаштування акаунта');
+    await expect(page.locator('.user-menu strong')).toHaveText('Smoke User');
+    await expect(page.locator('.user-menu a[href="account.html"]')).toHaveAttribute('aria-current', 'page');
+    await expect(page.locator('.user-menu a[href="privacy.html"]')).toHaveText('Конфіденційність');
+    await expect(page.locator('.account-page__cards > section')).toHaveCount(2);
+    await expect(page.locator('.user-menu__panel > a.select__option')).toHaveText([
+      'Налаштування',
+      'Конфіденційність',
+      'Вийти',
+    ]);
+
+    await page.locator('.user-menu summary').click();
+    await page.locator('.user-menu a[href="privacy.html"]').click();
+    await expect(page).toHaveURL(/\/privacy\.html$/);
+    await expect(page.locator('#account-data-card, #delete-account-dialog, #change-password-dialog')).toHaveCount(0);
 
     expect(errors).toEqual([]);
   });

@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="StudyPlanner — налаштування безпеки облікового запису."
+    />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-cyrillic-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <title>Налаштування</title>
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/utilities.css" />
+    <link rel="stylesheet" href="css/pages/app.css" />
+    <link rel="stylesheet" href="css/pages/account.css" />
+
+    <script src="js/api.js" defer></script>
+    <script src="js/account.js" defer></script>
+    <script src="js/auth.js" defer></script>
+    <script src="js/navigation.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </head>
+  <body class="app-page" data-page="account">
+    <svg class="icon-sprite" aria-hidden="true">
+      <symbol id="icon-cap" viewBox="0 0 24 24">
+        <path
+          d="m2 10 10-5 10 5-10 5-10-5Zm4 2v5c3 3 9 3 12 0v-5M22 10v6"
+        ></path>
+      </symbol>
+      <symbol id="icon-settings" viewBox="0 0 24 24">
+        <path
+          d="M12.22 2h-.44a2 2 0 0 0-2 1.72l-.14 1.02a2 2 0 0 1-1 1.48l-.87.5a2 2 0 0 1-1.8 0l-.87-.5a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.87.5a2 2 0 0 1 1 1.48v1.02a2 2 0 0 1-1 1.48l-.87.5a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.87-.5a2 2 0 0 1 1.8 0l.87.5a2 2 0 0 1 1 1.48l.14 1.02a2 2 0 0 0 2 1.72h.44a2 2 0 0 0 2-1.72l.14-1.02a2 2 0 0 1 1-1.48l.87-.5a2 2 0 0 1 1.8 0l.87.5a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.87-.5a2 2 0 0 1-1-1.48v-1.02a2 2 0 0 1 1-1.48l.87-.5a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.87.5a2 2 0 0 1-1.8 0l-.87-.5a2 2 0 0 1-1-1.48l-.14-1.02a2 2 0 0 0-2-1.72z"
+        ></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </symbol>
+      <symbol id="icon-logout" viewBox="0 0 24 24">
+        <path d="M9 3H4v18h5M9 12h12m-4-4 4 4-4 4"></path>
+      </symbol>
+      <symbol id="icon-eye" viewBox="0 0 24 24">
+        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </symbol>
+      <symbol id="icon-eye-off" viewBox="0 0 24 24">
+        <path
+          d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.9 5.2A10.8 10.8 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3 3.9M6.2 6.2C3.5 8 2 12 2 12s3.5 7 10 7a10 10 0 0 0 4-.8"
+        ></path>
+      </symbol>
+    </svg>
+
+    <a class="skip-link" href="#main">Перейти до профілю</a>
+    <div class="planner-shell">
+      <header class="app-header">
+        <a class="brand" href="tasks.html">
+          <svg class="icon" aria-hidden="true">
+            <use href="#icon-cap"></use>
+          </svg>
+          <span>StudyPlanner</span>
+        </a>
+        <div class="app-header__right">
+          <nav class="app-nav" aria-label="Основна навігація">
+            <ul>
+              <li><a href="tasks.html">Завдання</a></li>
+              <li><a href="calendar.html">Календар</a></li>
+            </ul>
+          </nav>
+          <details class="user-menu" hidden>
+            <summary class="user-menu__trigger">
+              <span class="avatar"></span>
+              <span class="visually-hidden">Меню користувача</span>
+            </summary>
+            <div class="user-menu__panel">
+              <strong></strong>
+              <p class="muted"></p>
+              <a class="select__option" href="account.html" aria-current="page">
+                <svg class="icon" aria-hidden="true">
+                  <use href="#icon-settings"></use>
+                </svg>
+                Налаштування
+              </a>
+              <a class="select__option" href="privacy.html">Конфіденційність</a>
+              <a class="select__option" href="login.html" data-action="logout">
+                <svg class="icon" aria-hidden="true">
+                  <use href="#icon-logout"></use>
+                </svg>
+                Вийти
+              </a>
+            </div>
+          </details>
+        </div>
+      </header>
+
+      <main class="planner-main account-page" id="main" hidden>
+        <header class="account-page__heading">
+          <h1>Налаштування акаунта</h1>
+          <p class="muted">Керуйте безпекою облікового запису.</p>
+        </header>
+
+        <div class="account-page__cards">
+          <section
+            class="legal-card account-card account-card--warning"
+            aria-labelledby="account-security-title"
+          >
+            <div class="legal-card__heading">
+              <h2 id="account-security-title">Безпека</h2>
+              <p class="legal-card__description">
+                За потреби змініть пароль для входу до свого облікового запису.
+              </p>
+            </div>
+            <div class="account-card__footer">
+              <button
+                type="button"
+                class="button account-card__warning-button"
+                id="btn-open-password-modal"
+              >
+                Змінити пароль
+              </button>
+            </div>
+          </section>
+
+          <section
+            class="legal-card legal-card--danger account-card"
+            id="account-data-card"
+            hidden
+            aria-labelledby="account-danger-title"
+          >
+            <div class="legal-card__heading">
+              <h2 id="account-danger-title">Видалення даних</h2>
+              <p class="legal-card__description">
+                Ця функція безповоротно видалить ваш обліковий запис, дисципліни
+                та завдання.
+              </p>
+            </div>
+            <div class="legal-card__footer">
+              <p class="muted">Цю дію неможливо скасувати.</p>
+              <div class="legal-card__actions">
+                <button
+                  type="button"
+                  class="button button--destructive legal-card__delete-button"
+                  id="btn-open-delete-modal"
+                >
+                  Видалити профіль
+                </button>
+                <p
+                  class="legal-card__status"
+                  id="delete-status"
+                  role="status"
+                  aria-live="polite"
+                  hidden
+                ></p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <footer class="site-footer">
+        <div class="container site-footer__inner">
+          <p class="muted">
+            StudyPlanner © 2026. <a href="terms.html">Умови використання</a> ·
+            <a href="privacy.html">Політика конфіденційності</a>
+          </p>
+        </div>
+      </footer>
+    </div>
+
+    <dialog
+      id="change-password-dialog"
+      class="confirm-dialog confirm-dialog--neutral"
+      aria-labelledby="password-dialog-title"
+      aria-describedby="password-dialog-description"
+    >
+      <div class="confirm-dialog__body">
+        <h2 id="password-dialog-title">Змінити пароль</h2>
+        <p id="password-dialog-description">
+          Новий пароль має містити від 8 до 128 символів.
+        </p>
+        <form id="change-password-form" novalidate>
+          <div class="field">
+            <label class="field__label" for="current-password"
+              >Поточний пароль</label
+            >
+            <div class="field__password">
+              <input
+                class="field__control"
+                type="password"
+                id="current-password"
+                autocomplete="current-password"
+                required
+              />
+              <button
+                class="field__password-toggle"
+                type="button"
+                data-password-toggle
+                aria-controls="current-password"
+                aria-label="Показати пароль"
+                aria-pressed="false"
+              >
+                <svg class="icon" aria-hidden="true">
+                  <use href="#icon-eye"></use>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field__label" for="new-password">Новий пароль</label>
+            <div class="field__password">
+              <input
+                class="field__control"
+                type="password"
+                id="new-password"
+                autocomplete="new-password"
+                minlength="8"
+                maxlength="128"
+                required
+              />
+              <button
+                class="field__password-toggle"
+                type="button"
+                data-password-toggle
+                aria-controls="new-password"
+                aria-label="Показати пароль"
+                aria-pressed="false"
+              >
+                <svg class="icon" aria-hidden="true">
+                  <use href="#icon-eye"></use>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field__label" for="repeat-new-password"
+              >Повторіть новий пароль</label
+            >
+            <div class="field__password">
+              <input
+                class="field__control"
+                type="password"
+                id="repeat-new-password"
+                autocomplete="new-password"
+                maxlength="128"
+                required
+              />
+              <button
+                class="field__password-toggle"
+                type="button"
+                data-password-toggle
+                aria-controls="repeat-new-password"
+                aria-label="Показати пароль"
+                aria-pressed="false"
+              >
+                <svg class="icon" aria-hidden="true">
+                  <use href="#icon-eye"></use>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <p
+            class="confirm-dialog__error field__error"
+            id="password-change-error"
+            role="alert"
+          ></p>
+          <div class="confirm-dialog__actions">
+            <button
+              type="button"
+              class="button button--outline"
+              id="password-cancel"
+            >
+              Скасувати
+            </button>
+            <button
+              type="submit"
+              class="button button--primary"
+              id="password-save"
+              disabled
+            >
+              Зберегти
+            </button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <dialog
+      id="delete-account-dialog"
+      class="confirm-dialog"
+      aria-labelledby="del-title"
+      aria-describedby="del-desc"
+    >
+      <span class="confirm-dialog__icon" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="M10.3 3.9 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3l-7.5-13.1a2 2 0 0 0-3.4 0Z"
+          ></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path>
+        </svg>
+      </span>
+      <div class="confirm-dialog__body">
+        <h2 id="del-title">Видалити профіль?</h2>
+        <p id="del-desc">Буде безповоротно видалено:</p>
+        <ul class="confirm-dialog__list">
+          <li>ваш обліковий запис</li>
+          <li>усі дисципліни та завдання</li>
+          <li>сесійні ключі на всіх пристроях</li>
+        </ul>
+        <div class="field confirm-dialog__password-field">
+          <label class="field__label" for="del-password"
+            >Введіть пароль для підтвердження</label
+          >
+          <div class="field__password">
+            <input
+              class="field__control"
+              type="password"
+              id="del-password"
+              autocomplete="current-password"
+              aria-describedby="del-password-error"
+              required
+            />
+            <button
+              class="field__password-toggle"
+              type="button"
+              data-password-toggle
+              aria-controls="del-password"
+              aria-label="Показати пароль"
+              aria-pressed="false"
+            >
+              <svg class="icon" aria-hidden="true">
+                <use href="#icon-eye"></use>
+              </svg>
+            </button>
+          </div>
+          <p
+            class="confirm-dialog__error field__error"
+            id="del-password-error"
+            role="alert"
+          ></p>
+        </div>
+        <div class="confirm-dialog__actions">
+          <button type="button" class="button button--outline" id="del-cancel">
+            Скасувати
+          </button>
+          <button
+            type="button"
+            class="button button--destructive"
+            id="del-confirm"
+            disabled
+          >
+            Видалити назавжди
+          </button>
+        </div>
+      </div>
+    </dialog>
+  </body>
+</html>

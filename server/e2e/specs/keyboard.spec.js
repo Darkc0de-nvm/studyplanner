@@ -38,7 +38,7 @@ test.describe('keyboard-only checks', () => {
   test('login can be completed with the keyboard only', async ({ page }) => {
     const email = makeEmail('keyboard');
     const register = await page.request.post('/api/auth/register', {
-      data: { name: 'Keyboard User', email, password: PASSWORD },
+      data: { name: 'Keyboard User', email, password: PASSWORD, acceptedTerms: true },
     });
     expect(register.status()).toBe(201);
     await page.context().clearCookies();

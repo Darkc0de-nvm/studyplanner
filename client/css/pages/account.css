@@ -1,0 +1,80 @@
+/* account page layout */
+body[data-page="account"] .planner-shell {
+  padding-block-end: 0;
+}
+
+.account-page {
+  inline-size: min(100%, 48rem);
+  margin-inline: auto;
+  padding-block: var(--space-5) var(--space-10);
+}
+
+.account-page__heading {
+  margin-block-end: var(--space-5);
+}
+
+.account-page__heading h1 {
+  font-size: var(--text-xl);
+  line-height: var(--leading-xl);
+}
+
+.account-page__heading p {
+  margin-block-start: var(--space-2);
+}
+
+.account-page__cards {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.account-card {
+  margin: 0;
+}
+
+.account-card--warning {
+  --account-warning-strong: #B45309;
+  --account-warning-foreground: #451A03;
+  border-inline-start: 0.25rem solid var(--soon);
+  box-shadow: var(--shadow-sm);
+}
+
+.account-card--warning .account-card__warning-button {
+  border-color: var(--soon);
+  background: var(--card);
+  color: var(--account-warning-strong);
+}
+
+.account-card--warning .account-card__warning-button:hover,
+.account-card--warning .account-card__warning-button:focus-visible {
+  border-color: var(--soon);
+  background: var(--soon);
+  color: var(--account-warning-foreground);
+}
+
+.account-card--warning .account-card__warning-button:focus-visible {
+  outline: 0.125rem solid var(--focus-strong);
+  outline-offset: 0.125rem;
+}
+
+.account-card .legal-card__description {
+  margin-block: var(--space-1) 0;
+}
+
+.account-card__footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-start: var(--space-5);
+  padding-block-start: var(--space-4);
+  border-block-start: var(--border-width) solid var(--border);
+}
+
+.user-menu__panel a[aria-current="page"] {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+@media (max-width: 35rem) {
+  .account-page .account-card__footer .button {
+    inline-size: 100%;
+  }
+}

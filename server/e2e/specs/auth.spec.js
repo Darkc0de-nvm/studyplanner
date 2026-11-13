@@ -15,6 +15,7 @@ async function registerViaApi(request, overrides = {}) {
       name: overrides.name || 'API Користувач',
       email,
       password: PASSWORD,
+      acceptedTerms: true,
     },
   });
   expect(response.status()).toBe(201);
@@ -22,14 +23,33 @@ async function registerViaApi(request, overrides = {}) {
 }
 
 test.describe('authentication', () => {
-  test('protected page redirects to login with a safe next path', async ({ page }) => {
+  test('protected planner and account settings pages keep a safe return path', async ({ page }) => {
     await page.goto('/tasks.html');
 
     await expect(page).toHaveURL(/\/login\.html\?next=%2Ftasks\.html$/);
     await expect(page.locator('[data-auth-form="login"]')).toBeVisible();
+
+    await page.goto('/account.html');
+
+    await expect(page).toHaveURL(/\/login\.html\?next=%2Faccount\.html$/);
+    await expect(page.locator('[data-auth-form="login"]')).toBeVisible();
   });
 
-  test('register, real profile and logout', async ({ page }) => {
+  test('successful login returns to the requested account settings page', async ({ page, request }) => {
+    const email = await registerViaApi(request, { name: 'Profile User' });
+
+    await page.goto('/account.html');
+    await expect(page).toHaveURL(/\/login\.html\?next=%2Faccount\.html$/);
+    await page.fill('#email', email);
+    await page.fill('#password', PASSWORD);
+    await page.click('button[type="submit"]');
+
+    await expect(page).toHaveURL(/\/account\.html$/);
+    await expect(page.locator('h1')).toHaveText('Налаштування акаунта');
+    await expect(page.locator('.user-menu strong')).toHaveText('Profile User');
+  });
+
+  test('register, account settings and logout', async ({ page }) => {
     const email = uniqueEmail('register');
 
     await page.goto('/register.html');
@@ -37,6 +57,7 @@ test.describe('authentication', () => {
     await page.fill('#email', email);
     await page.fill('#password', PASSWORD);
     await page.fill('#password-repeat', PASSWORD);
+    await page.check('#acceptedTerms');
     await page.click('button[type="submit"]');
 
     await expect(page).toHaveURL(/\/tasks\.html$/);
@@ -48,7 +69,7 @@ test.describe('authentication', () => {
 
     await menu.locator('summary').click();
     await menu.getByRole('link', { name: 'Вийти' }).click();
-    await expect(page).toHaveURL(/\/login\.html$/);
+    await expect(page).toHaveURL(/\/index\.html$/);
 
     await page.goto('/tasks.html');
     await expect(page).toHaveURL(/\/login\.html\?next=%2Ftasks\.html$/);
@@ -103,6 +124,7 @@ test.describe('authentication', () => {
     await page.fill('#email', email);
     await page.fill('#password', PASSWORD);
     await page.fill('#password-repeat', PASSWORD);
+    await page.check('#acceptedTerms');
     await page.click('button[type="submit"]');
 
     await expect(page).toHaveURL(/\/register\.html$/);

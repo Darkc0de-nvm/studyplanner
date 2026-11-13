@@ -12,6 +12,7 @@
     authState: 'auth-state',
     login: 'login',
     register: 'register',
+    account: 'account',
     static: 'static',
   };
 
@@ -191,9 +192,18 @@
       app.forms.init();
       app.auth.init(new URLSearchParams(location.search).get('state'));
     }
+    if (document.body.dataset.page === PAGE.account) {
+      app.auth.requireAuth()
+        .then(() => {
+          app.account?.init();
+          const accountPage = document.getElementById('main');
+          if (accountPage) accountPage.hidden = false;
+          enterPage();
+        })
+        .catch(() => {});
+    }
     if (document.body.dataset.page === PAGE.static) {
       app.selects?.init();
-      app.account?.init();
       const authHome = document.querySelector('[data-auth-home]');
       authHome?.addEventListener('click', async event => {
         event.preventDefault();
@@ -209,7 +219,7 @@
     if (deletedAlert && new URLSearchParams(location.search).get('deleted') === '1') {
       deletedAlert.hidden = false;
     }
-    if (![PAGE.tasks, PAGE.calendar].includes(document.body.dataset.page)) enterPage();
+    if (![PAGE.tasks, PAGE.calendar, PAGE.account].includes(document.body.dataset.page)) enterPage();
   }
 
   init();

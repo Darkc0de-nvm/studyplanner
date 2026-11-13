@@ -13,6 +13,7 @@ const BASE_TIME = new Date('2026-10-06T12:00:00');
 const PAGES = [
   { name: 'tasks', path: '/tasks.html', auth: true, ready: '.task-card' },
   { name: 'calendar', path: '/calendar.html', auth: true, ready: '.month-heading h1' },
+  { name: 'account', path: '/account.html', auth: true, ready: '#btn-open-password-modal' },
   { name: 'login', path: '/login.html', ready: '[data-auth-form="login"]' },
   { name: 'register', path: '/register.html', ready: '[data-auth-form="register"]' },
   { name: 'index', path: '/', ready: 'h1' },

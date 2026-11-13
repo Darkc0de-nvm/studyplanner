@@ -28,6 +28,7 @@ async function registerAndSignIn(page, name = 'E2E Користувач') {
   await page.fill('#email', email);
   await page.fill('#password', PASSWORD);
   await page.fill('#password-repeat', PASSWORD);
+  await page.check('#acceptedTerms');
   await page.click('button[type="submit"]');
 
   await expect(page).toHaveURL(/\/tasks\.html$/);

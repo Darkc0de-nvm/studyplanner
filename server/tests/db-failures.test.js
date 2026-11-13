@@ -210,9 +210,9 @@ describe('Session, account and discipline endpoints when the database fails', ()
     injectFailure('DELETE FROM users');
 
     const res = await ag
-      .delete('/api/account')
+      .post('/api/account/delete')
       .set('Content-Type', 'application/json')
-      .send({});
+      .send({ password: 'Password1!' });
 
     expect(res.status).toBe(500);
     expect(res.body.error.code).toBe('INTERNAL_ERROR');
