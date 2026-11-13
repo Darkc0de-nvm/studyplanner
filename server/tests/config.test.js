@@ -4,6 +4,23 @@ const path = require('path');
 
 const SERVER_DIR = path.join(__dirname, '..');
 
+// Ambient app variables (CI job env, a developer shell or .env) must not leak
+// into these child processes, otherwise "documented defaults" are not defaults.
+const APP_ENV_KEYS = [
+  'NODE_ENV',
+  'PORT',
+  'DATABASE_URL',
+  'TEST_DATABASE_URL',
+  'E2E_DATABASE_URL',
+  'SESSION_SECRET',
+  'SESSION_MAX_AGE',
+  'TRUST_PROXY',
+  'COOKIE_DOMAIN',
+  'COOKIE_SECURE',
+  'DATABASE_SSL',
+  'DATABASE_SSL_REJECT_UNAUTHORIZED',
+];
+
 const VALID_ENV = {
   NODE_ENV: 'test',
   DATABASE_URL: 'postgresql://postgres:postgres@127.0.0.1:5433/studyplanner_test',
@@ -12,9 +29,11 @@ const VALID_ENV = {
 
 /** Runs a snippet in a fresh Node process with a controlled environment. */
 function runNode(env, code) {
-  const childEnv = { ...process.env, ...env };
-  for (const key of Object.keys(childEnv)) {
-    if (childEnv[key] === undefined) delete childEnv[key];
+  const childEnv = { ...process.env };
+  for (const key of APP_ENV_KEYS) delete childEnv[key];
+  for (const [key, value] of Object.entries(env)) {
+    if (value === undefined) delete childEnv[key];
+    else childEnv[key] = value;
   }
   return spawnSync(process.execPath, ['-e', code], {
     cwd: SERVER_DIR,
