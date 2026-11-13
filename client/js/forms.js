@@ -264,15 +264,13 @@
       clear(form);
       if (app.modals) app.modals.close();
 
-      // Automatically select newly created discipline in open task form
-      const openModal = document.querySelector('.modal--open');
-      if (openModal) {
-        const radio = openModal.querySelector(`input[name="disciplineId"][value="${created.id}"]`);
-        if (radio) {
-          radio.checked = true;
-          if (app.selects) app.selects.sync(radio.closest(SELECTOR.select));
-        }
-      }
+      // Select it before the parent task modal is restored after its close animation.
+      document.querySelectorAll('[data-task-form]').forEach(taskForm => {
+        const radio = taskForm.querySelector(`input[name="disciplineId"][value="${created.id}"]`);
+        if (!radio) return;
+        radio.checked = true;
+        if (app.selects) app.selects.sync(radio.closest(SELECTOR.select));
+      });
     } catch (err) {
       const status = form.querySelector(SELECTOR.status);
       const errorEl = form.querySelector('#new-discipline-name-error') || form.querySelector(SELECTOR.error);
