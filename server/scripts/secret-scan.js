@@ -21,6 +21,10 @@ const SKIP_FILES = new Set(['package-lock.json', 'pnpm-lock.yaml', 'yarn.lock'])
 // Values used only by tests, examples and local placeholders.
 const ALLOWED_GENERIC_VALUES = /test|example|e2e|dummy|fake|placeholder|change[_-]?me|your[_-]|sample|wrong|invalid/i;
 
+function isPlaceholderDatabaseCredentials(match) {
+  return /^postgres(?:ql)?:\/\/(?:user|<user>):(?:pass|<password>)@$/i.test(match);
+}
+
 const PATTERNS = [
   {
     name: 'private key block',
@@ -49,6 +53,9 @@ const PATTERNS = [
   {
     name: 'database URL with credentials',
     re: /\bpostgres(?:ql)?:\/\/[^\s:@'"]+:(?!postgres\b)[^\s@'"]{4,}@/i,
+    // Permit only unmistakable documentation placeholders, not arbitrary
+    // credentials or URLs that merely point at a local host.
+    allow(_value, _line, match) { return isPlaceholderDatabaseCredentials(match); },
   },
   {
     name: 'hard-coded secret assignment',
@@ -74,7 +81,7 @@ function scanText(text, location, findings) {
     for (const pattern of PATTERNS) {
       const match = pattern.re.exec(line);
       if (!match) continue;
-      if (pattern.allow && pattern.allow(match[1] || '', line)) continue;
+      if (pattern.allow && pattern.allow(match[1] || '', line, match[0])) continue;
       findings.push(`${location}:${index + 1} — ${pattern.name}`);
     }
   });
@@ -131,7 +138,7 @@ function scanHistory(findings, limit = 5000) {
     for (const pattern of PATTERNS) {
       const match = pattern.re.exec(content);
       if (!match) continue;
-      if (pattern.allow && pattern.allow(match[1] || '', content)) continue;
+      if (pattern.allow && pattern.allow(match[1] || '', content, match[0])) continue;
       findings.push(`history ${commit} ${file} — ${pattern.name}`);
       if (findings.length >= limit) return;
     }
@@ -153,4 +160,6 @@ function main() {
   process.exitCode = 1;
 }
 
-main();
+if (require.main === module) main();
+
+module.exports = { isPlaceholderDatabaseCredentials };

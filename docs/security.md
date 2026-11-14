@@ -79,6 +79,8 @@ npm run secret-scan
 npm test -- tests/security-headers.test.js tests/auth.test.js tests/origin-check.test.js tests/session-cookie.test.js
 ```
 
+Сканер розпізнає лише явні шаблони для документаційних PostgreSQL URL (`user:pass` і `<user>:<password>`). Інші URL із credential-формою залишаються помилками; перевірка робочого дерева й Git-історії не вимикається.
+
 Ручна перевірка заголовків і cookie:
 
 ```powershell

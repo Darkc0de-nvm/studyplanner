@@ -244,8 +244,8 @@ StudyPlanner/
 |---|---|---|:---:|
 | `PORT` | Порт, який слухає Express сервер | `3000` | Ні (дефолт `3000`) |
 | `NODE_ENV` | Режим оточення (`development`, `test`, `production`) | `development` | Так |
-| `DATABASE_URL` | Рядок підключення до PostgreSQL | `postgres://user:pass@host/studyplanner` | Так |
-| `TEST_DATABASE_URL`| Рядок підключення до тестової БД (для тестів) | `postgres://user:pass@127.0.0.1:5433/studyplanner_test` | У тестах |
+| `DATABASE_URL` | Рядок підключення до PostgreSQL | `postgres://<user>:<password>@<host>/studyplanner` | Так |
+| `TEST_DATABASE_URL`| Рядок підключення до тестової БД (для тестів) | `postgres://<user>:<password>@127.0.0.1:5433/studyplanner_test` | У тестах |
 | `DATABASE_SSL` | Режим SSL до PostgreSQL: `auto`, `true`, `false` | `auto` | Ні (дефолт `auto`) |
 | `DATABASE_SSL_REJECT_UNAUTHORIZED` | Перевіряти сертифікат сервера БД: `true`, `false` | `true` | Ні (дефолт `true`) |
 | `SESSION_SECRET` | Криптографічний секрет для HMAC-підпису сесійних cookie | `32_символьний_рандомний_токен_генерації` | Так |
