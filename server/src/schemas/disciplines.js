@@ -13,7 +13,7 @@ const createDisciplineSchema = z.object({
     .int('Індекс кольору має бути цілим числом.')
     .min(1, 'Індекс кольору від 1 до 5.')
     .max(5, 'Індекс кольору від 1 до 5.')
-    .default(1),
+    .optional(),
 }).strict();
 
 module.exports = { createDisciplineSchema };

@@ -36,7 +36,6 @@ test.describe('client smoke', () => {
     await page.goto('/states.html');
     await expect(page.locator('.user-menu__panel > a.select__option')).toHaveText([
       'Налаштування',
-      'Конфіденційність',
       'Вийти',
     ]);
     await expect(page.locator('#account-data-card, #delete-account-dialog, #change-password-dialog')).toHaveCount(0);
@@ -62,10 +61,8 @@ test.describe('client smoke', () => {
     await expect(page.locator('.task-groups > *').first()).toBeVisible();
     await expect(page.locator('.user-menu')).toBeVisible();
     await expect(page.locator('.user-menu a[href="account.html"]')).toContainText('Налаштування');
-    await expect(page.locator('.user-menu a[href="privacy.html"]')).toHaveText('Конфіденційність');
     await expect(page.locator('.user-menu__panel > a.select__option')).toHaveText([
       'Налаштування',
-      'Конфіденційність',
       'Вийти',
     ]);
 
@@ -73,10 +70,8 @@ test.describe('client smoke', () => {
     await expect(page.locator('[data-date]').first()).toBeVisible();
     await expect(page.locator('.user-menu')).toBeVisible();
     await expect(page.locator('.user-menu a[href="account.html"]')).toContainText('Налаштування');
-    await expect(page.locator('.user-menu a[href="privacy.html"]')).toHaveText('Конфіденційність');
     await expect(page.locator('.user-menu__panel > a.select__option')).toHaveText([
       'Налаштування',
-      'Конфіденційність',
       'Вийти',
     ]);
 
@@ -84,16 +79,13 @@ test.describe('client smoke', () => {
     await expect(page.locator('h1')).toHaveText('Налаштування акаунта');
     await expect(page.locator('.user-menu strong')).toHaveText('Smoke User');
     await expect(page.locator('.user-menu a[href="account.html"]')).toHaveAttribute('aria-current', 'page');
-    await expect(page.locator('.user-menu a[href="privacy.html"]')).toHaveText('Конфіденційність');
     await expect(page.locator('.account-page__cards > section')).toHaveCount(2);
     await expect(page.locator('.user-menu__panel > a.select__option')).toHaveText([
       'Налаштування',
-      'Конфіденційність',
       'Вийти',
     ]);
 
-    await page.locator('.user-menu summary').click();
-    await page.locator('.user-menu a[href="privacy.html"]').click();
+    await page.locator('.site-footer a[href="privacy.html"]').click();
     await expect(page).toHaveURL(/\/privacy\.html$/);
     await expect(page.locator('#account-data-card, #delete-account-dialog, #change-password-dialog')).toHaveCount(0);
 

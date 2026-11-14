@@ -233,16 +233,16 @@
   content: "";
 }
 
-/* sibling :checked controls the switch and completed cards below the toolbar */
-.done-toggle:checked ~ .app-toolbar .switch__track {
+/* sibling :checked controls the switch and completed items below the toolbar */
+.done-toggle:checked ~ .toolbar .switch__track {
   background: var(--primary);
 }
 
-.done-toggle:checked ~ .app-toolbar .switch__track::before {
+.done-toggle:checked ~ .toolbar .switch__track::before {
   transform: translateX(0.875rem);
 }
 
-.done-toggle:focus-visible ~ .app-toolbar .done-label {
+.done-toggle:focus-visible ~ .toolbar .done-label {
   outline: 0.1875rem solid var(--focus-strong);
   outline-offset: 0.1875rem;
 }
@@ -442,7 +442,7 @@
 .task-card .tag,
 .task-details .tag {
   line-height: 1rem;
-  background: var(--discipline-fill);
+  background: var(--discipline-color);
   color: var(--primary-foreground);
 }
 
@@ -634,6 +634,7 @@
 }
 
 .delete-dialog__description {
+  margin-block-start: calc(-1 * var(--space-3));
   font-size: var(--text-sm);
 }
 
@@ -651,6 +652,7 @@
   align-items: flex-start;
   gap: var(--space-2);
   padding: var(--space-3);
+  border: var(--border-width) solid var(--border);
   border-radius: var(--radius-sm);
   text-align: start;
   font-size: var(--text-sm);
@@ -1084,6 +1086,11 @@
     --chip-bg: var(--discipline-3-bg);
   }
 
+  .calendar-chip--done {
+    opacity: 0.65;
+    text-decoration: line-through;
+  }
+
   .calendar-cell__more {
     color: var(--muted-foreground);
   }
@@ -1440,6 +1447,10 @@
 
 .calendar-legend li[hidden] {
   display: none;
+}
+
+.calendar-cell__dot--done {
+  opacity: 0.45;
 }
 
 html:has(.app-page) {

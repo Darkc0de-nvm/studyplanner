@@ -145,9 +145,6 @@
                 </svg>
                 Налаштування</a
               >
-              <a class="select__option" href="privacy.html">
-                Конфіденційність</a
-              >
               <a class="select__option" href="login.html" data-action="logout">
                 <svg class="icon" aria-hidden="true">
                   <use href="#icon-logout"></use>
@@ -167,6 +164,11 @@
           hidden
         ></div>
 
+        <input
+          type="checkbox"
+          class="done-toggle visually-hidden"
+          id="show-done"
+        />
         <div class="toolbar calendar-toolbar">
           <div class="month-heading">
             <a
@@ -257,6 +259,11 @@
               ></label>
             </fieldset>
           </details>
+
+          <label class="switch done-label" for="show-done"
+            >Показати виконані<span class="switch__track" aria-hidden="true">
+            </span>
+          </label>
 
           <a
             class="button button--ghost filter-reset"

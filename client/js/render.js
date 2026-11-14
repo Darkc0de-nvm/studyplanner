@@ -209,8 +209,17 @@
     time.dateTime = task.deadline;
     time.textContent = app.dates.format(task.deadline);
     const relative = element.querySelector(SELECTOR.meta);
-    relative.hidden = task.done;
-    relative.textContent = `· ${app.dates.relative(task.deadline, today)}`;
+    if (task.done && task.completedAt) {
+      const completedDate = new Date(task.completedAt);
+      const completedISO = Number.isNaN(completedDate.getTime()) ? '' : app.dates.toISO(completedDate);
+      relative.hidden = !completedISO;
+      relative.textContent = completedISO
+        ? `· здано ${completedISO === app.dates.toISO(today) ? 'сьогодні' : app.dates.format(completedISO)}`
+        : '';
+    } else {
+      relative.hidden = task.done;
+      relative.textContent = `· ${app.dates.relative(task.deadline, today)}`;
+    }
     element.querySelector(SELECTOR.description).hidden = !task.description;
     const check = element.querySelector(SELECTOR.check);
     check.checked = task.done;

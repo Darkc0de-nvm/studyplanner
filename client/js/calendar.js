@@ -28,12 +28,14 @@
       const color = app.tasks.getDisciplineColor ? app.tasks.getDisciplineColor(task.disciplineId) : task.disciplineId;
       const chip = app.render.clone(TEMPLATE.chip);
       chip.firstElementChild.classList.add(CLASS.chip + color);
+      if (task.done) chip.firstElementChild.classList.add(CLASS.chip + 'done');
       chip.firstElementChild.textContent = task.title;
       chip.firstElementChild.dataset.taskId = task.id;
       chip.firstElementChild.dataset.taskState = app.tasks.getTaskState(task);
       chips.append(chip);
       const dot = app.render.clone(TEMPLATE.dot);
       dot.firstElementChild.classList.add(CLASS.dot + color);
+      if (task.done) dot.firstElementChild.classList.add(CLASS.dot + 'done');
       dot.firstElementChild.dataset.taskState = app.tasks.getTaskState(task);
       dots.append(dot);
     });
@@ -55,11 +57,13 @@
     const days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
     const cells = Math.ceil((offset + days) / DAYS_PER_WEEK) * DAYS_PER_WEEK;
     const content = document.createDocumentFragment();
+    const visibleDisciplines = new Set();
     for (let index = 0; index < cells; index += 1) {
       const date = new Date(start);
       date.setDate(start.getDate() + index);
       const iso = app.dates.toISO(date);
       const tasks = tasksOn(iso);
+      tasks.forEach(task => visibleDisciplines.add(String(task.disciplineId)));
       const fragment = app.render.clone(TEMPLATE.cell);
       const cell = fragment.firstElementChild;
       cell.dataset.date = iso;
@@ -83,7 +87,9 @@
     document.querySelector(SELECTOR.grid).replaceChildren(content);
     const discipline = app.filters.current().discipline;
     document.querySelector(SELECTOR.reset).hidden = discipline === '0';
-    document.querySelectorAll(SELECTOR.legend).forEach(item => { item.hidden = discipline !== '0' && item.dataset.disciplineId !== discipline; });
+    document.querySelectorAll(SELECTOR.legend).forEach(item => {
+      item.hidden = !visibleDisciplines.has(item.dataset.disciplineId);
+    });
     fillDay();
   }
 

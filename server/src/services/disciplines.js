@@ -29,13 +29,25 @@ async function findOrCreate(userId, name, colorIndex = 1) {
   return format(created);
 }
 
-async function create(userId, name, colorIndex = 1) {
+async function create(userId, name, colorIndex) {
   const { rows: existing } = await pool.query(
     'SELECT id FROM disciplines WHERE user_id = $1 AND lower(name) = lower($2)',
     [userId, name]
   );
   if (existing.length > 0) {
     throw new AppError(409, 'DISCIPLINE_CONFLICT', 'Дисципліна з такою назвою вже існує.');
+  }
+
+  if (colorIndex === undefined) {
+    const { rows: usage } = await pool.query(
+      'SELECT color_index, COUNT(*)::int AS count FROM disciplines WHERE user_id = $1 AND color_index BETWEEN 1 AND 3 GROUP BY color_index',
+      [userId]
+    );
+    const counts = new Map(usage.map(row => [Number(row.color_index), Number(row.count)]));
+    colorIndex = [1, 2, 3].reduce(
+      (leastUsed, color) => (counts.get(color) || 0) < (counts.get(leastUsed) || 0) ? color : leastUsed,
+      1
+    );
   }
 
   let disc;
