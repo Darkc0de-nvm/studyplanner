@@ -104,3 +104,5 @@ Lighthouse-деталі:
 - **Документація:** `docs/phases/phase3.md`; локально (поза git) — `docs/security.md`, `docs/accessibility.md`, `docs/performance.md`, `docs/ai-log.md`.
 
 Коміти, staging, push, merge і теги не виконувалися — їх робить користувач.
+
+Наступний етап — production-розгортання. Його статус і критерії готовності зафіксовані в [`phase4.md`](phase4.md), а інструкція з налаштування та відкату — у [`../deployment.md`](../deployment.md).
