@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-cyrillic-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/geist-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <meta
+      name="description"
+      content="StudyPlanner — Політика конфіденційності"
+    />
+    <title>Політика конфіденційності</title>
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/utilities.css" />
+    <link rel="stylesheet" href="css/pages/landing.css" />
+
+    <script src="js/api.js" defer></script>
+    <script src="js/navigation.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </head>
+  <body class="site-shell" data-page="static">
+    <svg class="icon-sprite" aria-hidden="true">
+      <symbol id="icon-shape-1" viewBox="0 0 24 24">
+        <path d="M22 10 12 5 2 10l10 5 10-5Z"></path>
+        <path d="M6 12v5c3 3 9 3 12 0v-5M22 10v6"></path>
+      </symbol>
+    </svg>
+
+    <a class="skip-link" href="#main">Перейти до вмісту</a>
+
+    <header class="navbar">
+      <nav class="navbar__inner container" aria-label="Головна навігація">
+        <a
+          class="brand"
+          href="index.html"
+          data-auth-home
+          aria-label="StudyPlanner — головна"
+        >
+          <svg class="icon icon--large" aria-hidden="true">
+            <use href="#icon-shape-1"></use>
+          </svg>
+          <span>StudyPlanner</span>
+        </a>
+      </nav>
+    </header>
+
+    <main id="main" class="container legal">
+      <article>
+        <h1>Політика конфіденційності</h1>
+        <p class="muted">Останнє оновлення: 13 листопада 2026 року</p>
+
+        <section>
+          <h2>1. Які дані ми збираємо</h2>
+          <p>
+            StudyPlanner зберігає лише ті дані, які необхідні для функціонування
+            планувальника завдань:
+          </p>
+          <ul>
+            <li>
+              <strong>Обліковий запис:</strong> ім’я користувача, адреса
+              електронної пошти, криптографічний хеш пароля (Argon2id) і дата та
+              час згоди з умовами, якщо її зафіксовано під час реєстрації.
+              Пароль передається на сервер під час реєстрації, входу, зміни
+              пароля та підтвердження видалення; у базі зберігається лише його
+              хеш Argon2id.
+            </li>
+            <li>
+              <strong>Навчальні завдання:</strong> назви завдань, описи, обрані
+              дисципліни, терміни виконання (дедлайни) та статус виконання.
+            </li>
+            <li>
+              <strong>Дисципліни:</strong> персоналізований список навчальних
+              предметів користувача та обрані колірні позначки.
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>2. Використання файлів cookie</h2>
+          <p>
+            Сервіс використовує єдиний сесійний файл cookie з назвою
+            <code>sp_session</code>, підписаний HMAC-SHA256, який містить
+            випадковий ідентифікатор активної сесії. Файл захищено атрибутами
+            <code>HttpOnly</code>, <code>SameSite=Lax</code> та
+            <code>Secure</code> у виробничому середовищі. Cookie не
+            використовуються для реклами або відстеження між сайтами.
+          </p>
+        </section>
+
+        <section>
+          <h2>3. Видалення збережених даних</h2>
+          <p>
+            Ви можете самостійно безповоротно видалити обліковий запис і
+            пов’язані з ним дані, підтвердивши дію поточним паролем.
+          </p>
+          <p>
+            Після підтвердження паролем сервіс каскадно видаляє обліковий запис,
+            дисципліни, завдання та всі пов’язані сесії.
+          </p>
+          <p>
+            Видалити акаунт можна у
+            <a href="account.html">налаштуваннях акаунта</a>.
+          </p>
+        </section>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container site-footer__inner">
+        <p class="muted">
+          StudyPlanner © 2026. <a href="terms.html">Умови використання</a> ·
+          <a href="privacy.html">Політика конфіденційності</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

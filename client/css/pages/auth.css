@@ -1,0 +1,215 @@
+/* authentication pages, loaded after shared styles */
+.auth-page {
+  background: var(--card);
+}
+
+.auth-layout {
+  min-block-size: 100vh;
+  padding: var(--space-12) var(--space-4) var(--space-8);
+}
+
+.auth-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  inline-size: 100%;
+  margin-inline: auto;
+}
+
+.auth-card__navigation {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 2.5rem;
+}
+
+.auth-card__back {
+  position: absolute;
+  inset-inline-start: 0;
+}
+
+.auth-card__brand {
+  font-size: 1rem;
+}
+
+.auth-card__logo {
+  display: none;
+}
+
+.auth-card__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.auth-card__title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 2.25rem;
+  letter-spacing: -0.03125rem;
+}
+
+.auth-card__subtitle {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: var(--muted-foreground);
+}
+
+.auth-card > .alert {
+  align-items: center;
+}
+
+.auth-card__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.auth-card__fields,
+.auth-card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.auth-card__footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: 1.25rem;
+}
+
+.auth-card__footer a {
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.auth-card__footer a:hover {
+  text-decoration: underline;
+}
+
+.field--consent .field__error:empty {
+  display: none;
+}
+
+.field--consent.field--error .field__consent-label {
+  color: var(--destructive);
+}
+
+.auth-card__form .field--consent .field__consent-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  font-weight: 400;
+}
+
+.auth-card__form .field--consent .field__consent-label input {
+  margin-block-start: 0;
+  flex: none;
+  transition: accent-color var(--duration-fast) var(--ease), transform var(--duration-fast) var(--ease);
+}
+
+.auth-card__form .field--consent .field__consent-label input:checked {
+  animation: consent-check-pop var(--duration-fast) var(--ease);
+}
+
+@keyframes consent-check-pop {
+  50% {
+    transform: scale(1.16);
+  }
+}
+
+.auth-card__form .field--consent .field__consent-label input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.auth-card__form .field--consent .field__consent-label a {
+  position: relative;
+  z-index: 1;
+  color: var(--primary);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--link-underline);
+  transition: border-bottom-color var(--duration-fast) var(--ease);
+}
+
+.auth-card__form .field--consent .field__consent-label a:hover,
+.auth-card__form .field--consent .field__consent-label a:focus-visible {
+  border-bottom-color: var(--primary);
+}
+
+.field--consent {
+  margin-block-start: -4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-card__form .field--consent .field__consent-label input,
+  .auth-card__form .field--consent .field__consent-label input:checked {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* tablet: center the form in a bordered card */
+@media (min-width: 48rem) {
+  .auth-page {
+    background: var(--background);
+  }
+
+  .auth-layout {
+    display: grid;
+    place-items: center;
+    padding: var(--space-8);
+  }
+
+  .auth-card {
+    max-inline-size: var(--auth-width);
+    padding: var(--space-8);
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .auth-card__navigation {
+    display: none;
+  }
+
+  .auth-card__logo {
+    display: block;
+    margin-block-end: var(--space-2);
+  }
+
+  .auth-card__logo .icon {
+    inline-size: 2.1875rem;
+    block-size: 2.1875rem;
+  }
+
+  .auth-card__title {
+    font-size: var(--text-xl);
+    font-weight: 500;
+    line-height: var(--leading-xl);
+  }
+
+  .auth-card__actions .button {
+    min-block-size: 2.5rem;
+  }
+}
+
+.alert[hidden] {
+  display: none;
+}

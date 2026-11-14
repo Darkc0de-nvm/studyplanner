@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Lint, tests, e2e and audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: studyplanner_test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d studyplanner_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5433/studyplanner_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5433/studyplanner_test
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5433/studyplanner_e2e
+      E2E_SESSION_SECRET: ci-secret-that-is-at-least-32-bytes-long!!
+      COOKIE_SECURE: 'false'
+      TRUST_PROXY: '0'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Validate client markup and styles
+        run: npm run validate:client
+
+      - name: API tests with coverage
+        run: npm test
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox
+
+      - name: End-to-end tests (Chromium and Firefox, visual baselines stay local)
+        run: npx playwright test --grep-invert "visual baseline|visual states"
+
+      - name: Secret scan
+        run: npm run secret-scan
+
+      # Report-only on purpose: a new advisory should be visible in the log
+      # without blocking unrelated work. Findings are triaged in docs/security.md.
+      - name: npm audit (report only)
+        run: npm audit --audit-level=high || true
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: server/playwright-report
+          retention-days: 7

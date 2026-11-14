@@ -1,3 +1,50 @@
-work/
-node_modules/
+# OS
 .DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Environment — NEVER commit secrets
+.env
+.env.local
+.env.*.local
+
+# Build / coverage / temp
+coverage/
+dist/
+.tmp/
+*.tsbuildinfo
+
+# Test artifacts (Playwright, screenshots generated during CI)
+test-results/
+playwright-report/
+.playwright/
+
+# Local Lighthouse reports, header captures and temporary server files
+server/perf/
+
+# Ignore local reports and screenshots, but keep maintained project docs
+*-snapshots/
+docs/*
+!docs/accessibility.md
+!docs/api.md
+!docs/api-examples.http
+!docs/architecture.md
+!docs/ai-log.md
+!docs/data-model.md
+!docs/deployment.md
+!docs/performance.md
+!docs/requirements.md
+!docs/security.md
+!docs/test-plan.md
+!docs/prompts/
+docs/prompts/*
+!docs/prompts/00-initial.md
+!docs/prompts/01-server-scaffold.md
+!docs/phases/
+
+# Legacy work folder
+work/

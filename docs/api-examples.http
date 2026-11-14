@@ -1,0 +1,80 @@
+### StudyPlanner REST API Examples
+### Base URL: http://localhost:3000
+
+### Health check
+GET http://localhost:3000/api/health
+
+### Register
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Олена Коваль",
+  "email": "olena@example.com",
+  "password": "Study2026!"
+}
+
+### Login
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "olena@example.com",
+  "password": "Study2026!"
+}
+
+### Get current user (requires sp_session cookie)
+GET http://localhost:3000/api/auth/me
+
+### Logout
+POST http://localhost:3000/api/auth/logout
+Content-Type: application/json
+
+{}
+
+### List disciplines
+GET http://localhost:3000/api/disciplines
+
+### Create discipline
+POST http://localhost:3000/api/disciplines
+Content-Type: application/json
+
+{
+  "name": "Архітектура комп'ютера",
+  "colorIndex": 1
+}
+
+### List tasks (with optional filters)
+GET http://localhost:3000/api/tasks
+# GET http://localhost:3000/api/tasks?q=звіт&done=false&from=2026-01-01&to=2026-12-31
+
+### Create task
+POST http://localhost:3000/api/tasks
+Content-Type: application/json
+
+{
+  "title": "Лабораторна робота №5",
+  "description": "Реалізувати full-stack застосунок",
+  "disciplineId": "REPLACE_WITH_ACTUAL_UUID",
+  "deadline": "2026-11-30"
+}
+
+### Toggle done
+PATCH http://localhost:3000/api/tasks/REPLACE_WITH_TASK_UUID
+Content-Type: application/json
+
+{
+  "done": true
+}
+
+### Delete task
+DELETE http://localhost:3000/api/tasks/REPLACE_WITH_TASK_UUID
+Content-Type: application/json
+
+{}
+
+### Delete account (cascades all data)
+DELETE http://localhost:3000/api/account
+Content-Type: application/json
+
+{}
