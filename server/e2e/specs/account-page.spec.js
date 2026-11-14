@@ -58,7 +58,7 @@ test.describe('account settings page', () => {
     await page.locator('#current-password').fill(originalPassword);
     await page.locator('#password-save').click();
     await expect(dialog).toBeHidden();
-    await expect(page.locator('#delete-status')).toHaveText('Пароль змінено');
+    await expect(page.locator('#password-status')).toHaveText('Пароль змінено');
 
     await page.request.post('/api/auth/logout');
     await page.goto('/login.html');

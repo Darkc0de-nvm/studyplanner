@@ -1,7 +1,6 @@
 'use strict';
 const { agent } = require('./helpers/app');
 const { runMigrations, cleanDb, pool } = require('./helpers/db');
-const disciplinesService = require('../src/services/disciplines');
 
 const USER = { name: 'Disc User', email: 'disc@example.com', password: 'Password1!', acceptedTerms: true };
 
@@ -32,11 +31,22 @@ describe('POST /api/disciplines', () => {
     expect(res.body.discipline.colorIndex).toBe(2);
   });
 
-  it('uses default colorIndex 1 when not provided', async () => {
+  it('перша дисципліна отримує colorIndex 1', async () => {
     const ag = await setup();
     const res = await ag.post('/api/disciplines').set('Content-Type', 'application/json').send({ name: 'Math' });
     expect(res.status).toBe(201);
     expect(res.body.discipline.colorIndex).toBe(1);
+  });
+
+  it('розподіляє colorIndex між 1, 2, 3 і повторює 1 для четвертої дисципліни', async () => {
+    const ag = await setup();
+    const colors = [];
+    for (const name of ['Math', 'Physics', 'Chemistry', 'Biology']) {
+      const res = await ag.post('/api/disciplines').set('Content-Type', 'application/json').send({ name });
+      expect(res.status).toBe(201);
+      colors.push(res.body.discipline.colorIndex);
+    }
+    expect(colors).toEqual([1, 2, 3, 1]);
   });
 
   it('returns 409 on duplicate name (case-insensitive)', async () => {
@@ -45,6 +55,10 @@ describe('POST /api/disciplines', () => {
     const res = await ag.post('/api/disciplines').set('Content-Type', 'application/json').send({ name: 'MATH' });
     expect(res.status).toBe(409);
     expect(res.body.error.code).toBe('DISCIPLINE_CONFLICT');
+
+    // The rejected duplicate must not create a second row.
+    const { rows: [{ count }] } = await pool.query('SELECT COUNT(*)::int AS count FROM disciplines');
+    expect(count).toBe(1);
   });
 
   it('validates colorIndex between 1 and 5', async () => {
@@ -90,25 +104,5 @@ describe('DELETE /api/disciplines/:id', () => {
     const res = await ag.delete('/api/disciplines/not-a-uuid').set('Content-Type', 'application/json').send({});
     expect(res.status).toBe(404);
     expect(res.body.error.code).toBe('NOT_FOUND');
-  });
-});
-
-describe('disciplinesService.findOrCreate', () => {
-  it('returns the existing discipline instead of creating a duplicate', async () => {
-    await setup();
-
-    const { rows: [user] } = await pool.query('SELECT id FROM users WHERE email = $1', [USER.email]);
-    const first = await disciplinesService.findOrCreate(user.id, 'Physics', 4);
-    const second = await disciplinesService.findOrCreate(user.id, 'PHYSICS', 2);
-
-    expect(first.name).toBe('Physics');
-    expect(first.colorIndex).toBe(4);
-    expect(second).toEqual(first);
-
-    const { rows: [{ count }] } = await pool.query(
-      'SELECT COUNT(*)::int AS count FROM disciplines WHERE user_id = $1',
-      [user.id]
-    );
-    expect(count).toBe(1);
   });
 });

@@ -32,8 +32,6 @@ body[data-page="account"] .planner-shell {
 }
 
 .account-card--warning {
-  --account-warning-strong: #B45309;
-  --account-warning-foreground: #451A03;
   border-inline-start: 0.25rem solid var(--soon);
   box-shadow: var(--shadow-sm);
 }
@@ -41,14 +39,14 @@ body[data-page="account"] .planner-shell {
 .account-card--warning .account-card__warning-button {
   border-color: var(--soon);
   background: var(--card);
-  color: var(--account-warning-strong);
+  color: var(--warning-strong);
 }
 
 .account-card--warning .account-card__warning-button:hover,
 .account-card--warning .account-card__warning-button:focus-visible {
   border-color: var(--soon);
   background: var(--soon);
-  color: var(--account-warning-foreground);
+  color: var(--warning-foreground);
 }
 
 .account-card--warning .account-card__warning-button:focus-visible {
@@ -62,7 +60,10 @@ body[data-page="account"] .planner-shell {
 
 .account-card__footer {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: flex-end;
+  gap: var(--space-2);
   margin-block-start: var(--space-5);
   padding-block-start: var(--space-4);
   border-block-start: var(--border-width) solid var(--border);

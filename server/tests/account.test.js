@@ -82,4 +82,26 @@ describe('POST /api/account/password', () => {
     expect((await current.post('/api/account/password').send({ currentPassword: USER.password, newPassword: 'short' })).status).toBe(422);
     expect((await current.post('/api/account/password').send({ currentPassword: USER.password, newPassword: USER.password })).status).toBe(422);
   });
+
+  it('rejects missing fields', async () => {
+    const { current } = await registerUser();
+    expect((await current.post('/api/account/password').set('Content-Type', 'application/json').send({})).status).toBe(422);
+    expect((await current.post('/api/account/password').set('Content-Type', 'application/json').send({ currentPassword: USER.password })).status).toBe(422);
+    expect((await current.post('/api/account/password').set('Content-Type', 'application/json').send({ newPassword: 'NewPass123!' })).status).toBe(422);
+  });
+
+  it('rejects fields of the wrong type', async () => {
+    const { current } = await registerUser();
+    expect((await current.post('/api/account/password').set('Content-Type', 'application/json').send({ currentPassword: 123, newPassword: 'NewPass123!' })).status).toBe(422);
+    expect((await current.post('/api/account/password').set('Content-Type', 'application/json').send({ currentPassword: USER.password, newPassword: 123 })).status).toBe(422);
+  });
+
+  it('rejects unknown fields', async () => {
+    const { current } = await registerUser();
+    const res = await current
+      .post('/api/account/password')
+      .set('Content-Type', 'application/json')
+      .send({ currentPassword: USER.password, newPassword: 'NewPass123!', extra: 'value' });
+    expect(res.status).toBe(422);
+  });
 });

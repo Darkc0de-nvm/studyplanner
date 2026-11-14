@@ -402,7 +402,7 @@
   font-size: var(--text-sm);
 }
 
-.legal-card__status[data-error="true"] {
+.legal-card .legal-card__status[data-error="true"] {
   color: var(--destructive-strong);
 }
 
@@ -427,7 +427,7 @@ button.legal-card__delete-button:focus-visible {
 
 .legal-card .legal-card__status {
   margin: 0;
-  color: var(--destructive-strong);
+  color: var(--muted-foreground);
   font-size: var(--text-sm);
 }
 
@@ -452,11 +452,11 @@ button.legal-card__delete-button:focus-visible {
   padding: 24px;
   overflow: auto;
   border: 0;
-  border-inline-start: 4px solid #e5484d;
+  border-inline-start: 4px solid var(--confirm-accent);
   border-radius: 16px;
-  background: #fff;
+  background: var(--card);
   color: var(--foreground);
-  box-shadow: 0 20px 48px rgba(15, 15, 20, 0.2);
+  box-shadow: 0 20px 48px var(--dialog-shadow);
   opacity: 0;
   transform: translateY(8px) scale(0.98);
   transition: opacity 180ms var(--ease-enter), transform 180ms var(--ease-enter), overlay 180ms allow-discrete, display 180ms allow-discrete;
@@ -478,7 +478,7 @@ button.legal-card__delete-button:focus-visible {
 }
 
 .confirm-dialog::backdrop {
-  background: rgba(15, 15, 20, 0.55);
+  background: var(--dialog-backdrop);
   backdrop-filter: blur(4px);
   opacity: 0;
   transition: opacity 180ms var(--ease-enter), overlay 180ms allow-discrete, display 180ms allow-discrete;
@@ -501,8 +501,8 @@ button.legal-card__delete-button:focus-visible {
   inline-size: 44px;
   block-size: 44px;
   border-radius: 50%;
-  background: #fdecec;
-  color: #d92d20;
+  background: var(--confirm-icon-bg);
+  color: var(--confirm-icon-foreground);
 }
 
 .confirm-dialog__icon svg {
@@ -592,7 +592,7 @@ button.legal-card__delete-button:focus-visible {
 }
 
 .site-footer__inner a {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid var(--link-underline);
   text-decoration: none;
   transition: border-bottom-color var(--duration-fast) var(--ease);
 }
@@ -720,10 +720,47 @@ button.legal-card__delete-button:focus-visible {
   position: sticky;
   inset-block-start: 0;
   z-index: 60;
+  align-items: center;
+  gap: var(--space-3);
   margin: 0;
-  border-radius: 0;
-  padding: var(--space-3);
-  text-align: center;
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--border);
+  border-inline-start: 0.25rem solid var(--soon);
+  border-radius: var(--radius-lg);
+  background: var(--soon-bg);
+  box-shadow: var(--shadow-sm);
+  color: var(--warning-foreground);
+  text-align: start;
+}
+
+.network-banner--inline {
+  position: static;
+  margin-block: calc(-1 * var(--space-2)) var(--space-2);
+}
+
+.network-banner__icon {
+  flex: none;
+  inline-size: var(--space-6);
+  block-size: var(--space-6);
+  color: var(--soon);
+}
+
+.network-banner__content {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.network-banner__title {
+  font-size: var(--text-base);
+  font-weight: 600;
+  line-height: 1.5rem;
+  overflow-wrap: anywhere;
+}
+
+.network-banner__message {
+  color: var(--muted-foreground);
+  overflow-wrap: anywhere;
 }
 
 .empty-state {
@@ -836,11 +873,11 @@ button.legal-card__delete-button:focus-visible {
     animation: feedback-enter var(--duration-fast) var(--ease-enter);
   }
 
-  .modal:is(:target, .modal--open, :has(.modal__state:target)) {
+  .modal:not(.modal--closing):is(:target, .modal--open, :has(.modal__state:target)) {
     animation: overlay-enter var(--duration-base) var(--ease);
   }
 
-  .modal:is(:target, .modal--open, :has(.modal__state:target)) .modal__panel {
+  .modal:not(.modal--closing):is(:target, .modal--open, :has(.modal__state:target)) .modal__panel {
     animation: sheet-enter var(--duration-enter) var(--ease-enter);
   }
 
@@ -912,7 +949,7 @@ button.legal-card__delete-button:focus-visible {
 
 /* tablet with motion: scale the dialog instead of sliding it up */
 @media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
-  .modal:is(:target, .modal--open, :has(.modal__state:target)) .modal__panel {
+  .modal:not(.modal--closing):is(:target, .modal--open, :has(.modal__state:target)) .modal__panel {
     animation-name: dialog-enter;
   }
 

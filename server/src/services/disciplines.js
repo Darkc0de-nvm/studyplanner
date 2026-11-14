@@ -15,20 +15,6 @@ async function list(userId) {
   return rows.map(format);
 }
 
-async function findOrCreate(userId, name, colorIndex = 1) {
-  const { rows } = await pool.query(
-    'SELECT id, user_id, name, color_index FROM disciplines WHERE user_id = $1 AND lower(name) = lower($2)',
-    [userId, name]
-  );
-  if (rows.length > 0) return format(rows[0]);
-
-  const { rows: [created] } = await pool.query(
-    'INSERT INTO disciplines (user_id, name, color_index) VALUES ($1, $2, $3) RETURNING id, user_id, name, color_index',
-    [userId, name, colorIndex]
-  );
-  return format(created);
-}
-
 async function create(userId, name, colorIndex) {
   const { rows: existing } = await pool.query(
     'SELECT id FROM disciplines WHERE user_id = $1 AND lower(name) = lower($2)',
@@ -93,4 +79,4 @@ async function remove(userId, id) {
   if (rowCount === 0) throw new AppError(404, 'NOT_FOUND', 'Дисципліну не знайдено.');
 }
 
-module.exports = { list, findOrCreate, create, remove };
+module.exports = { list, create, remove };

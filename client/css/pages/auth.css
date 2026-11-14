@@ -58,6 +58,10 @@
   color: var(--muted-foreground);
 }
 
+.auth-card > .alert {
+  align-items: center;
+}
+
 .auth-card__form {
   display: flex;
   flex-direction: column;
@@ -139,7 +143,7 @@
   font-weight: 500;
   text-decoration: none;
   white-space: nowrap;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid var(--link-underline);
   transition: border-bottom-color var(--duration-fast) var(--ease);
 }
 

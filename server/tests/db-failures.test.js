@@ -21,6 +21,26 @@ function injectFailure(match, pgCode) {
   });
 }
 
+/**
+ * Fails statements issued through a pooled client (pool.connect()), which
+ * bypasses the pool.query wrapper above, e.g. inside a transaction.
+ */
+function injectClientFailure(match) {
+  const realConnect = pool.connect.bind(pool);
+  return vi.spyOn(pool, 'connect').mockImplementation(async (...args) => {
+    const client = await realConnect(...args);
+    const realQuery = client.query.bind(client);
+    vi.spyOn(client, 'query').mockImplementation((sql, params) => {
+      const text = typeof sql === 'string' ? sql : '';
+      if (text.includes(match)) {
+        return Promise.reject(new Error('injected database failure'));
+      }
+      return realQuery(sql, params);
+    });
+    return client;
+  });
+}
+
 async function authenticatedAgent() {
   const ag = agent();
   const res = await ag
@@ -213,6 +233,19 @@ describe('Session, account and discipline endpoints when the database fails', ()
       .post('/api/account/delete')
       .set('Content-Type', 'application/json')
       .send({ password: 'Password1!' });
+
+    expect(res.status).toBe(500);
+    expect(res.body.error.code).toBe('INTERNAL_ERROR');
+  });
+
+  it('returns 500 when password change fails', async () => {
+    const ag = await authenticatedAgent();
+    injectClientFailure('UPDATE users');
+
+    const res = await ag
+      .post('/api/account/password')
+      .set('Content-Type', 'application/json')
+      .send({ currentPassword: USER.password, newPassword: 'NewPass123!' });
 
     expect(res.status).toBe(500);
     expect(res.body.error.code).toBe('INTERNAL_ERROR');

@@ -324,5 +324,5 @@
   }
 
   window.addEventListener('pagehide', cancelPending);
-  app.render = { init, list, card, cards, visible, cancelPending, bind, clone, animateRemoval, cancelRemoval, finalizeRemoval, remap };
+  app.render = { init, list, card, cards, visible, cancelPending, bind, clone, animateRemoval, cancelRemoval, finalizeRemoval, remap, duration };
 })();

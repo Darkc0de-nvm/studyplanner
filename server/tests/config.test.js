@@ -6,20 +6,9 @@ const SERVER_DIR = path.join(__dirname, '..');
 
 // Ambient app variables (CI job env, a developer shell or .env) must not leak
 // into these child processes, otherwise "documented defaults" are not defaults.
-const APP_ENV_KEYS = [
-  'NODE_ENV',
-  'PORT',
-  'DATABASE_URL',
-  'TEST_DATABASE_URL',
-  'E2E_DATABASE_URL',
-  'SESSION_SECRET',
-  'SESSION_MAX_AGE',
-  'TRUST_PROXY',
-  'COOKIE_DOMAIN',
-  'COOKIE_SECURE',
-  'DATABASE_SSL',
-  'DATABASE_SSL_REJECT_UNAUTHORIZED',
-];
+// Derive the list from config.js itself so new schema keys are covered
+// automatically instead of drifting from a hand-maintained copy.
+const APP_ENV_KEYS = Object.keys(require('../src/config'));
 
 const VALID_ENV = {
   NODE_ENV: 'test',
@@ -61,12 +50,22 @@ describe('configuration fail-fast', () => {
 
   it('loads a valid configuration with documented defaults', () => {
     const res = runNode(
-      VALID_ENV,
-      "const c = require('./src/config'); console.log([c.COOKIE_SECURE, c.DATABASE_SSL, c.DATABASE_SSL_REJECT_UNAUTHORIZED].join('|'));"
+      { DATABASE_URL: VALID_ENV.DATABASE_URL, SESSION_SECRET: VALID_ENV.SESSION_SECRET },
+      "console.log(JSON.stringify(require('./src/config')))"
     );
 
     expect(res.status).toBe(0);
-    expect(res.stdout.trim()).toBe('auto|auto|true');
+    const config = JSON.parse(res.stdout);
+    expect(config).toMatchObject({
+      NODE_ENV: 'development',
+      PORT: 3000,
+      SESSION_MAX_AGE: 2592000,
+      TRUST_PROXY: 0,
+      COOKIE_SECURE: 'auto',
+      DATABASE_SSL: 'auto',
+      DATABASE_SSL_REJECT_UNAUTHORIZED: 'true',
+    });
+    expect(config.COOKIE_DOMAIN).toBeUndefined();
   });
 });
 

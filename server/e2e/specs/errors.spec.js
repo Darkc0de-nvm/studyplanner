@@ -30,7 +30,8 @@ test.describe('offline cold start', () => {
     await expect(page).toHaveURL(/\/tasks\.html$/);
     const banner = page.locator('[data-api-error]');
     await expect(banner).toBeVisible();
-    await expect(banner).toContainText('Відсутнє підключення до мережі');
+    await expect(banner).toContainText('Немає з’єднання');
+    await expect(banner).toContainText('Перевірте доступність інтернету.');
 
     // The banner markup must not require inline styles under `style-src 'self'`.
     const networkBanner = page.locator('#network-offline-banner');

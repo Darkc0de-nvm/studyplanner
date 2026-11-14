@@ -12,6 +12,7 @@
   const LOCKED = 'app-page--modal';
   const MUTED = 'muted';
   const DATE_CELL = '[data-date]';
+  const EXIT_DURATION = '--duration-enter';
   let active = null;
   let trigger = null;
   let selectedId = null;
@@ -119,7 +120,7 @@
     }
     closing = true;
     active.classList.add(CLOSING);
-    closeTimer = window.setTimeout(finishClose, 240);
+    closeTimer = window.setTimeout(finishClose, app.render.duration(EXIT_DURATION));
   }
 
   function showTask(action, task, source) {

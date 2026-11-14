@@ -93,6 +93,16 @@ test.describe('dynamic disciplines', () => {
 
     await page.goto('/calendar.html');
     const legendItem = page.locator(`.calendar-legend [data-discipline-id="${discipline.id}"]`);
+    // The legend only lists disciplines that have tasks in the visible month.
+    await expect(legendItem).toBeHidden();
+
+    await createTask(page, {
+      title: 'Квантова лабораторна',
+      disciplineId: discipline.id,
+      deadline: isoDate(),
+    });
+    await page.reload();
+
     await expect(legendItem).toBeVisible();
     await expect(legendItem).toContainText('Квантова фізика');
     // The client currently supports colours 1..3, so 4 cycles back to 1.

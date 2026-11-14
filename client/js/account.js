@@ -22,6 +22,7 @@
     const repeatPassword = document.getElementById('repeat-new-password');
     const accountCard = document.getElementById('account-data-card');
     const status = document.getElementById('delete-status');
+    const passwordStatus = document.getElementById('password-status');
     if (!deleteDialog || !deleteOpen || !changeDialog || !changeOpen) return;
 
     let busy = false;
@@ -33,6 +34,13 @@
       status.textContent = message;
       status.hidden = !message;
       status.dataset.error = String(isError);
+    }
+
+    function setPasswordStatus(message, isError = false) {
+      if (!passwordStatus) return;
+      passwordStatus.textContent = message;
+      passwordStatus.hidden = !message;
+      passwordStatus.dataset.error = String(isError);
     }
 
     function setError(element, message) {
@@ -167,7 +175,7 @@
     });
 
     changeOpen.addEventListener('click', () => {
-      setStatus('');
+      setPasswordStatus('');
       resetChangeDialog();
       changeDialog.showModal();
       currentPassword.focus();
@@ -201,7 +209,7 @@
       try {
         await app.api.account.changePassword(currentPassword.value, newPassword.value);
         changeDialog.close();
-        setStatus('Пароль змінено');
+        setPasswordStatus('Пароль змінено');
       } catch (err) {
         busy = false;
         changeForm.querySelectorAll('input, button').forEach(control => { control.disabled = false; });

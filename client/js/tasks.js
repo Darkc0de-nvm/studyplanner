@@ -131,9 +131,16 @@
     const banner = document.querySelector('[data-api-error]');
     if (!banner) return;
     if (isError) {
-      banner.textContent = message;
+      const isOffline = message === 'Відсутнє підключення до мережі. Перевірте зв’язок.';
+      banner.classList.toggle('alert--error', !isOffline);
+      banner.classList.toggle('network-banner', isOffline);
+      banner.classList.toggle('network-banner--inline', isOffline);
+      if (isOffline && app.renderOfflineNotice) app.renderOfflineNotice(banner);
+      else banner.textContent = message;
       banner.hidden = false;
     } else {
+      banner.classList.remove('network-banner', 'network-banner--inline');
+      banner.classList.add('alert--error');
       banner.textContent = '';
       banner.hidden = true;
     }

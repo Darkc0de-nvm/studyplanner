@@ -22,6 +22,17 @@
   --overlay: rgba(0, 0, 0, 0.5);
   --overlay-light: rgba(0, 0, 0, 0.2);
   --secondary-foreground: #525252;
+  /* confirmation dialog accents */
+  --confirm-accent: #E5484D;
+  --confirm-icon-bg: #FDECEC;
+  --confirm-icon-foreground: #D92D20;
+  --dialog-shadow: rgba(15, 15, 20, 0.2);
+  --dialog-backdrop: rgba(15, 15, 20, 0.55);
+  /* underlined inline links */
+  --link-underline: rgba(0, 0, 0, 0.25);
+  /* account security warnings */
+  --warning-strong: #B45309;
+  --warning-foreground: #451A03;
 
   /* task status colors */
   --overdue-bg: #FFE2E2;

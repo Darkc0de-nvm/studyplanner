@@ -20,6 +20,45 @@
   const CALENDAR_STATES = ['filter', 'filter-open', 'details-empty'];
   const SELECTOR = { filter: '.app-filter', userMenu: '.user-menu' };
 
+  function ensureWifiSymbol() {
+    if (document.getElementById('icon-wifi')) return;
+    const sprite = document.querySelector('.icon-sprite');
+    if (!sprite) return;
+
+    const svgNamespace = 'http://www.w3.org/2000/svg';
+    const symbol = document.createElementNS(svgNamespace, 'symbol');
+    symbol.id = 'icon-wifi';
+    symbol.setAttribute('viewBox', '0 0 24 24');
+    const path = document.createElementNS(svgNamespace, 'path');
+    path.setAttribute('d', 'm2 2 20 20M8.5 16.5a5 5 0 0 1 7 0M5 12a10 10 0 0 1 5-2M2 8a16 16 0 0 1 4-2m4-1a16 16 0 0 1 12 3m-8 2a10 10 0 0 1 5 2M12 20h.01');
+    symbol.append(path);
+    sprite.append(symbol);
+  }
+
+  function renderOfflineNotice(container) {
+    ensureWifiSymbol();
+    const svgNamespace = 'http://www.w3.org/2000/svg';
+    const icon = document.createElementNS(svgNamespace, 'svg');
+    icon.classList.add('icon', 'network-banner__icon');
+    icon.setAttribute('aria-hidden', 'true');
+    const use = document.createElementNS(svgNamespace, 'use');
+    use.setAttribute('href', '#icon-wifi');
+    icon.append(use);
+
+    const content = document.createElement('div');
+    content.className = 'network-banner__content';
+    const title = document.createElement('strong');
+    title.className = 'network-banner__title';
+    title.textContent = 'Немає з’єднання';
+    const message = document.createElement('span');
+    message.className = 'network-banner__message';
+    message.textContent = 'Перевірте доступність інтернету.';
+    content.append(title, message);
+    container.replaceChildren(icon, content);
+  }
+
+  app.renderOfflineNotice = renderOfflineNotice;
+
   function initNetworkBanner() {
     let banner = document.getElementById('network-offline-banner');
     function updateBanner() {
@@ -28,10 +67,10 @@
         if (!banner) {
           banner = document.createElement('div');
           banner.id = 'network-offline-banner';
-          banner.className = 'alert alert--error network-banner';
+          banner.className = 'alert network-banner';
           banner.setAttribute('role', 'status');
           banner.setAttribute('aria-live', 'polite');
-          banner.textContent = 'Відсутнє підключення до мережі. Перевірте зв’язок.';
+          renderOfflineNotice(banner);
           document.body.prepend(banner);
         }
         banner.hidden = false;
@@ -193,14 +232,19 @@
       app.auth.init(new URLSearchParams(location.search).get('state'));
     }
     if (document.body.dataset.page === PAGE.account) {
+      enterPage();
+      const showAccount = () => {
+        app.account?.init();
+        const accountPage = document.getElementById('main');
+        if (accountPage) accountPage.hidden = false;
+      };
       app.auth.requireAuth()
-        .then(() => {
-          app.account?.init();
-          const accountPage = document.getElementById('main');
-          if (accountPage) accountPage.hidden = false;
-          enterPage();
-        })
-        .catch(() => {});
+        .then(showAccount)
+        .catch(err => {
+          // Offline/timeout: render the shell with the network banner instead
+          // of leaving the page empty, mirroring initPlanner.
+          if (err && (err.isOffline || err.status === 0)) showAccount();
+        });
     }
     if (document.body.dataset.page === PAGE.static) {
       app.selects?.init();

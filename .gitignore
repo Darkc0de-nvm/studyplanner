@@ -26,9 +26,24 @@ playwright-report/
 # Local Lighthouse reports, header captures and temporary server files
 server/perf/
 
-# Ignore personal docs and screenshots, but keep the phase reports
+# Ignore local reports and screenshots, but keep maintained project docs
 *-snapshots/
 docs/*
+!docs/accessibility.md
+!docs/api.md
+!docs/api-examples.http
+!docs/architecture.md
+!docs/ai-log.md
+!docs/data-model.md
+!docs/deployment.md
+!docs/performance.md
+!docs/requirements.md
+!docs/security.md
+!docs/test-plan.md
+!docs/prompts/
+docs/prompts/*
+!docs/prompts/00-initial.md
+!docs/prompts/01-server-scaffold.md
 !docs/phases/
 
 # Legacy work folder

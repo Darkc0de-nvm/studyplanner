@@ -4,6 +4,10 @@
 
 Вебзастосунок для планування навчальних завдань і дедлайнів. Це full-stack проєкт: статичний клієнт на HTML, CSS і JavaScript, REST API на Node.js та Express і PostgreSQL для зберігання даних.
 
+## Статус проєкту
+
+Фазу 3 (безпека, доступність, продуктивність і CI) задокументовано як завершену у [`docs/phases/phase3.md`](docs/phases/phase3.md). Production-розгортання — наступний етап; його план і критерії готовності описані в [`docs/phases/phase4.md`](docs/phases/phase4.md). Сам застосунок ще не позначений у документації як розгорнутий.
+
 ## Стек
 
 - **Клієнт:** HTML5, CSS3, JavaScript без збирача; локальний шрифт Geist.
@@ -32,6 +36,11 @@ StudyPlanner/
 │   ├── tests/                  # API-тести
 │   ├── e2e/                    # Playwright і налаштування e2e-БД
 │   └── package.json
+├── docs/
+│   ├── api.md                  # Контракт REST API
+│   ├── deployment.md           # Цільове production-розгортання та відкат
+│   ├── requirements.md         # Вимоги до проєкту
+│   └── phases/                 # Звіти й план етапів
 └── docker-compose.yml           # PostgreSQL для розробки й тестів
 ```
 
@@ -68,6 +77,10 @@ StudyPlanner/
 
 Відкрийте [http://localhost:3000](http://localhost:3000). Express віддає клієнт із `client/` і API з `/api`; окремої збірки клієнта немає. Перевірка сервера та бази доступна за адресою [http://localhost:3000/api/health](http://localhost:3000/api/health).
 
+## Production-розгортання
+
+Цільова схема з документації — один Render Web Service для Express-клієнта й API та керована PostgreSQL у Neon. Налаштування, змінні середовища, міграції й перевірки перед запуском описані в [`docs/deployment.md`](docs/deployment.md). Перед фактичним створенням ресурсів перевірте актуальні умови обраних планів.
+
 ## Демонстраційні дані
 
 Команда `npm run seed` створює демокористувача, три дисципліни й сім завдань. Якщо `SEED_EMAIL` і `SEED_PASSWORD` не задані, email і пароль генеруються випадково; ім’я за замовчуванням — `Demo User`. Значення можна задати через `SEED_EMAIL`, `SEED_PASSWORD` і `SEED_NAME`. Коли пароль генерується, команда виводить облікові дані в консоль.
@@ -87,9 +100,10 @@ StudyPlanner/
 | `POST`                   | `/api/auth/logout`     | Вихід                                 |
 | `GET`, `POST`            | `/api/tasks`           | Список і створення завдань            |
 | `GET`, `PATCH`, `DELETE` | `/api/tasks/:id`       | Перегляд, зміна й видалення завдання  |
-| `GET`, `POST`            | `/api/disciplines`     | Список і створення дисциплін          |
-| `DELETE`                 | `/api/disciplines/:id` | Видалення дисципліни                  |
-| `DELETE`                 | `/api/account`         | Видалення акаунта та пов’язаних даних |
+| `GET`, `POST`            | `/api/disciplines`     | Список і створення дисциплін           |
+| `DELETE`                 | `/api/disciplines/:id` | Видалення дисципліни                   |
+| `POST`                   | `/api/account/delete`  | Видалення акаунта та пов’язаних даних  |
+| `POST`                   | `/api/account/password` | Зміна пароля                          |
 
 Маршрути завдань, дисциплін і акаунта потребують активної сесії. Повний опис форматів запитів і відповідей дивіться у [`docs/api.md`](docs/api.md).
 
@@ -126,7 +140,7 @@ npm run e2e:chromium      # E2E лише у Chromium
 
 ### Візуальна база
 
-`npm run e2e` також порівнює скриншоти сторінок у Chromium і Firefox на ширинах 1440, 768 і 390 px, а також 19 ключових станів (діалоги, помилки форм, фільтри, datepicker, меню користувача) на 1440 і 390 px. Для детермінованості e2e-сервер створює акаунт `demo.visual@studyplanner.test` з паролем `Study2026!` і дедлайнами відносно `2026-10-06`, а тест фіксує годинник браузера на цій даті. 118 еталонних знімків лежать у `server/e2e/specs/visual.spec.js-snapshots/`. Після навмисних змін інтерфейсу оновіть їх командою `npx playwright test e2e/specs/visual.spec.js --update-snapshots`.
+`npm run e2e` також порівнює скриншоти сторінок у Chromium і Firefox на ширинах 1440, 768 і 390 px, а також 19 ключових станів (діалоги, помилки форм, фільтри, datepicker, меню користувача) на 1440 і 390 px. Для детермінованості e2e-сервер створює акаунт `demo.visual@studyplanner.test` з паролем `Study2026!` і дедлайнами відносно `2026-10-06`, а тест фіксує годинник браузера на цій даті. 124 еталонні знімки (62 сценарії × 2 браузери) генеруються локально в `server/e2e/specs/visual.spec.js-snapshots/`; цей каталог ігнорується git. Після навмисних змін інтерфейсу оновіть їх командою `npx playwright test e2e/specs/visual.spec.js --update-snapshots`.
 
 ## Інтерфейс
 
