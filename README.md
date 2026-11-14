@@ -6,12 +6,12 @@
 
 ## Статус проєкту
 
-Фазу 3 (безпека, доступність, продуктивність і CI) задокументовано як завершену у [`docs/phases/phase3.md`](docs/phases/phase3.md). Production-розгортання — наступний етап; його план і критерії готовності описані в [`docs/phases/phase4.md`](docs/phases/phase4.md). Сам застосунок ще не позначений у документації як розгорнутий.
+Фазу 3 (безпека, доступність, продуктивність і CI) задокументовано як завершену у [`docs/phases/phase3.md`](docs/phases/phase3.md). Безкоштовне хмарне розгортання — наступний етап; його план і критерії готовності описані в [`docs/phases/phase4.md`](docs/phases/phase4.md). Сам застосунок ще не позначений у документації як розгорнутий.
 
 ## Стек
 
 - **Клієнт:** HTML5, CSS3, JavaScript без збирача; локальний шрифт Geist.
-- **Сервер:** Node.js 22+, Express 4, Zod для валідації.
+- **Сервер:** Node.js 22.x (точна версія зафіксована в `.node-version`), Express 4, Zod для валідації.
 - **Дані й авторизація:** PostgreSQL 16, сесійні HttpOnly cookie, хешування паролів Argon2id.
 - **Перевірки:** Vitest і Supertest для API; Playwright для наскрізних сценаріїв у Chromium та Firefox; ESLint.
 - **Локальна інфраструктура:** Docker Compose для PostgreSQL.
@@ -38,7 +38,7 @@ StudyPlanner/
 │   └── package.json
 ├── docs/
 │   ├── api.md                  # Контракт REST API
-│   ├── deployment.md           # Цільове production-розгортання та відкат
+│   ├── deployment.md           # Безкоштовне хмарне розгортання та відкат
 │   ├── requirements.md         # Вимоги до проєкту
 │   └── phases/                 # Звіти й план етапів
 └── docker-compose.yml           # PostgreSQL для розробки й тестів
@@ -46,7 +46,7 @@ StudyPlanner/
 
 ## Локальний запуск
 
-Потрібні Node.js 22+ і Docker із Docker Compose.
+Потрібні Node.js 22.x і Docker із Docker Compose.
 
 1. Створіть конфігурацію сервера з шаблону:
 
@@ -77,9 +77,9 @@ StudyPlanner/
 
 Відкрийте [http://localhost:3000](http://localhost:3000). Express віддає клієнт із `client/` і API з `/api`; окремої збірки клієнта немає. Перевірка сервера та бази доступна за адресою [http://localhost:3000/api/health](http://localhost:3000/api/health).
 
-## Production-розгортання
+## Хмарне розгортання
 
-Цільова схема з документації — один Render Web Service для Express-клієнта й API та керована PostgreSQL у Neon. Налаштування, змінні середовища, міграції й перевірки перед запуском описані в [`docs/deployment.md`](docs/deployment.md). Перед фактичним створенням ресурсів перевірте актуальні умови обраних планів.
+План — навчальний деплой на безкоштовних планах Render Web Service і Neon Free. Він може засинати й мати холодний старт; це не production SLA. Налаштування, змінні середовища, міграції та перевірки перед запуском описані в [`docs/deployment.md`](docs/deployment.md). Фактичний URL буде додано після розгортання.
 
 ## Демонстраційні дані
 
