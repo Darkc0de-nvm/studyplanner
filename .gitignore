@@ -41,10 +41,8 @@ docs/*
 !docs/security.md
 !docs/test-plan.md
 !docs/prompts/
-docs/prompts/*
-!docs/prompts/00-initial.md
-!docs/prompts/01-server-scaffold.md
 !docs/phases/
 
 # Legacy work folder
 work/
+.neon

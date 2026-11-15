@@ -6,13 +6,13 @@
 
 ## 1. Підсумок
 
-Фазу 3 завершено. Сервер пройшов аудит залежностей і заголовків, клієнт — повний axe-аудит на 60 комбінаціях сторінок/станів і keyboard-only сценарії, а Lighthouse на production-like сервері показує **100/100/100/100** на всіх восьми прогонах, крім `tasks.html` mobile (Performance 99) і CLS 0.030 на desktop-версії списку.
+Фазу 3 завершено. Сервер пройшов аудит залежностей і заголовків, клієнт — axe-аудит і keyboard-only сценарії, а Lighthouse на production-like сервері показує **100/100/100/100** на всіх восьми прогонах, крім `tasks.html` mobile (Performance 99) і CLS 0.030 на desktop-версії списку. Поточна axe-специфікація охоплює **62** комбінації сторінок/станів і ширини.
 
 Ключові результати:
 
 - `npm audit` і `npm audit --omit=dev`: **0 уразливостей**;
 - серверні тести: **167/167**, покриття рядків **98.59 %**, гілок **96.46 %**, функцій **100 %**;
-- axe-core: **60/60**, 0 `serious`/`critical` у Chromium на 1440 і 390 px;
+- axe-core: **62** сценарії за поточною специфікацією, 0 `serious`/`critical` у Chromium на 1440 і 390 px;
 - keyboard-only: **8/8**; горизонтального скролу на 720 px немає;
 - візуальна база: **118/118** у Chromium і Firefox після навмисних a11y-змін;
 - Lighthouse: Performance 97–100, Accessibility 100, Best Practices 100, SEO 100;
@@ -39,7 +39,7 @@
 ### S3. Доступність
 
 - Створено `server/e2e/page-fixtures.js` — спільні сторінки, стани й вхід у демо-акаунт.
-- `a11y.spec.js`: 30 сторінок/станів × 2 ширини = 60 тестів; теги WCAG 2.0/2.1/2.2 A+AA; падіння лише на `serious`/`critical`.
+- На момент початкового прогону `a11y.spec.js` містив 30 сторінок/станів × 2 ширини = 60 тестів; поточний набір має 31 ціль × 2 ширини = 62 тести. Теги WCAG 2.0/2.1/2.2 A+AA; блокують лише `serious`/`critical` порушення.
 - `keyboard.spec.js`: skip-link, вхід, діалог + Escape, меню користувача, календар, редагування завдання, підтвердження видалення, 200 % zoom (720 px).
 - Виправлено контраст заповнених бейджів (`--discipline-*-fill`, білий текст), темніший текст `.alert--error`, доступні імена меню користувача та `label-content-name-mismatch` у календарі через `.visually-hidden`-опис.
 - Візуальні еталони оновлено лише для навмисних змін контрасту; повторний прогін стабільний.
@@ -62,25 +62,27 @@
 
 ## 3. Перевірки
 
-| Перевірка | Команда | Результат |
-|---|---|---|
-| API-тести + покриття | `npm test` | 167/167; lines 98.59 %, branches 96.46 %, functions 100 % |
-| ESLint | `npm run lint` | 0 помилок, 0 попереджень |
-| E2E (Chromium + Firefox) | `npm run e2e` | 234 passed, 60 skipped (a11y лише Chromium); візуальні — 118/118 |
-| axe-core | `npx playwright test e2e/specs/a11y.spec.js --project=chromium` | 60/60, 0 serious/critical |
-| Keyboard-only | `npx playwright test e2e/specs/keyboard.spec.js` | 8/8 у Chromium і 8/8 у Firefox |
-| Валідатор клієнта | `npm run validate:client` | 23 HTML + 9 CSS, 0 помилок |
-| Секрети | `npm run secret-scan` | PASS |
-| Залежності | `npm audit` / `npm audit --omit=dev` | 0 / 0 |
-| Lighthouse | `npx lighthouse ...` (8 прогонів) | perf 97–100, a11y 100, BP 100, SEO 100 |
+Наведена нижче таблиця фіксує прогони під час завершення Фази 3. Після них до актуальної axe-специфікації додали ще одну сторінку, тому зараз вона генерує 62 сценарії замість 60. Фінальний merge-коміт `ce36e50` пройшов CI на Node.js 22.23.5 ([run 43580734789](https://github.com/Darkc0de-nvm/studyplanner/actions/runs/43580734789)). Для цього самого коміту збережений локальний coverage report (Node.js 24.13.1) показує 181/181 серверний тест, 98.69 % рядків, 96.60 % гілок і 100 % функцій. Workflow не завантажує coverage report як артефакт, тому ці coverage-значення є локальним результатом, а не окремим показником із CI.
+
+| Перевірка                           | Команда                                                         | Результат                                                        |
+| ----------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------- |
+| API-тести + покриття                | `npm test`                                                      | 167/167; lines 98.59 %, branches 96.46 %, functions 100 %        |
+| ESLint                              | `npm run lint`                                                  | 0 помилок, 0 попереджень                                         |
+| E2E (Chromium + Firefox)            | `npm run e2e`                                                   | 234 passed, 60 skipped (a11y лише Chromium); візуальні — 118/118 |
+| axe-core (початковий прогін Фази 3) | `npx playwright test e2e/specs/a11y.spec.js --project=chromium` | 60/60, 0 serious/critical                                        |
+| Keyboard-only                       | `npx playwright test e2e/specs/keyboard.spec.js`                | 8/8 у Chromium і 8/8 у Firefox                                   |
+| Валідатор клієнта                   | `npm run validate:client`                                       | 23 HTML + 9 CSS, 0 помилок                                       |
+| Секрети                             | `npm run secret-scan`                                           | PASS                                                             |
+| Залежності                          | `npm audit` / `npm audit --omit=dev`                            | 0 / 0                                                            |
+| Lighthouse                          | `npx lighthouse ...` (8 прогонів)                               | perf 97–100, a11y 100, BP 100, SEO 100                           |
 
 Lighthouse-деталі:
 
-| Сторінка | Mobile | Desktop |
-|---|---|---|
-| `/` | 100 · LCP 1061 ms · CLS 0.000 | 100 · LCP 257 ms · CLS 0.000 |
-| `/login.html` | 100 · LCP 1061 ms · CLS 0.000 | 100 · LCP 252 ms · CLS 0.000 |
-| `/tasks.html` | 99 · LCP 2062 ms · CLS 0.005 | 100 · LCP 484 ms · CLS 0.030 |
+| Сторінка         | Mobile                        | Desktop                      |
+| ---------------- | ----------------------------- | ---------------------------- |
+| `/`              | 100 · LCP 1061 ms · CLS 0.000 | 100 · LCP 257 ms · CLS 0.000 |
+| `/login.html`    | 100 · LCP 1061 ms · CLS 0.000 | 100 · LCP 252 ms · CLS 0.000 |
+| `/tasks.html`    | 99 · LCP 2062 ms · CLS 0.005  | 100 · LCP 484 ms · CLS 0.030 |
 | `/calendar.html` | 100 · LCP 1061 ms · CLS 0.005 | 100 · LCP 297 ms · CLS 0.033 |
 
 ## 4. Відомі обмеження
@@ -91,7 +93,7 @@ Lighthouse-деталі:
 4. Живий скрінрідер (NVDA/VoiceOver) не тестувався; доступні імена й `aria-live` перевірені через axe/DOM.
 5. Візуальні еталони локальні (`*-snapshots/` ігноруються git) і прив'язані до `win32`; у CI візуальні тести виключені.
 6. Lighthouse-числа локальні, без CDN і реального TLS; LCP має природну варіативність (landing mobile 1061–1522 ms).
-7. `docs/security.md`, `docs/accessibility.md`, `docs/performance.md` і `docs/ai-log.md` лежать у `docs/`, який ігнорується git; у репозиторій потрапляє лише цей звіт у `docs/phases/`.
+7. Усі перелічені звіти (`docs/security.md`, `docs/accessibility.md`, `docs/performance.md`, `docs/ai-log.md` і звіти у `docs/phases/`) відстежуються Git.
 
 ## 5. Файли
 
@@ -101,7 +103,7 @@ Lighthouse-деталі:
 - **Доступність:** `server/e2e/page-fixtures.js`, `server/e2e/specs/a11y.spec.js`, `server/e2e/specs/keyboard.spec.js`, `client/js/calendar.js`, `client/tasks.html`, `client/calendar.html`, `client/states.html`, `client/css/tokens.css`, `client/css/components.css`, `client/css/pages/app.css`.
 - **Швидкодія:** `client/favicon.svg`, meta-описи та `preload` у `client/*.html`, `server/perf/*`.
 - **Інфраструктура:** `.github/workflows/ci.yml`, `server/scripts/validate-client.js`, `server/package.json`, `server/package-lock.json`, `server/vitest.config.mjs`, `README.md`.
-- **Документація:** `docs/phases/phase3.md`; локально (поза git) — `docs/security.md`, `docs/accessibility.md`, `docs/performance.md`, `docs/ai-log.md`.
+- **Документація:** `docs/phases/phase3.md`, `docs/security.md`, `docs/accessibility.md`, `docs/performance.md`, `docs/ai-log.md`; усі ці файли відстежуються Git.
 
 Коміти, staging, push, merge і теги не виконувалися — їх робить користувач.
 

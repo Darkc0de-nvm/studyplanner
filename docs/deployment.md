@@ -1,10 +1,10 @@
 # Безкоштовне хмарне розгортання StudyPlanner
 
-> **Статус:** інструкція для майбутнього навчального розгортання. Ресурси Render/Neon ще не створені, URL і результати перевірок не заповнені.
+> **Статус:** розгорнуто й перевірено 14.11.2026. Застосунок працює на Render Free Web Service із Neon Free; усі 6 міграцій застосовано, `GET /api/health` повернув `status: ok`, `db: ok`. Публічна адреса: [https://studyplanner-ec5s.onrender.com](https://studyplanner-ec5s.onrender.com).
 
-Цільова архітектура — один безкоштовний Node.js Web Service на Render, який обслуговує клієнт і `/api`, та PostgreSQL у Neon Free. Це зберігає same-origin сесії та TLS-з'єднання до БД. Такий варіант призначений для навчальної демонстрації: він має холодні старти, обмежені квоти й не надає production SLA.
+Фактична архітектура — один безкоштовний Node.js Web Service на Render, який обслуговує клієнт і `/api`, та PostgreSQL у Neon Free. Це зберігає same-origin сесії та TLS-з'єднання до БД. Такий варіант призначений для навчальної демонстрації: він має холодні старти, обмежені квоти й не надає production SLA. Розділи нижче фіксують поточні параметри й кроки для повторного розгортання.
 
-Провайдерські панелі й безкоштовні квоти змінюються; перед створенням ресурсів звіряйте актуальні [Render Free обмеження](https://render.com/docs/free), [Render FAQ про білінг](https://render.com/docs/faq), [Render health checks](https://render.com/docs/health-checks), [Render Node.js version](https://render.com/docs/node-version), [плани Neon](https://neon.com/docs/introduction/plans), [Neon Connect from any app](https://neon.tech/docs/connect/connect-from-any-app) та [Neon connection pooling](https://neon.tech/docs/connect/connection-pooling).
+Провайдерські панелі й безкоштовні квоти змінюються; перед зміною налаштувань або створенням додаткових ресурсів звіряйте актуальні [Render Free обмеження](https://render.com/docs/free), [Render FAQ про білінг](https://render.com/docs/faq), [Render health checks](https://render.com/docs/health-checks), [Render Node.js version](https://render.com/docs/node-version), [плани Neon](https://neon.com/docs/introduction/plans), [Neon Connect from any app](https://neon.tech/docs/connect/connect-from-any-app) та [Neon connection pooling](https://neon.tech/docs/connect/connection-pooling).
 
 ### Безкоштовні плани (перевірено 14.11.2026)
 
@@ -14,23 +14,25 @@
 - Не переходьте на платні плани й не додавайте платні ресурси. Якщо безкоштовна квота вичерпається, очікуйте тимчасову недоступність до її скидання або зменште використання.
 - Ці умови підходять для навчального проєкту; для важливих даних врахуйте обмежену історію відновлення Neon Free та відсутність резервних копій у Render Free Postgres. Цей план використовує Neon, не Render Postgres.
 
-## 1. Передумови
+## 1. Поточний стан та передумови
 
-- Фаза 3 та всі поточні зміни перевірені CI; розгортайте лише перевірений коміт із `main`.
+- Розгорнуто merge-коміт `ce36e50` із `main`; успішний CI на Node.js 22.23.5: [run 43580734789](https://github.com/Darkc0de-nvm/studyplanner/actions/runs/43580734789).
 - У Git немає `.env`, паролів, `DATABASE_URL` або інших секретів.
-- Для навчального розгортання створюються окрема Neon Free база й Render Free Web Service. Не використовуйте тестову БД `studyplanner_e2e`.
-- Переконайтеся, що Render service і Neon project залишаються на планах Free.
+- Створені окрема Neon Free база та Render Free Web Service. Не використовуйте тестову БД `studyplanner_e2e`.
+- Залишайте Render service і Neon project на планах Free.
 
-## 2. Створіть базу даних у Neon
+## 2. База даних Neon (створено)
 
-1. Створіть Neon project на плані Free та окрему базу даних для розгорнутого застосунку.
+1. Neon Free project створено в регіоні AWS Europe (London), project ID `rough-sun-05511851`.
 2. У Neon Console відкрийте **Connect** та скопіюйте connection string для Node.js. Збережіть його як секрет; не додавайте до репозиторію або звичайного README.
 3. Використовуйте TLS-параметри з connection string. Код проєкту вмикає SSL автоматично для production і Neon host та перевіряє сертифікат за замовчуванням (`DATABASE_SSL=auto`, `DATABASE_SSL_REJECT_UNAUTHORIZED=true`).
 4. Pooled connection string доречний для звичайного runtime pool. Для міграцій використовуйте connection string, рекомендований Neon для довготривалого адміністративного запиту; уникайте запуску міграцій паралельно.
 
-## 3. Створіть Render Web Service на Free plan
+## 3. Render Web Service (створено)
 
-Підключіть GitHub-репозиторій і задайте:
+Render підключено до GitHub-репозиторію `Darkc0de-nvm/studyplanner`, гілка `main`. Поточна конфігурація:
+
+Публічний URL: [https://studyplanner-ec5s.onrender.com](https://studyplanner-ec5s.onrender.com).
 
 | Поле | Значення |
 |---|---|
@@ -66,12 +68,12 @@ Render Free Web Service має тимчасову файлову систему,
 
 Не додавайте production-пароль у `SEED_PASSWORD` і не запускайте seed без чіткої потреби. Seed створює демонстраційні дані; для навчального деплою користувач може зареєструватися через інтерфейс.
 
-## 5. Міграції та перший запуск
+## 5. Міграції та запуск
 
-1. Render Free не має SSH і не запускає pre-deploy command. З локального каталогу `server` під'єднайтеся до Neon через `DATABASE_URL` та виконайте `node src/db/migrate.js`; не зберігайте production URL у файлах репозиторію.
+1. Початкові міграції застосовано локально до Neon через direct/unpooled connection string: `001_create_extensions.sql` … `006_add_terms_accepted_at.sql` (6 applied, 0 skipped). Render Free не має SSH і не запускає pre-deploy command; наступні міграції виконуйте локально через Neon, не зберігаючи production URL у файлах репозиторію.
 2. Для migration-процесу потрібні `NODE_ENV=production`, `DATABASE_URL`, `DATABASE_SSL=true`, `DATABASE_SSL_REJECT_UNAUTHORIZED=true`, `TRUST_PROXY=1` і `SESSION_SECRET` довжиною від 32 символів. Задавайте їх лише на час команди в локальному середовищі й очистіть після міграції.
-3. Перевірте в Neon, що всі міграції застосовані. Не запускайте seed без чіткої потреби.
-4. У Render logs перевірте, що сервер стартував у `production` без конфігураційних помилок. Потім відкрийте `GET /api/health`; відповідь має містити `{"status":"ok","db":"ok",...}`.
+3. Перед наступним релізом перевірте в Neon статус міграцій. Не запускайте seed без чіткої потреби.
+4. У Render logs переконайтеся, що сервер стартував у `production` без конфігураційних помилок. Живий `GET /api/health` вже перевірено: HTTP 200, `{"status":"ok","db":"ok",...}`.
 
 Перед будь-якою зміною схеми, що видаляє чи перетворює дані, підготуйте резервну копію або відновлювану Neon branch. Не вважайте відкат коду автоматичним відкатом SQL-міграції.
 
@@ -85,7 +87,7 @@ Render Free Web Service має тимчасову файлову систему,
 - Переконайтеся, що відповідь не віддає stack trace, а production logs не містять паролів, cookie чи повного тіла запитів.
 - Перевірте ключові security headers і відкрийте `tasks.html`, `calendar.html`, `privacy.html` та `terms.html` у desktop/mobile viewport.
 
-Запишіть у [`phases/phase4.md`](phases/phase4.md) URL навчального деплою, дату, результат smoke-check і посилання на успішний deploy/CI. Не публікуйте секрети або connection string у звіті.
+Результати поточного розгортання занесені до [`phases/phase4.md`](phases/phase4.md). Додайте до нього URL сервісу після копіювання з Render Dashboard. Не публікуйте секрети або connection string у звіті.
 
 ## 7. Відкат
 

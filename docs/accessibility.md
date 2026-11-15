@@ -89,6 +89,6 @@ npx playwright test e2e/specs/keyboard.spec.js --project=chromium
 - `server/e2e/page-fixtures.js` — спільні сторінки, стани й вхід у демо-акаунт.
 - `server/e2e/specs/a11y.spec.js` — 62 axe-тести.
 - `server/e2e/specs/keyboard.spec.js` — 8 keyboard-only тестів (включно з редагуванням і видаленням завдання).
-- `server/e2e/specs/visual.spec.js` — 118 візуальних еталонів (регресія після a11y-фіксів).
+- `server/e2e/specs/visual.spec.js` — 124 візуальні еталони (поточна база Chromium і Firefox).
 - `client/css/utilities.css` — `.visually-hidden`.
 - `client/css/base.css` — `:focus-visible`, `prefers-reduced-motion`.
